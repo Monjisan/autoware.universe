@@ -320,6 +320,8 @@ void SimplePlanningSimulator::on_ackermann_cmd(
   current_ackermann_cmd_ptr_ = msg;
   set_input(
     msg->lateral.steering_tire_angle, msg->longitudinal.speed, msg->longitudinal.acceleration);
+    msg->lateral.front_steering_tire_angle, msg->longitudinal.speed,
+    msg->longitudinal.acceleration);
 }
 
 void SimplePlanningSimulator::set_input(const float steer, const float vel, const float accel)
