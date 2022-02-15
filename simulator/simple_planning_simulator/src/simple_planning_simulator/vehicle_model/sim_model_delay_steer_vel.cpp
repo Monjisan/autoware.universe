@@ -102,4 +102,3 @@ Eigen::VectorXd SimModelDelaySteerVel::calcModel(
 
   return d_state;
 }
-

@@ -112,8 +112,8 @@ void RawVehicleCommandConverterNode::publishActuationCmd()
   ActuationCommandStamped actuation_cmd;
   const double acc = control_cmd_ptr_->longitudinal.acceleration;
   const double vel = current_twist_ptr_->twist.linear.x;
-  const double f_steer = control_cmd_ptr_->lateral.front_steering_tire_angle;
-  const double f_steer_rate = control_cmd_ptr_->lateral.front_steering_tire_rotation_rate;
+  const double f_steer = control_cmd_ptr_->lateral.steering_tire_angle;
+  const double f_steer_rate = control_cmd_ptr_->lateral.steering_tire_rotation_rate;
   const double r_steer = control_cmd_ptr_->lateral.rear_steering_tire_angle;
   const double r_steer_rate = control_cmd_ptr_->lateral.rear_steering_tire_rotation_rate;
   bool accel_cmd_is_zero = true;
@@ -219,7 +219,7 @@ double RawVehicleCommandConverterNode::calculateBrakeMap(
 
 void RawVehicleCommandConverterNode::onSteering(const Steering::ConstSharedPtr msg)
 {
-  current_steer_ptr_ = std::make_unique<double>(msg->front_steering_tire_angle);
+  current_steer_ptr_ = std::make_unique<double>(msg->steering_tire_angle);
 }
 
 void RawVehicleCommandConverterNode::onVelocity(const Odometry::ConstSharedPtr msg)

@@ -62,7 +62,7 @@ autoware_auto_vehicle_msgs::msg::SteeringReport to_steering_report(
   const std::shared_ptr<SimModelInterface> vehicle_model_ptr)
 {
   autoware_auto_vehicle_msgs::msg::SteeringReport steer;
-  steer.front_steering_tire_angle = static_cast<float32_t>(vehicle_model_ptr->getSteer());
+  steer.steering_tire_angle = static_cast<float32_t>(vehicle_model_ptr->getSteer());
   steer.rear_steering_tire_angle = static_cast<float32_t>(vehicle_model_ptr->getRearSteer());
   return steer;
 }
@@ -320,8 +320,7 @@ void SimplePlanningSimulator::on_ackermann_cmd(
 {
   current_ackermann_cmd_ptr_ = msg;
   set_input(
-    msg->lateral.steering_tire_angle, msg->longitudinal.speed, msg->longitudinal.acceleration);
-    msg->lateral.front_steering_tire_angle, msg->longitudinal.speed,
+    msg->lateral.steering_tire_angle, msg->longitudinal.speed,
     msg->longitudinal.acceleration);
 }
 
@@ -413,7 +412,7 @@ void SimplePlanningSimulator::add_measurement_noise(
 
   vel.longitudinal_velocity += static_cast<float32_t>(velocity_noise);
 
-  steer.front_steering_tire_angle += static_cast<float32_t>((*n.steer_dist_)(*n.rand_engine_));
+  steer.steering_tire_angle += static_cast<float32_t>((*n.steer_dist_)(*n.rand_engine_));
   steer.rear_steering_tire_angle += static_cast<float32_t>((*n.steer_dist_)(*n.rand_engine_));
 }
 

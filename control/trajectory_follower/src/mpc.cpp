@@ -105,13 +105,13 @@ bool8_t MPC::calculateMPC(
     const auto & dt = m_param.prediction_dt;
     if(DIM_U==1)
 	{
-    ctrl_cmd.front_steering_tire_angle = static_cast<float>(u_filtered(0));//need to fix
-    ctrl_cmd.front_steering_tire_rotation_rate = static_cast<float>((Uex(1) - Uex(0)) / dt);
-    ctrl_cmd.rear_steering_tire_angle = 0; 
+    ctrl_cmd.steering_tire_angle = static_cast<float>(u_filtered(0));//need to fix
+    ctrl_cmd.steering_tire_rotation_rate = static_cast<float>((Uex(1) - Uex(0)) / dt);
+    ctrl_cmd.rear_steering_tire_angle = 0;
     ctrl_cmd.rear_steering_tire_rotation_rate = 0;
 	}else if(DIM_U==2){
-    ctrl_cmd.front_steering_tire_angle = static_cast<float>(u_filtered(0));
-    ctrl_cmd.front_steering_tire_rotation_rate = static_cast<float>((Uex(2) - Uex(0)) / dt);
+    ctrl_cmd.steering_tire_angle = static_cast<float>(u_filtered(0));
+    ctrl_cmd.steering_tire_rotation_rate = static_cast<float>((Uex(2) - Uex(0)) / dt);
     ctrl_cmd.rear_steering_tire_angle = static_cast<float>(u_filtered(1));
     ctrl_cmd.rear_steering_tire_rotation_rate = static_cast<float>((Uex(3) - Uex(1)) / dt);
     }else{
@@ -122,7 +122,7 @@ bool8_t MPC::calculateMPC(
   storeSteerCmd(u_filtered);
 
   /* save input to buffer for delay compensation*/
-  m_input_buffer.push_back(ctrl_cmd.front_steering_tire_angle);
+  m_input_buffer.push_back(ctrl_cmd.steering_tire_angle);
   m_input_buffer.pop_front();
   m_raw_f_steer_cmd_pprev = m_raw_f_steer_cmd_prev;
   m_raw_r_steer_cmd_pprev = m_raw_r_steer_cmd_prev;
@@ -153,7 +153,7 @@ bool8_t MPC::calculateMPC(
   const float64_t nearest_k = reference_trajectory.k[static_cast<size_t>(mpc_data.nearest_idx)];
   const float64_t nearest_smooth_k =
     reference_trajectory.smooth_k[static_cast<size_t>(mpc_data.nearest_idx)];
-  const float64_t steer_cmd = ctrl_cmd.front_steering_tire_angle;
+  const float64_t steer_cmd = ctrl_cmd.steering_tire_angle;
   const float64_t wb = m_vehicle_model_ptr->getWheelbase();
 
   typedef decltype (diagnostic.diag_array.data) ::value_type DiagnosticValueType;
@@ -286,8 +286,8 @@ void MPC::setReferenceTrajectory(
 
 void MPC::resetPrevResult(const autoware_auto_vehicle_msgs::msg::SteeringReport & current_steer)
 {
-  m_raw_f_steer_cmd_prev = current_steer.front_steering_tire_angle;
-  m_raw_f_steer_cmd_pprev = current_steer.front_steering_tire_angle;
+  m_raw_f_steer_cmd_prev = current_steer.steering_tire_angle;
+  m_raw_f_steer_cmd_pprev = current_steer.steering_tire_angle;
   m_raw_r_steer_cmd_prev = current_steer.rear_steering_tire_angle;
   m_raw_r_steer_cmd_pprev = current_steer.rear_steering_tire_angle;
 }
@@ -318,7 +318,7 @@ bool8_t MPC::getData(
 
   /* get data */
   data->nearest_idx = static_cast<int64_t>(nearest_idx);
-  data->f_steer = static_cast<float64_t>(current_steer.front_steering_tire_angle);
+  data->f_steer = static_cast<float64_t>(current_steer.steering_tire_angle);
   data->r_steer = static_cast<float64_t>(current_steer.rear_steering_tire_angle);
   data->lateral_err = trajectory_follower::MPCUtils::calcLateralError(
     current_pose,
@@ -329,7 +329,7 @@ bool8_t MPC::getData(
 
   /* get predicted steer */
   if (!m_f_steer_prediction_prev) {
-    m_f_steer_prediction_prev = std::make_shared<float64_t>(current_steer.front_steering_tire_angle);
+    m_f_steer_prediction_prev = std::make_shared<float64_t>(current_steer.steering_tire_angle);
   }
   if (!m_r_steer_prediction_prev) {
     m_r_steer_prediction_prev = std::make_shared<float64_t>(current_steer.rear_steering_tire_angle);
@@ -411,7 +411,7 @@ std::tuple<float64_t,float64_t> MPC::getSteerCmdSum(
     t = rclcpp::Time(m_ctrl_cmd_vec.at(idx).stamp);
     f_steer_sum +=
       (1 - std::exp(-duration / time_constant)) *
-      static_cast<float64_t>(m_ctrl_cmd_vec.at(idx - 1).front_steering_tire_angle);
+      static_cast<float64_t>(m_ctrl_cmd_vec.at(idx - 1).steering_tire_angle);
     r_steer_sum +=
       (1 - std::exp(-duration / time_constant)) *
       static_cast<float64_t>(m_ctrl_cmd_vec.at(idx - 1).rear_steering_tire_angle);
@@ -422,7 +422,7 @@ std::tuple<float64_t,float64_t> MPC::getSteerCmdSum(
   const float64_t duration = (t_end - t).seconds();
   f_steer_sum +=
     (1 - std::exp(-duration / time_constant)) *
-    static_cast<float64_t>(m_ctrl_cmd_vec.at(idx - 1).front_steering_tire_angle);
+    static_cast<float64_t>(m_ctrl_cmd_vec.at(idx - 1).steering_tire_angle);
   r_steer_sum +=
     (1 - std::exp(-duration / time_constant)) *
     static_cast<float64_t>(m_ctrl_cmd_vec.at(idx - 1).rear_steering_tire_angle);
@@ -435,7 +435,7 @@ void MPC::storeSteerCmd(const Eigen::VectorXd steer)
   const auto time_delayed = m_clock->now() + rclcpp::Duration::from_seconds(m_param.input_delay);
   autoware_auto_control_msgs::msg::AckermannLateralCommand cmd;
   cmd.stamp = time_delayed;
-  cmd.front_steering_tire_angle = static_cast<float>(steer(0));
+  cmd.steering_tire_angle = static_cast<float>(steer(0));
   cmd.rear_steering_tire_angle = static_cast<float>(steer(1));
 
   // store published ctrl cmd
