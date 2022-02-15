@@ -171,7 +171,7 @@ void SimplePlanningSimulator::initialize_vehicle_model()
 {
   const auto vehicle_model_type_str = declare_parameter("vehicle_model_type", "IDEAL_STEER_VEL");
 
-  RCLCPP_INFO(this->get_logger(), "vehicle_model_type = %s", vehicle_model_type_str.c_str());
+  RCLCPP_ERROR(this->get_logger(), "vehicle_model_type = %s", vehicle_model_type_str.c_str());
 
   const float64_t vel_lim = declare_parameter("vel_lim", 50.0);
   const float64_t vel_rate_lim = declare_parameter("vel_rate_lim", 7.0);
@@ -213,9 +213,7 @@ void SimplePlanningSimulator::initialize_vehicle_model()
       steer_rate_lim, wheelbase,
       timer_sampling_time_ms_ / 1000.0, acc_time_delay, acc_time_constant, steer_time_delay,
       steer_time_constant);
-  //for 4ws debug.Be sure to delete later.
-  }
-  //} else if (vehicle_model_type_str == "DELAY_STEER_ACC_4WS") {
+  } else if (vehicle_model_type_str == "DELAY_STEER_ACC_4WS") {
     vehicle_model_type_ = VehicleModelType::DELAY_STEER_ACC_4WS;
     vehicle_model_ptr_ = std::make_shared<SimModelDelaySteerAcc4ws>(
       vel_lim, steer_lim, steer_lim, vel_rate_lim,
@@ -223,9 +221,9 @@ void SimplePlanningSimulator::initialize_vehicle_model()
       timer_sampling_time_ms_ / 1000.0, acc_time_delay, acc_time_constant,
 	  steer_time_delay, steer_time_constant,
 	  steer_time_delay, steer_time_constant);
-  //} else {
-  //  throw std::invalid_argument("Invalid vehicle_model_type: " + vehicle_model_type_str);
-  //}
+  } else {
+   throw std::invalid_argument("Invalid vehicle_model_type: " + vehicle_model_type_str);
+  }
 }
 
 rcl_interfaces::msg::SetParametersResult SimplePlanningSimulator::on_parameter(

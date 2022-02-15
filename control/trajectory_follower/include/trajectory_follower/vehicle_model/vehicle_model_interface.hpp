@@ -40,6 +40,7 @@ protected:
   const int64_t m_dim_y;   //!< @brief dimension of output y
   float64_t m_velocity;   //!< @brief vehicle velocity [m/s]
   float64_t m_curvature;  //!< @brief curvature on the linearized point on path
+  float64_t m_posture;	//!< @brief posture angle on the linearized point on path
   float64_t m_wheelbase;  //!< @brief wheelbase of the vehicle [m]
 
 public:
@@ -92,6 +93,12 @@ public:
    * @param [in] curvature curvature on the linearized point on path
    */
   void setCurvature(const float64_t curvature);
+
+  /**
+   * @brief set posture
+   * @param [in] posture posture on the linearized point on path
+   */
+  void setPosture(const float64_t curvature);
 
   /**
    * @brief calculate discrete model matrix of x_k+1 = a_d * xk + b_d * uk + w_d, yk = c_d * xk

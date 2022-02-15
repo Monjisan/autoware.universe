@@ -43,7 +43,7 @@
 #ifndef TRAJECTORY_FOLLOWER__VEHICLE_MODEL__VEHICLE_MODEL_4WS_HPP_
 #define TRAJECTORY_FOLLOWER__VEHICLE_MODEL__VEHICLE_MODEL_4WS_HPP_
 
-#include "trajectory_follower/vehicle_model/vehicle_model_interface_4ws.hpp"
+#include "trajectory_follower/vehicle_model/vehicle_model_interface.hpp"
 
 #include "trajectory_follower/visibility_control.hpp"
 
@@ -64,7 +64,7 @@ using autoware::common::types::float64_t;
  * Vehicle model class of bicycle kinematics
  * @brief calculate model-related values
  */
-class TRAJECTORY_FOLLOWER_PUBLIC FwsModel : public VehicleModelInterface4ws
+class TRAJECTORY_FOLLOWER_PUBLIC FwsModel : public VehicleModelInterface
 {
 public:
   /**

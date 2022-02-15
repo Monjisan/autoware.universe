@@ -500,11 +500,11 @@ Eigen::VectorXd MPC::getInitialState(const MPCData & data)
     x0 << lat_err, dlat, yaw_err, dyaw;
     RCLCPP_DEBUG(m_logger, "(before lpf) dot_lat_err = %f, dot_yaw_err = %f", dlat, dyaw);
     RCLCPP_DEBUG(m_logger, "(after lpf) dot_lat_err = %f, dot_yaw_err = %f", dlat, dyaw);
+  } else if (m_vehicle_model_type == "kinematics_4ws") {
+    x0 << lat_err, yaw_err, f_steer, r_steer;
   } else {
     RCLCPP_ERROR(m_logger, "vehicle_model_type is undefined");
   }
-  //for 4ws. Be sure to fix
-  x0 << lat_err, yaw_err, f_steer, r_steer;
   return x0;
 }
 

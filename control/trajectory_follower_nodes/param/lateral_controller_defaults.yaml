@@ -42,7 +42,7 @@
     mpc_velocity_time_constant: 0.3              # time constant used for velocity smoothing
 
     # -- vehicle model --
-    vehicle_model_type: "kinematics" # vehicle model type for mpc prediction. option is kinematics, kinematics_no_delay, and dynamics
+    vehicle_model_type: "kinematics_4ws" # vehicle model type for mpc prediction. option is kinematics, kinematics_no_delay, and dynamics
     input_delay: 0.24                # steering input delay time for delay compensation
     vehicle_model_steer_tau: 0.1     # steering dynamics time constant (1d approximation) [s]
     steer_lim_deg: 20.0              # steering angle limit [deg]
