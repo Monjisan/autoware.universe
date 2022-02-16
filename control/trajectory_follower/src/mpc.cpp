@@ -712,6 +712,16 @@ MPCMatrix MPC::generateMPCMatrix(
     addSteerWeightR(&m.R1ex);
   }
 
+  // Debug for dual steer
+  // std::cerr << "----- Model -----" << std::endl;
+  // std::cerr << "Aex: \n" << m.Aex << std::endl;
+  // std::cerr << "Bex: \n" << m.Bex << std::endl;
+  // std::cerr << "Wex: \n" << m.Wex << std::endl;
+  // std::cerr << "Cex: \n" << m.Cex << std::endl;
+  // std::cerr << "Qex: \n" << m.Qex << std::endl;
+  // std::cerr << "R1ex: \n" << m.R1ex << std::endl;
+  // std::cerr << "R2ex: \n" << m.R2ex << std::endl;
+  // std::cerr << "Uref_ex: \n" << m.Uref_ex << std::endl;
   return m;
 }
 
@@ -779,6 +789,13 @@ bool8_t MPC::executeOptimization(
     ubA(1, 0) = m_raw_r_steer_cmd_prev + m_steer_rate_lim * m_ctrl_period;
   }
 
+  // debug for dual steer
+  // std::cerr << "----- constraints -----" << std::endl;
+  // std::cerr << "lb: \n" << lb << std::endl;
+  // std::cerr << "ub: \n" << ub << std::endl;
+  // std::cerr << "A: \n" << A << std::endl;
+  // std::cerr << "lbA: \n" << lbA << std::endl;
+  // std::cerr << "ubA: \n" << ubA << std::endl;
 
   auto t_start = std::chrono::system_clock::now();
   bool8_t solve_result = m_qpsolver_ptr->solve(H, f.transpose(), A, lb, ub, lbA, ubA, *Uex);

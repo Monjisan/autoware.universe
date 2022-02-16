@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "trajectory_follower/vehicle_model/vehicle_model_4ws.hpp"
+#include "trajectory_follower/vehicle_model/vehicle_model_4ws_kinematics.hpp"
 
 #include <cmath>
+#include <iostream>
 
 namespace autoware
 {
@@ -84,7 +85,6 @@ void FwsModel::calculateDiscreteMatrix(
   const float64_t delta_fr = calculateReferenceFrontSteer();
   const float64_t delta_rr = calculateReferenceRearSteer();
 
-  //float64_t cos_delta_r_squared_inv = 1 / (cos(delta_r) * cos(delta_r));
   float64_t velocity = m_velocity;
   float64_t sigma_1 = m_wheelbase *std::sqrt(std::pow(tan(delta_rr), 2)+1);
   if (std::abs(m_velocity) < 1e-04) {velocity = 1e-04 * (m_velocity >= 0 ? 1 : -1);}
@@ -99,7 +99,6 @@ void FwsModel::calculateDiscreteMatrix(
          0.0, 0.0,      0.0,               -1.0 / m_steer_tau;
   Eigen::MatrixXd I = Eigen::MatrixXd::Identity(m_dim_x, m_dim_x);
   a_d = (I - dt * 0.5 * a_d).inverse() * (I + dt * 0.5 * a_d);  // bilinear discretization
-
   b_d << 0.0, 0.0,
 	  0.0,0.0,
 	  1.0 / m_steer_tau,0.0,
