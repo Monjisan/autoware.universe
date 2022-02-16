@@ -318,11 +318,11 @@ void SimplePlanningSimulator::on_ackermann_cmd(
 {
   current_ackermann_cmd_ptr_ = msg;
   set_input(
-    msg->lateral.steering_tire_angle, msg->longitudinal.speed,
+    msg->lateral.steering_tire_angle, msg->lateral.rear_steering_tire_angle, msg->longitudinal.speed,
     msg->longitudinal.acceleration);
 }
 
-void SimplePlanningSimulator::set_input(const float steer, const float vel, const float accel)
+void SimplePlanningSimulator::set_input(const float steer, const float rear_steer, const float vel, const float accel)
 {
   using autoware_auto_vehicle_msgs::msg::GearCommand;
   Eigen::VectorXd input(vehicle_model_ptr_->getDimU());
@@ -355,11 +355,9 @@ void SimplePlanningSimulator::set_input(const float steer, const float vel, cons
   } else if (  // NOLINT
     vehicle_model_type_ == VehicleModelType::DELAY_STEER_ACC_4WS)
   {
-    input << acc, steer, 0;
+    input << acc, steer, rear_steer;
   }
-  /* for 4ws debug*/
-  input << acc, steer, 0;
-  /**/
+
   vehicle_model_ptr_->setInput(input);
 }
 

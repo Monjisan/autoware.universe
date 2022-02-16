@@ -211,7 +211,7 @@ private:
   /**
    * @brief set input steering, velocity, and acceleration of the vehicle model
    */
-  void set_input(const float steer, const float vel, const float accel);
+  void set_input(const float steer, const float rear_steer, const float vel, const float accel);
 
   /**
    * @brief set current_vehicle_state_ with received message
