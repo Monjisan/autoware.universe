@@ -109,6 +109,7 @@ LateralController::LateralController(const rclcpp::NodeOptions & node_options)
       std::make_shared<trajectory_follower::FwsModel>(
       wheelbase, m_mpc.m_steer_lim,
       m_mpc.m_param.steer_tau);
+    m_mpc.HAS_REAR_STEER_CONTROL = true;
   } else {
     RCLCPP_ERROR(get_logger(), "vehicle_model_type is undefined");
   }
@@ -129,7 +130,7 @@ LateralController::LateralController(const rclcpp::NodeOptions & node_options)
     const float64_t delay_tmp = declare_parameter<float64_t>("input_delay");
     const float64_t delay_step = std::round(delay_tmp / m_mpc.m_ctrl_period);
     m_mpc.m_param.input_delay = delay_step * m_mpc.m_ctrl_period;
-    m_mpc.m_input_buffer = std::deque<float64_t>(static_cast<size_t>(delay_step), 0.0);
+    m_mpc.m_input_buffer = std::deque<Eigen::VectorXd>(static_cast<size_t>(delay_step), Eigen::VectorXd::Zero(vehicle_model_ptr->getDimU()));
   }
 
   /* initialize lowpass filter */
@@ -206,10 +207,14 @@ void LateralController::onTimer()
   if (isStoppedState()) {
     // Reset input buffer
     for (auto & value : m_mpc.m_input_buffer) {
-      value = m_ctrl_cmd_prev.steering_tire_angle;
+      value(0) = m_ctrl_cmd_prev.steering_tire_angle;
+      if (m_mpc.HAS_REAR_STEER_CONTROL) {
+        value(1) = m_ctrl_cmd_prev.rear_steering_tire_angle;
+      }
     }
     // Use previous command value as previous raw steer command
     m_mpc.m_raw_f_steer_cmd_prev = m_ctrl_cmd_prev.steering_tire_angle;
+    m_mpc.m_raw_r_steer_cmd_prev = m_ctrl_cmd_prev.rear_steering_tire_angle;
 
     publishCtrlCmd(m_ctrl_cmd_prev);
     publishPredictedTraj(predicted_traj);
@@ -519,7 +524,7 @@ rcl_interfaces::msg::SetParametersResult LateralController::paramCallback(
     const float64_t delay = delay_step * m_mpc.m_ctrl_period;
     if (param.input_delay != delay) {
       param.input_delay = delay;
-      m_mpc.m_input_buffer = std::deque<float64_t>(static_cast<size_t>(delay_step), 0.0);
+      m_mpc.m_input_buffer = std::deque<Eigen::VectorXd>(static_cast<size_t>(delay_step), Eigen::VectorXd::Zero(m_mpc.getVehicleModel()->getDimU()));
     }
 
     // transaction succeeds, now assign values

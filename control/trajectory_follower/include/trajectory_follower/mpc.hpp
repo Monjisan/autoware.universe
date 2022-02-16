@@ -163,6 +163,8 @@ private:
   std::shared_ptr<trajectory_follower::QPSolverInterface> m_qpsolver_ptr;
   //!< @brief lowpass filter for steering command
   trajectory_follower::Butterworth2dFilter m_lpf_steering_cmd;
+  //!< @brief lowpass filter for rear steering command
+  trajectory_follower::Butterworth2dFilter m_lpf_rear_steering_cmd;
   //!< @brief lowpass filter for lateral error
   trajectory_follower::Butterworth2dFilter m_lpf_lateral_error;
   //!< @brief lowpass filter for heading error
@@ -341,12 +343,16 @@ private:
   }
 
 public:
+
+  //!< @brief true when the model has 2 steer input (front and rear)
+  bool HAS_REAR_STEER_CONTROL = false;  //TODO(Horibe) temporally for 4ws model
+
   //!< @brief reference trajectory to be followed
   trajectory_follower::MPCTrajectory m_ref_traj;
   //!< @brief MPC design parameter
   MPCParam m_param;
   //!< @brief mpc_output buffer for delay time compensation
-  std::deque<float64_t> m_input_buffer;
+  std::deque<Eigen::VectorXd> m_input_buffer;
   //!< @brief mpc raw output in previous period
   float64_t m_raw_f_steer_cmd_prev = 0.0;
   //!< @brief mpc raw output in previous period
@@ -423,6 +429,7 @@ public:
     const float64_t error_deriv_lpf_cutoff_hz)
   {
     m_lpf_steering_cmd.initialize(m_ctrl_period, steering_lpf_cutoff_hz);
+    m_lpf_rear_steering_cmd.initialize(m_ctrl_period, steering_lpf_cutoff_hz);
     m_lpf_lateral_error.initialize(m_ctrl_period, error_deriv_lpf_cutoff_hz);
     m_lpf_yaw_error.initialize(m_ctrl_period, error_deriv_lpf_cutoff_hz);
   }
@@ -454,6 +461,12 @@ public:
   {
     m_clock = clock;
   }
+
+  inline std::shared_ptr<trajectory_follower::VehicleModelInterface> getVehicleModel()
+  {
+    return m_vehicle_model_ptr;
+  }
+
 };  // class MPC
 }  // namespace trajectory_follower
 }  // namespace control

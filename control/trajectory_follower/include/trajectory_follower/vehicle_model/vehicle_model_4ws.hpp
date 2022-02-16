@@ -29,14 +29,15 @@
  * u = steer_fd ,steer_rd
  *
  *    Nonlinear model
- * dx1/dt = v * sin(x2)
- * dx2/dt = v * tan(x3) / W
- * dx3/dt = -(x3 - u) / tau
+ * dx1/dt =
+ * dx2/dt =
+ * dx3/dt =
+ * dx4/dt =
  *
  *    Linearized model around reference point (v = v_r, th = th_r, steer = steer_r)
- *         [0,  vr,                   0]       [    0]       [                           0]
- * dx/dt = [0,   0, vr/W/cos(steer_r)^2] * x + [    0] * u + [-vr*steer_r/W/cos(steer_r)^2]
- *         [0,   0,               1/tau]       [1/tau]       [                           0]
+ *
+ * dx/dt =
+ *
  *
  */
 
@@ -102,6 +103,11 @@ public:
 private:
   float64_t m_steer_lim;                                                //!< @brief steering angle limit [rad]
   float64_t m_steer_tau;                                                //!< @brief steering time constant for 1d-model [s]
+
+  float64_t calculateReferenceFrontSteer();
+
+  float64_t calculateReferenceRearSteer();
+
 };
 }                          // namespace trajectory_follower
 }                  // namespace control

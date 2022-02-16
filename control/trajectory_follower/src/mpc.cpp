@@ -87,47 +87,46 @@ bool8_t MPC::calculateMPC(
   }
   const int64_t DIM_U = m_vehicle_model_ptr->getDimU();
   /* apply saturation and filter */
-  Eigen::Vector2d u_saturated;
-  Eigen::Vector2d u_filtered;
-  if(DIM_U==1)
-  {
-    u_saturated << std::max(std::min(Uex(0), m_steer_lim), -m_steer_lim),0.0;
-    u_filtered << m_lpf_steering_cmd.filter(u_saturated(0)),0.0;
-  }else if(DIM_U==2){
-    u_saturated << std::max(std::min(Uex(0), m_steer_lim), -m_steer_lim), std::max(std::min(Uex(1), m_steer_lim), -m_steer_lim);
-    u_filtered << m_lpf_steering_cmd.filter(u_saturated(0)),m_lpf_steering_cmd.filter(u_saturated(1));
-  }else{
-	  RCLCPP_ERROR(m_logger, "Input dimension is greater than 2.");
+  Eigen::VectorXd u_saturated(DIM_U);
+  Eigen::VectorXd u_filtered(DIM_U);
+  const auto sat_steer = [&](const auto v) {
+    return std::max(std::min(v, m_steer_lim), -m_steer_lim);
+  };
+
+  u_saturated(0) = sat_steer(Uex(0));
+  u_filtered(0) = m_lpf_steering_cmd.filter(u_saturated(0));
+
+  if (HAS_REAR_STEER_CONTROL) {
+    u_saturated(1) = sat_steer(Uex(1));
+    u_filtered(1) = m_lpf_rear_steering_cmd.filter(u_saturated(1));
   }
 
   /* set control command */
   {
     const auto & dt = m_param.prediction_dt;
-    if(DIM_U==1)
-	{
     ctrl_cmd.steering_tire_angle = static_cast<float>(u_filtered(0));//need to fix
-    ctrl_cmd.steering_tire_rotation_rate = static_cast<float>((Uex(1) - Uex(0)) / dt);
+    ctrl_cmd.steering_tire_rotation_rate = static_cast<float>((Uex(DIM_U) - Uex(0)) / dt);
     ctrl_cmd.rear_steering_tire_angle = 0;
     ctrl_cmd.rear_steering_tire_rotation_rate = 0;
-	}else if(DIM_U==2){
-    ctrl_cmd.steering_tire_angle = static_cast<float>(u_filtered(0));
-    ctrl_cmd.steering_tire_rotation_rate = static_cast<float>((Uex(2) - Uex(0)) / dt);
-    ctrl_cmd.rear_steering_tire_angle = static_cast<float>(u_filtered(1));
-    ctrl_cmd.rear_steering_tire_rotation_rate = static_cast<float>((Uex(3) - Uex(1)) / dt);
-    }else{
-        RCLCPP_ERROR(m_logger, "Input dimension is greater than 2.");
+
+    if (HAS_REAR_STEER_CONTROL) {
+      ctrl_cmd.rear_steering_tire_angle = static_cast<float>(u_filtered(1));
+      ctrl_cmd.rear_steering_tire_rotation_rate =
+        static_cast<float>((Uex(DIM_U + 1) - Uex(1)) / dt);
     }
   }
 
   storeSteerCmd(u_filtered);
 
   /* save input to buffer for delay compensation*/
-  m_input_buffer.push_back(ctrl_cmd.steering_tire_angle);
+  m_input_buffer.push_back(u_filtered);
   m_input_buffer.pop_front();
   m_raw_f_steer_cmd_pprev = m_raw_f_steer_cmd_prev;
-  m_raw_r_steer_cmd_pprev = m_raw_r_steer_cmd_prev;
   m_raw_f_steer_cmd_prev = Uex(0);
-  m_raw_r_steer_cmd_prev = (DIM_U==1)?0:Uex(1);
+  if (HAS_REAR_STEER_CONTROL) {
+    m_raw_r_steer_cmd_pprev = m_raw_r_steer_cmd_prev;
+    m_raw_r_steer_cmd_prev = Uex(1);
+  }
 
   /* calculate predicted trajectory */
   Eigen::VectorXd Xex = mpc_matrix.Aex * x0 + mpc_matrix.Bex * Uex + mpc_matrix.Wex;
@@ -436,7 +435,9 @@ void MPC::storeSteerCmd(const Eigen::VectorXd steer)
   autoware_auto_control_msgs::msg::AckermannLateralCommand cmd;
   cmd.stamp = time_delayed;
   cmd.steering_tire_angle = static_cast<float>(steer(0));
-  cmd.rear_steering_tire_angle = static_cast<float>(steer(1));
+  if (HAS_REAR_STEER_CONTROL) {
+    cmd.rear_steering_tire_angle = static_cast<float>(steer(1));
+  }
 
   // store published ctrl cmd
   m_ctrl_cmd_vec.emplace_back(cmd);
@@ -543,9 +544,10 @@ bool8_t MPC::updateStateForDelayCompensation(
     /* get discrete state matrix A, B, C, W */
     m_vehicle_model_ptr->setVelocity(v);
     m_vehicle_model_ptr->setCurvature(k);
+    m_vehicle_model_ptr->setPosture(0.0);  // TODO(Horibe) only for 4ws model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, m_ctrl_period);
     Eigen::MatrixXd ud = Eigen::MatrixXd::Zero(DIM_U, 1);
-    ud(0, 0) = m_input_buffer.at(i);  // for steering input delay
+    ud = Eigen::MatrixXd(m_input_buffer.at(i));  // for steering input delay
     x_curr = Ad * x_curr + Bd * ud + Wd;
     mpc_curr_time += m_ctrl_period;
   }
@@ -632,7 +634,7 @@ MPCMatrix MPC::generateMPCMatrix(
     /* get discrete state matrix A, B, C, W */
     m_vehicle_model_ptr->setVelocity(ref_vx);
     m_vehicle_model_ptr->setCurvature(ref_k);
-    m_vehicle_model_ptr->setPosture(0);
+    m_vehicle_model_ptr->setPosture(0);  // TODO(Horibe) must be improved for 4sw-model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, DT);
 
     Q = Eigen::MatrixXd::Zero(DIM_Y, DIM_Y);
@@ -640,6 +642,9 @@ MPCMatrix MPC::generateMPCMatrix(
     Q(0, 0) = getWeightLatError(ref_k);
     Q(1, 1) = getWeightHeadingError(ref_k);
     R(0, 0) = getWeightSteerInput(ref_k);
+    if (HAS_REAR_STEER_CONTROL) {
+      R(1, 1) = getWeightSteerInput(ref_k);
+    }
 
     Q_adaptive = Q;
     R_adaptive = R;
@@ -649,6 +654,10 @@ MPCMatrix MPC::generateMPCMatrix(
     }
     Q_adaptive(1, 1) += ref_vx_squared * getWeightHeadingErrorSqVel(ref_k);
     R_adaptive(0, 0) += ref_vx_squared * getWeightSteerInputSqVel(ref_k);
+    if (HAS_REAR_STEER_CONTROL) {
+      R_adaptive(1, 1) += ref_vx_squared * getWeightSteerInputSqVel(ref_k);
+    }
+
 
     /* update mpc matrix */
     int64_t idx_x_i = i * DIM_X;
@@ -679,20 +688,29 @@ MPCMatrix MPC::generateMPCMatrix(
     if (std::fabs(Uref(0, 0)) < DEG2RAD * m_param.zero_ff_steer_deg) {
       Uref(0, 0) = 0.0;  // ignore curvature noise
     }
+    if (HAS_REAR_STEER_CONTROL) {
+      if (std::fabs(Uref(1, 0)) < DEG2RAD * m_param.zero_ff_steer_deg) {
+        Uref(1, 0) = 0.0;  // ignore curvature noise
+      }
+    }
     m.Uref_ex.block(i * DIM_U, 0, DIM_U, 1) = Uref;
   }
 
-  /* add lateral jerk : weight for (v * {u(i) - u(i-1)} )^2 */
-  for (int64_t i = 0; i < N - 1; ++i) {
-    const float64_t ref_vx = reference_trajectory.vx[static_cast<size_t>(i)];
-    m_sign_vx = ref_vx > ep ? 1 : (ref_vx < -ep ? -1 : m_sign_vx);
-    const float64_t ref_k = reference_trajectory.k[static_cast<size_t>(i)] * m_sign_vx;
-    const float64_t j = ref_vx * ref_vx * getWeightLatJerk(ref_k) / (DT * DT);
-    const Eigen::Matrix2d J = (Eigen::Matrix2d() << j, -j, -j, j).finished();
-    m.R2ex.block(i, i, 2, 2) += J;
-  }
+  // steer rate and lateral jerk expressions are different for the 4ws.
+  if (!HAS_REAR_STEER_CONTROL) {
 
-  addSteerWeightR(&m.R1ex);
+    /* add lateral jerk : weight for (v * {u(i) - u(i-1)} )^2 */
+    for (int64_t i = 0; i < N - 1; ++i) {
+      const float64_t ref_vx = reference_trajectory.vx[static_cast<size_t>(i)];
+      m_sign_vx = ref_vx > ep ? 1 : (ref_vx < -ep ? -1 : m_sign_vx);
+      const float64_t ref_k = reference_trajectory.k[static_cast<size_t>(i)] * m_sign_vx;
+      const float64_t j = ref_vx * ref_vx * getWeightLatJerk(ref_k) / (DT * DT);
+      const Eigen::Matrix2d J = (Eigen::Matrix2d() << j, -j, -j, j).finished();
+      m.R2ex.block(i, i, 2, 2) += J;
+    }
+
+    addSteerWeightR(&m.R1ex);
+  }
 
   return m;
 }
@@ -731,7 +749,8 @@ bool8_t MPC::executeOptimization(
     return false;
   }
 
-  const int64_t DIM_U_N = m_param.prediction_horizon * m_vehicle_model_ptr->getDimU();
+  const int64_t DIM_U = m_vehicle_model_ptr->getDimU();
+  const int64_t DIM_U_N = m_param.prediction_horizon * DIM_U;
 
   // cost function: 1/2 * Uex' * H * Uex + f' * Uex,  H = B' * C' * Q * C * B + R
   const MatrixXd CB = m.Cex * m.Bex;
@@ -745,8 +764,8 @@ bool8_t MPC::executeOptimization(
   addSteerWeightF(&f);
 
   MatrixXd A = MatrixXd::Identity(DIM_U_N, DIM_U_N);
-  for (int64_t i = 1; i < DIM_U_N; i++) {
-    A(i, i - 1) = -1.0;
+  for (int64_t i = DIM_U; i < DIM_U_N; i++) {
+    A(i, i - DIM_U) = -1.0;
   }
 
   VectorXd lb = VectorXd::Constant(DIM_U_N, -m_steer_lim);  // min steering angle
@@ -755,6 +774,11 @@ bool8_t MPC::executeOptimization(
   VectorXd ubA = VectorXd::Constant(DIM_U_N, m_steer_rate_lim * m_param.prediction_dt);
   lbA(0, 0) = m_raw_f_steer_cmd_prev - m_steer_rate_lim * m_ctrl_period;
   ubA(0, 0) = m_raw_f_steer_cmd_prev + m_steer_rate_lim * m_ctrl_period;
+  if (HAS_REAR_STEER_CONTROL) {
+    lbA(1, 0) = m_raw_r_steer_cmd_prev - m_steer_rate_lim * m_ctrl_period;
+    ubA(1, 0) = m_raw_r_steer_cmd_prev + m_steer_rate_lim * m_ctrl_period;
+  }
+
 
   auto t_start = std::chrono::system_clock::now();
   bool8_t solve_result = m_qpsolver_ptr->solve(H, f.transpose(), A, lb, ub, lbA, ubA, *Uex);
