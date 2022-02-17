@@ -457,10 +457,6 @@ void SimplePlanningSimulator::set_initial_state(const Pose & pose, const Twist &
     state << x, y, yaw, vx, steer, 0, accx;
   }
 
-  /*for 4ws debug*/
-    state << x, y, yaw, 0, 0, 0, 0;
-	/**/
-
   vehicle_model_ptr_->setState(state);
 
   is_initialized_ = true;
