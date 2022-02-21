@@ -111,7 +111,7 @@ void FwsModel::calculateDiscreteMatrix(
   w_d << 0.0,
 	  velocity*(tan(delta_fr)-tan(delta_rr))/sigma_1
 		  -m_curvature*velocity
-		  -delta_fr*velocity * std::sqrt((pow(tan(delta_fr), 2)+1))/sigma_1
+		  -delta_fr*velocity * (pow(tan(delta_fr), 2)+1)/sigma_1
 	  +delta_rr*(m_steer_tau*velocity*(1+tan(delta_fr)*tan(delta_rr))+sigma_1)/(m_steer_tau*sigma_1),
     0.0,
 	0.0;
@@ -136,7 +136,7 @@ float64_t FwsModel::calculateReferenceRearSteer()
   auto sign = [](float64_t x) {return (x > 0.0) - (x < 0.0);};
 
   float64_t beta_r = -m_posture;
-  float64_t delta_rr = std::atan((sin(beta_r)-m_wheelbase * m_curvature)/cos(beta_r));
+  float64_t delta_rr = beta_r;
   if (std::abs(delta_rr) >= m_steer_lim) {
     delta_rr = m_steer_lim * static_cast<float64_t>(sign(delta_rr));
   }
