@@ -115,6 +115,15 @@ void FwsModel::calculateDiscreteMatrix(
 	  +delta_rr*(m_steer_tau*velocity*(1+tan(delta_fr)*tan(delta_rr))+sigma_1)/(m_steer_tau*sigma_1),
     0.0,
 	0.0;
+  //std::cerr<<"d fr\n"<<delta_fr <<std::endl;
+  //std::cerr<<"d rr\n"<<delta_rr <<std::endl;
+  //std::cerr<<"m_steer_tau\n"<<m_steer_tau <<std::endl;
+  //std::cerr<<"m_steer_lim\n"<<m_steer_lim <<std::endl;
+  //std::cerr<<"dt\n"<<dt <<std::endl;
+  //std::cerr<<"velocity*(tan(delta_fr)-tan(delta_rr))/sigma_1 \n" << velocity*(tan(delta_fr)-tan(delta_rr))/sigma_1<<std::endl;
+  //std::cerr<<"-m_curvature*velocity\n" <<-m_curvature*velocity <<std::endl;
+  //std::cerr<<"-delta_fr*velocity * (pow(tan(delta_fr), 2)+1)/sigma_1\n" <<-delta_fr*velocity * (pow(tan(delta_fr), 2)+1)/sigma_1 <<std::endl;
+  //std::cerr<<"delta_rr*(m_steer_tau*velocity*(1+tan(delta_fr)*tan(delta_rr))+sigma_1)/(m_steer_tau*sigma_1)\n" <<delta_rr*(m_steer_tau*velocity*(1+tan(delta_fr)*tan(delta_rr))+sigma_1)/(m_steer_tau*sigma_1) <<std::endl;
   w_d *= dt;
 }
 
@@ -124,6 +133,9 @@ float64_t FwsModel::calculateReferenceFrontSteer()
 
   float64_t beta_r = -m_posture;
   float64_t delta_fr = std::atan((sin(beta_r)+m_wheelbase * m_curvature)/cos(beta_r));
+  //std::cerr<<"delta_fr\n"<<delta_fr <<std::endl;
+  //std::cerr<<"m_wheelbase\n"<<m_wheelbase <<std::endl;
+  std::cerr<<"m_curvature\n"<<m_curvature <<std::endl;
   if (std::abs(delta_fr) >= m_steer_lim) {
     delta_fr = m_steer_lim * static_cast<float64_t>(sign(delta_fr));
   }

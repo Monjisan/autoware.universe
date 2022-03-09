@@ -48,6 +48,7 @@ bool8_t MPC::calculateMPC(
   trajectory_follower::MPCTrajectory reference_trajectory =
     applyVelocityDynamicsFilter(m_ref_traj, current_pose, current_velocity);
 
+  std::cerr<<"m_ref_traj:"<<m_ref_traj.k[static_cast<size_t>(3)]<<std::endl;
   MPCData mpc_data;
   if (!getData(reference_trajectory, current_steer, current_pose, &mpc_data)) {
     RCLCPP_WARN_THROTTLE(m_logger, *m_clock, 1000 /*ms*/, "fail to get Data.");
@@ -75,6 +76,7 @@ bool8_t MPC::calculateMPC(
       1000 /*ms*/, "trajectory resampling failed.");
     return false;
   }
+  std::cerr<<"mpc_resampled_ref_traj:"<<mpc_resampled_ref_traj.k[static_cast<size_t>(3)]<<std::endl;
 
   /* generate mpc matrix : predict equation Xec = Aex * x0 + Bex * Uex + Wex */
   MPCMatrix mpc_matrix = generateMPCMatrix(mpc_resampled_ref_traj);
@@ -590,6 +592,7 @@ MPCMatrix MPC::generateMPCMatrix(
   const trajectory_follower::MPCTrajectory & reference_trajectory)
 {
   using Eigen::MatrixXd;
+  //std::cerr<<"reference_trajectory:"<<reference_trajectory.k[static_cast<size_t>(3)]<<std::endl;
 
   const int64_t N = m_param.prediction_horizon;
   const float64_t DT = m_param.prediction_dt;
@@ -626,8 +629,14 @@ MPCMatrix MPC::generateMPCMatrix(
     const float64_t ref_vx = reference_trajectory.vx[static_cast<size_t>(i)];
     const float64_t ref_vx_squared = ref_vx * ref_vx;
 
+	//TODO: (Horibe) check
+    m_sign_vx = ref_vx > ep ? 1 : (ref_vx < -ep ? -1 : m_sign_vx);
+
     // curvature will be 0 when vehicle stops
+	std::cerr<<"m_sign_vx"<<m_sign_vx<<std::endl;
+	std::cerr<<"reference_trajectory.k[i]"<<reference_trajectory.k[static_cast<size_t>(i)]<<std::endl;
     const float64_t ref_k = reference_trajectory.k[static_cast<size_t>(i)] * m_sign_vx;
+	std::cerr<<"ref_k"<<ref_k<<std::endl;
     const float64_t ref_smooth_k = reference_trajectory.smooth_k[static_cast<size_t>(i)] *
       m_sign_vx;
 
@@ -636,15 +645,24 @@ MPCMatrix MPC::generateMPCMatrix(
     m_vehicle_model_ptr->setCurvature(ref_k);
     m_vehicle_model_ptr->setPosture(0);  // TODO(Horibe) must be improved for 4sw-model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, DT);
+	
+	//std::cerr << "A\n" << Ad << std::endl;
+	//std::cerr << "B\n" << Bd << std::endl;
+	//std::cerr << "C\n" << Cd << std::endl;
+	std::cerr << "W\n" << Wd << std::endl;
 
     Q = Eigen::MatrixXd::Zero(DIM_Y, DIM_Y);
     R = Eigen::MatrixXd::Zero(DIM_U, DIM_U);
+    //Q(0, 0) = 10;
     Q(0, 0) = getWeightLatError(ref_k);
+    //Q(1, 1) = 1;
     Q(1, 1) = getWeightHeadingError(ref_k);
     R(0, 0) = getWeightSteerInput(ref_k);
     if (HAS_REAR_STEER_CONTROL) {
       R(1, 1) = getWeightSteerInput(ref_k);
     }
+	//std::cerr << "Q\n" << Q << std::endl;
+	//std::cerr << "R\n" << R << std::endl;
 
     Q_adaptive = Q;
     R_adaptive = R;
