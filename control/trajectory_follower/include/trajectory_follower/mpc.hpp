@@ -270,6 +270,9 @@ private:
    * @brief check if the matrix has invalid value
    */
   bool8_t isValid(const MPCMatrix & m) const;
+
+  void updateSignVx(const trajectory_follower::MPCTrajectory & reference_trajectory);
+
   /**
    * @brief return true if the given curvature is considered low
    */
