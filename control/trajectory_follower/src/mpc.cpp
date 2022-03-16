@@ -155,6 +155,7 @@ bool8_t MPC::calculateMPC(
   const float64_t nearest_smooth_k =
     reference_trajectory.smooth_k[static_cast<size_t>(mpc_data.nearest_idx)];
   const float64_t steer_cmd = ctrl_cmd.steering_tire_angle;
+  const float64_t r_steer_cmd = ctrl_cmd.rear_steering_tire_angle;
   const float64_t wb = m_vehicle_model_ptr->getWheelbase();
 
   typedef decltype (diagnostic.diag_array.data) ::value_type DiagnosticValueType;
@@ -197,6 +198,8 @@ bool8_t MPC::calculateMPC(
   append_diag_data(mpc_data.predicted_f_steer);
   // [17] angvel from predicted steer
   append_diag_data(current_velocity * tan(mpc_data.predicted_f_steer) / wb);
+  // [18] final rear steering command (MPC + LPF)
+  append_diag_data(r_steer_cmd);
 
   return true;
 }
@@ -546,7 +549,7 @@ bool8_t MPC::updateStateForDelayCompensation(
     /* get discrete state matrix A, B, C, W */
     m_vehicle_model_ptr->setVelocity(v);
     m_vehicle_model_ptr->setCurvature(k);
-    m_vehicle_model_ptr->setPosture(0.2);  // TODO(Horibe) only for 4ws model
+    m_vehicle_model_ptr->setPosture(0.1);  // TODO(Horibe) only for 4ws model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, m_ctrl_period);
     Eigen::MatrixXd ud = Eigen::MatrixXd::Zero(DIM_U, 1);
     ud = Eigen::MatrixXd(m_input_buffer.at(i));  // for steering input delay
@@ -634,7 +637,7 @@ MPCMatrix MPC::generateMPCMatrix(
     /* get discrete state matrix A, B, C, W */
     m_vehicle_model_ptr->setVelocity(ref_vx);
     m_vehicle_model_ptr->setCurvature(ref_k);
-    m_vehicle_model_ptr->setPosture(0.2);  // TODO(Horibe) must be improved for 4sw-model
+    m_vehicle_model_ptr->setPosture(0.1);  // TODO(Horibe) must be improved for 4sw-model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, DT);
 
 	//std::cerr << "A\n" << Ad << std::endl;
@@ -645,12 +648,12 @@ MPCMatrix MPC::generateMPCMatrix(
     Q = Eigen::MatrixXd::Zero(DIM_Y, DIM_Y);
     R = Eigen::MatrixXd::Zero(DIM_U, DIM_U);
     //Q(0, 0) = 10;
-    Q(0, 0) = getWeightLatError(ref_k)*5;
+    Q(0, 0) = getWeightLatError(ref_k)*10;
     //Q(1, 1) = 1;
-    Q(1, 1) = getWeightHeadingError(ref_k)+1;
+    Q(1, 1) = getWeightHeadingError(ref_k)+0.1;
     R(0, 0) = getWeightSteerInput(ref_k);
     if (HAS_REAR_STEER_CONTROL) {
-      R(1, 1) = getWeightSteerInput(ref_k)*0.1;
+      R(1, 1) = getWeightSteerInput(ref_k)*10;
     }
 	std::cerr << "Q\n" << Q << std::endl;
 	std::cerr << "R\n" << R << std::endl;
@@ -786,7 +789,9 @@ bool8_t MPC::executeOptimization(
   H.triangularView<Eigen::Upper>() += m.R1ex + m.R2ex;
   H.triangularView<Eigen::Lower>() = H.transpose();
   MatrixXd f = (m.Cex * (m.Aex * x0 + m.Wex)).transpose() * QCB - m.Uref_ex.transpose() * m.R1ex;
-  addSteerWeightF(&f);
+  if (!HAS_REAR_STEER_CONTROL) {
+    addSteerWeightF(&f);
+  }
 
   MatrixXd A = MatrixXd::Identity(DIM_U_N, DIM_U_N);
   for (int64_t i = DIM_U; i < DIM_U_N; i++) {
