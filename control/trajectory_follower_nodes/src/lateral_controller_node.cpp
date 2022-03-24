@@ -164,6 +164,11 @@ LateralController::LateralController(const rclcpp::NodeOptions & node_options)
   m_sub_odometry = create_subscription<nav_msgs::msg::Odometry>(
     "~/input/current_odometry", rclcpp::QoS{1}, std::bind(
       &LateralController::onOdometry, this, _1));
+  m_sub_target_yaw_tmp = create_subscription<tier4_debug_msgs::msg::Float64Stamped>(
+    "~/input/target_yaw", rclcpp::QoS{1},
+    [this](const tier4_debug_msgs::msg::Float64Stamped::SharedPtr msg) {
+      m_mpc.m_target_yaw = msg->data;
+    });
 
   // TODO(Frederik.Beaujean) ctor is too long, should factor out parameter declarations
   declareMPCparameters();

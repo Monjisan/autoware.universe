@@ -38,6 +38,7 @@
 #include "autoware_auto_planning_msgs/msg/trajectory.hpp"
 #include "autoware_auto_vehicle_msgs/msg/steering_report.hpp"
 #include "autoware_auto_vehicle_msgs/msg/vehicle_odometry.hpp"
+#include "tier4_debug_msgs/msg/float64_stamped.hpp"
 #include "common/types.hpp"
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -97,6 +98,9 @@ private:
   //!< @brief subscription for transform messages
   rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_tf_sub;
   rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_tf_static_sub;
+
+  // tmp for 4 wheel steer
+  rclcpp::Subscription<tier4_debug_msgs::msg::Float64Stamped>::SharedPtr m_sub_target_yaw_tmp;
 
   /* parameters for path smoothing */
   //!< @brief flag for path smoothing

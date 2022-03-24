@@ -350,6 +350,8 @@ public:
   //!< @brief true when the model has 2 steer input (front and rear)
   bool HAS_REAR_STEER_CONTROL = false;  //TODO(Horibe) temporally for 4ws model
 
+  double m_target_yaw = 0.0;  // TODO(Horibe) tmp for 4 wheel steer.
+
   //!< @brief reference trajectory to be followed
   trajectory_follower::MPCTrajectory m_ref_traj;
   //!< @brief MPC design parameter

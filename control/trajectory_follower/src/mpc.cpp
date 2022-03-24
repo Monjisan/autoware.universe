@@ -549,7 +549,7 @@ bool8_t MPC::updateStateForDelayCompensation(
     /* get discrete state matrix A, B, C, W */
     m_vehicle_model_ptr->setVelocity(v);
     m_vehicle_model_ptr->setCurvature(k);
-    m_vehicle_model_ptr->setPosture(0.1);  // TODO(Horibe) only for 4ws model
+    m_vehicle_model_ptr->setPosture(m_target_yaw);  // TODO(Horibe) only for 4ws model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, m_ctrl_period);
     Eigen::MatrixXd ud = Eigen::MatrixXd::Zero(DIM_U, 1);
     ud = Eigen::MatrixXd(m_input_buffer.at(i));  // for steering input delay
@@ -637,7 +637,7 @@ MPCMatrix MPC::generateMPCMatrix(
     /* get discrete state matrix A, B, C, W */
     m_vehicle_model_ptr->setVelocity(ref_vx);
     m_vehicle_model_ptr->setCurvature(ref_k);
-    m_vehicle_model_ptr->setPosture(0.1);  // TODO(Horibe) must be improved for 4sw-model
+    m_vehicle_model_ptr->setPosture(m_target_yaw);  // TODO(Horibe) must be improved for 4sw-model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, DT);
 
     Q = Eigen::MatrixXd::Zero(DIM_Y, DIM_Y);
