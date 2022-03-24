@@ -640,11 +640,6 @@ MPCMatrix MPC::generateMPCMatrix(
     m_vehicle_model_ptr->setPosture(0.1);  // TODO(Horibe) must be improved for 4sw-model
     m_vehicle_model_ptr->calculateDiscreteMatrix(Ad, Bd, Cd, Wd, DT);
 
-	//std::cerr << "A\n" << Ad << std::endl;
-	//std::cerr << "B\n" << Bd << std::endl;
-	//std::cerr << "C\n" << Cd << std::endl;
-	//std::cerr << "W\n" << Wd << std::endl;
-
     Q = Eigen::MatrixXd::Zero(DIM_Y, DIM_Y);
     R = Eigen::MatrixXd::Zero(DIM_U, DIM_U);
     //Q(0, 0) = 10;
@@ -655,8 +650,6 @@ MPCMatrix MPC::generateMPCMatrix(
     if (HAS_REAR_STEER_CONTROL) {
       R(1, 1) = getWeightSteerInput(ref_k)*10;
     }
-	std::cerr << "Q\n" << Q << std::endl;
-	std::cerr << "R\n" << R << std::endl;
 
     Q_adaptive = Q;
     R_adaptive = R;
