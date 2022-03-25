@@ -61,8 +61,8 @@ void FwsModel::calculateDiscreteMatrix(
 	       0.0,               1.0 / m_steer_tau;
   b_d *= dt;
 
-  c_d << 1.0, 0.0, 0.0,  0.0,
-	       0.0, 1.0, 0.0, -1.0;
+  c_d << 1.0, 0.0, 0.0, 0.0,
+	       0.0, 1.0, 0.0, 0.0;
 
   const auto w_d_1 = velocity * (tan(delta_fr) - tan(delta_rr)) / sigma_1 - m_curvature * velocity -
                     delta_fr * velocity * (pow(tan(delta_fr), 2) + 1) / sigma_1 +
