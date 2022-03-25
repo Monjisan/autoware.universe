@@ -143,6 +143,7 @@ private:
   rclcpp::Subscription<PoseWithCovarianceStamped>::SharedPtr sub_init_pose_;
   rclcpp::Subscription<Trajectory>::SharedPtr sub_trajectory_;
   rclcpp::Subscription<Engage>::SharedPtr sub_engage_;
+  rclcpp::Subscription<AckermannControlCommand>::SharedPtr sub_override_cmd_;
 
   rclcpp::CallbackGroup::SharedPtr group_api_service_;
   tier4_api_utils::Service<InitializePose>::SharedPtr srv_set_pose_;
@@ -164,11 +165,13 @@ private:
   SteeringReport current_steer_;
   VehicleControlCommand::ConstSharedPtr current_vehicle_cmd_ptr_;
   AckermannControlCommand::ConstSharedPtr current_ackermann_cmd_ptr_;
+  AckermannControlCommand::ConstSharedPtr current_override_cmd_ptr_;
   GearCommand::ConstSharedPtr current_gear_cmd_ptr_;
   TurnIndicatorsCommand::ConstSharedPtr current_turn_indicators_cmd_ptr_;
   HazardLightsCommand::ConstSharedPtr current_hazard_lights_cmd_ptr_;
   Trajectory::ConstSharedPtr current_trajectory_ptr_;
   bool current_engage_;
+
 
   /* frame_id */
   std::string simulated_frame_id_;  //!< @brief simulated vehicle frame id
@@ -184,6 +187,8 @@ private:
 
   float64_t x_stddev_;  //!< @brief x standard deviation for dummy covariance in map coordinate
   float64_t y_stddev_;  //!< @brief y standard deviation for dummy covariance in map coordinate
+
+  float override_time_threshold_ = 1.0;  //!< @brief lifetime for override command
 
   /* vehicle model */
   enum class VehicleModelType
@@ -210,7 +215,12 @@ private:
   /**
    * @brief set input steering, velocity, and acceleration of the vehicle model
    */
-  void set_input(const float steer, const float vel, const float accel);
+  void set_input(const AckermannControlCommand & msg);
+
+  /**
+   * @brief set input steering, velocity, and acceleration of the vehicle model
+   */
+  void update_input();
 
   /**
    * @brief set current_vehicle_state_ with received message
@@ -248,6 +258,11 @@ private:
    * @brief subscribe autoware engage
    */
   void on_engage(const Engage::ConstSharedPtr msg);
+
+  /**
+   * @brief set current_override_cmd_ptr_ with received message
+   */
+  void on_override_cmd(const AckermannControlCommand::ConstSharedPtr msg);
 
   /**
    * @brief get z-position from trajectory

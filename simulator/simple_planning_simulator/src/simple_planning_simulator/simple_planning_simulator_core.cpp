@@ -104,6 +104,8 @@ SimplePlanningSimulator::SimplePlanningSimulator(const rclcpp::NodeOptions & opt
     "input/trajectory", QoS{1}, std::bind(&SimplePlanningSimulator::on_trajectory, this, _1));
   sub_engage_ = create_subscription<Engage>(
     "input/engage", rclcpp::QoS{1}, std::bind(&SimplePlanningSimulator::on_engage, this, _1));
+  sub_override_cmd_ = create_subscription<AckermannControlCommand>(
+    "input/override_cmd", rclcpp::QoS{1}, std::bind(&SimplePlanningSimulator::on_override_cmd, this, _1));
 
   pub_control_mode_report_ =
     create_publisher<ControlModeReport>("output/control_mode_report", QoS{1});
@@ -240,12 +242,10 @@ void SimplePlanningSimulator::on_timer()
   }
 
   // update vehicle dynamics
-  {
+  if (current_engage_) {
     const float64_t dt = delta_time_.get_dt(get_clock()->now());
-
-    if (current_engage_) {
-      vehicle_model_ptr_->update(dt);
-    }
+    update_input();
+    vehicle_model_ptr_->update(dt);
   }
 
   // set current state
@@ -305,12 +305,36 @@ void SimplePlanningSimulator::on_ackermann_cmd(
   const autoware_auto_control_msgs::msg::AckermannControlCommand::ConstSharedPtr msg)
 {
   current_ackermann_cmd_ptr_ = msg;
-  set_input(
-    msg->lateral.steering_tire_angle, msg->longitudinal.speed, msg->longitudinal.acceleration);
 }
 
-void SimplePlanningSimulator::set_input(const float steer, const float vel, const float accel)
+void SimplePlanningSimulator::on_override_cmd(
+  const AckermannControlCommand::ConstSharedPtr msg)
 {
+  current_override_cmd_ptr_ = msg;
+}
+
+void SimplePlanningSimulator::update_input()
+{
+  const auto is_override_detected = [&]() {
+    return (this->now() - current_override_cmd_ptr_->stamp).seconds() < override_time_threshold_;
+  };
+
+  if (current_override_cmd_ptr_) {
+    if (is_override_detected()) {
+      std::cerr << "override is detected!!!" << std::endl;  // TODO(Horibe)
+      set_input(*current_override_cmd_ptr_);
+    }
+  } else if (current_ackermann_cmd_ptr_) {
+    set_input(*current_ackermann_cmd_ptr_);
+  }
+}
+
+void SimplePlanningSimulator::set_input(const autoware_auto_control_msgs::msg::AckermannControlCommand &cmd)
+{
+  const float steer = cmd.lateral.steering_tire_angle;
+  const float vel = cmd.longitudinal.speed;
+  const float accel = cmd.longitudinal.acceleration;
+
   using autoware_auto_vehicle_msgs::msg::GearCommand;
   Eigen::VectorXd input(vehicle_model_ptr_->getDimU());
 
