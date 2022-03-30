@@ -611,6 +611,7 @@ MPCMatrix MPC::generateMPCMatrix(
   m.R1ex = MatrixXd::Zero(DIM_U * N, DIM_U * N);
   m.R2ex = MatrixXd::Zero(DIM_U * N, DIM_U * N);
   m.Uref_ex = MatrixXd::Zero(DIM_U * N, 1);
+  m.Yref_ex = MatrixXd::Zero(DIM_Y * N, 1);
 
   /* weight matrix depends on the vehicle model */
   MatrixXd Q = MatrixXd::Zero(DIM_Y, DIM_Y);
@@ -623,6 +624,7 @@ MPCMatrix MPC::generateMPCMatrix(
   MatrixXd Wd(DIM_X, 1);
   MatrixXd Cd(DIM_Y, DIM_X);
   MatrixXd Uref(DIM_U, 1);
+  MatrixXd Yref(DIM_Y, 1);
 
   /* predict dynamics for N times */
   for (int64_t i = 0; i < N; ++i) {
@@ -699,6 +701,9 @@ MPCMatrix MPC::generateMPCMatrix(
       }
     }
     m.Uref_ex.block(i * DIM_U, 0, DIM_U, 1) = Uref;
+
+    Yref<<0,m_target_yaw;
+    m.Yref_ex.block(i * DIM_Y, 0, DIM_Y, 1) = Yref;
   }
 
   // steer rate and lateral jerk expressions are different for the 4ws.
@@ -726,6 +731,7 @@ MPCMatrix MPC::generateMPCMatrix(
   // std::cerr << "R1ex: \n" << m.R1ex << std::endl;
   // std::cerr << "R2ex: \n" << m.R2ex << std::endl;
   // std::cerr << "Uref_ex: \n" << m.Uref_ex << std::endl;
+  // std::cerr << "Yref_ex: \n" << m.Yref_ex << std::endl;
   return m;
 }
 
@@ -781,7 +787,7 @@ bool8_t MPC::executeOptimization(
   H.triangularView<Eigen::Upper>() = CB.transpose() * QCB;
   H.triangularView<Eigen::Upper>() += m.R1ex + m.R2ex;
   H.triangularView<Eigen::Lower>() = H.transpose();
-  MatrixXd f = (m.Cex * (m.Aex * x0 + m.Wex)).transpose() * QCB - m.Uref_ex.transpose() * m.R1ex;
+  MatrixXd f = (m.Cex * (m.Aex * x0 + m.Wex)-m.Yref_ex).transpose() * QCB - m.Uref_ex.transpose() * m.R1ex;
   if (!HAS_REAR_STEER_CONTROL) {
     addSteerWeightF(&f);
   }
