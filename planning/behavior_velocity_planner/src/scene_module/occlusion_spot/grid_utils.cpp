@@ -166,7 +166,7 @@ bool isCollisionFree(
   const double radius)
 {
   const grid_map::Matrix & grid_data = grid["layer"];
-  bool polys = true;
+  bool polys = false;
   try {
     if (polys) {
       Point2d occlusion_p = {p1.x(), p1.y()};
