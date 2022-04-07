@@ -147,15 +147,21 @@ void findOcclusionSpots(
   }
   for (grid_map::PolygonIterator iterator(grid, grid_polygon); !iterator.isPastEnd(); ++iterator) {
     OcclusionSpotSquare occlusion_spot_square;
+    const bool use_corner = false;
     if (isOcclusionSpotSquare(
           occlusion_spot_square, grid_data, *iterator, min_occlusion_spot_size, grid.getSize())) {
       if (!grid.getPosition(occlusion_spot_square.index, occlusion_spot_square.position)) {
         continue;
-      }
-      std::vector<grid_map::Position> corner_positions;
-      getCornerPositions(corner_positions, grid, occlusion_spot_square);
-      for (const grid_map::Position & corner : corner_positions) {
-        occlusion_spot_positions.emplace_back(corner);
+      } else if (!use_corner) {
+        occlusion_spot_positions.emplace_back(occlusion_spot_square.position);
+      } else if (use_corner) {
+        std::vector<grid_map::Position> corner_positions;
+        getCornerPositions(corner_positions, grid, occlusion_spot_square);
+        for (const grid_map::Position & corner : corner_positions) {
+          occlusion_spot_positions.emplace_back(corner);
+        }
+      } else {
+        // failed to find
       }
     }
   }
