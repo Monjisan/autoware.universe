@@ -67,7 +67,7 @@ private:
   rclcpp::Subscription<tier4_localization_msgs::msg::PoseInitializationRequest>::SharedPtr
     pose_initialization_request_sub_;
 
-  rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initial_pose_pub_;
+  tilde:;TildePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initial_pose_pub_;
 
   rclcpp::Client<tier4_localization_msgs::srv::PoseWithCovarianceStamped>::SharedPtr ndt_client_;
 

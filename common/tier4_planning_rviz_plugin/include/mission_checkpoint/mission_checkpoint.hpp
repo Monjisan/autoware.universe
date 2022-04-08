@@ -78,7 +78,7 @@ private Q_SLOTS:
 
 private:
   rclcpp::Clock::SharedPtr clock_;
-  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
+  tilde:;TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
 
   rviz_common::properties::StringProperty * pose_topic_property_;
   rviz_common::properties::StringProperty * twist_topic_property_;

@@ -109,9 +109,9 @@ public:
   void publish();
 
 private:
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
-  rclcpp::Publisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr stop_reason_pub_;
-  rclcpp::Publisher<Float32MultiArrayStamped>::SharedPtr pub_debug_values_;
+  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
+  tilde:;TildePublisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr stop_reason_pub_;
+  tilde:;TildePublisher<Float32MultiArrayStamped>::SharedPtr pub_debug_values_;
   rclcpp::Node * node_;
   double base_link2front_;
 

@@ -68,8 +68,8 @@ private:
     sub_lane_driving_trajectory_;
   rclcpp::Subscription<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr
     sub_parking_trajectory_;
-  rclcpp::Publisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr pub_trajectory_;
-  rclcpp::Publisher<tier4_planning_msgs::msg::Scenario>::SharedPtr pub_scenario_;
+  tilde:;TildePublisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr pub_trajectory_;
+  tilde:;TildePublisher<tier4_planning_msgs::msg::Scenario>::SharedPtr pub_scenario_;
 
   autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr lane_driving_trajectory_;
   autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr parking_trajectory_;

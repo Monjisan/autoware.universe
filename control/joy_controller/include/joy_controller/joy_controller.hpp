@@ -80,15 +80,15 @@ private:
   void onOdometry(const nav_msgs::msg::Odometry::ConstSharedPtr msg);
 
   // Publisher
-  rclcpp::Publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
+  tilde:;TildePublisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
     pub_control_command_;
-  rclcpp::Publisher<tier4_external_api_msgs::msg::ControlCommandStamped>::SharedPtr
+  tilde:;TildePublisher<tier4_external_api_msgs::msg::ControlCommandStamped>::SharedPtr
     pub_external_control_command_;
-  rclcpp::Publisher<tier4_external_api_msgs::msg::GearShiftStamped>::SharedPtr pub_shift_;
-  rclcpp::Publisher<tier4_external_api_msgs::msg::TurnSignalStamped>::SharedPtr pub_turn_signal_;
-  rclcpp::Publisher<tier4_external_api_msgs::msg::Heartbeat>::SharedPtr pub_heartbeat_;
-  rclcpp::Publisher<tier4_control_msgs::msg::GateMode>::SharedPtr pub_gate_mode_;
-  rclcpp::Publisher<autoware_auto_vehicle_msgs::msg::Engage>::SharedPtr pub_vehicle_engage_;
+  tilde:;TildePublisher<tier4_external_api_msgs::msg::GearShiftStamped>::SharedPtr pub_shift_;
+  tilde:;TildePublisher<tier4_external_api_msgs::msg::TurnSignalStamped>::SharedPtr pub_turn_signal_;
+  tilde:;TildePublisher<tier4_external_api_msgs::msg::Heartbeat>::SharedPtr pub_heartbeat_;
+  tilde:;TildePublisher<tier4_control_msgs::msg::GateMode>::SharedPtr pub_gate_mode_;
+  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::Engage>::SharedPtr pub_vehicle_engage_;
 
   void publishControlCommand();
   void publishExternalControlCommand();

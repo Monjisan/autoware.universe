@@ -55,7 +55,7 @@ public:
   }
 
 private:
-  rclcpp::Publisher<Bool>::SharedPtr m_pub{};
+  tilde:;TildePublisher<Bool>::SharedPtr m_pub{};
   rclcpp::Subscription<Int32>::SharedPtr m_sub{};
 };
 

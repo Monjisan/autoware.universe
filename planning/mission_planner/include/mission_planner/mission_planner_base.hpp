@@ -45,7 +45,7 @@ protected:
   std::string base_link_frame_;
   std::string map_frame_;
 
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_publisher_;
+  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_publisher_;
 
   virtual bool isRoutingGraphReady() const = 0;
   virtual autoware_auto_planning_msgs::msg::HADMapRoute planRoute() = 0;
@@ -54,7 +54,7 @@ protected:
   virtual void publishRoute(const autoware_auto_planning_msgs::msg::HADMapRoute & route) const;
 
 private:
-  rclcpp::Publisher<autoware_auto_planning_msgs::msg::HADMapRoute>::SharedPtr route_publisher_;
+  tilde:;TildePublisher<autoware_auto_planning_msgs::msg::HADMapRoute>::SharedPtr route_publisher_;
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_subscriber_;
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr checkpoint_subscriber_;
 

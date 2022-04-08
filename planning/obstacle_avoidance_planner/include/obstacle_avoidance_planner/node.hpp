@@ -107,16 +107,16 @@ private:
   std::unique_ptr<rclcpp::Time> prev_replanned_time_ptr_;
 
   // ROS
-  rclcpp::Publisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr trajectory_pub_;
-  rclcpp::Publisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr avoiding_traj_pub_;
-  rclcpp::Publisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr
+  tilde:;TildePublisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr trajectory_pub_;
+  tilde:;TildePublisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr avoiding_traj_pub_;
+  tilde:;TildePublisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr
     debug_smoothed_points_pub_;
-  rclcpp::Publisher<tier4_planning_msgs::msg::IsAvoidancePossible>::SharedPtr
+  tilde:;TildePublisher<tier4_planning_msgs::msg::IsAvoidancePossible>::SharedPtr
     is_avoidance_possible_pub_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_markers_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr debug_clearance_map_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr debug_object_clearance_map_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr debug_area_with_objects_pub_;
+  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_markers_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr debug_clearance_map_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr debug_object_clearance_map_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr debug_area_with_objects_pub_;
   rclcpp::Subscription<autoware_auto_planning_msgs::msg::Path>::SharedPtr path_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Subscription<autoware_auto_perception_msgs::msg::PredictedObjects>::SharedPtr

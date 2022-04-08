@@ -74,9 +74,9 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr nav_sat_fix_sub_;
   rclcpp::Subscription<ublox_msgs::msg::NavPVT>::SharedPtr nav_pvt_sub_;
 
-  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
-  rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_cov_pub_;
-  rclcpp::Publisher<tier4_debug_msgs::msg::BoolStamped>::SharedPtr fixed_pub_;
+  tilde:;TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
+  tilde:;TildePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_cov_pub_;
+  tilde:;TildePublisher<tier4_debug_msgs::msg::BoolStamped>::SharedPtr fixed_pub_;
 
   CoordinateSystem coordinate_system_;
   std::string base_frame_;

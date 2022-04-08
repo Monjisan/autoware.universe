@@ -42,7 +42,7 @@ public:
       [this](const DiagnosticArray::ConstSharedPtr msg) { received_diags_.push_back(msg); });
   }
 
-  rclcpp::Publisher<Trajectory>::SharedPtr traj_pub_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub_;
   rclcpp::Subscription<DiagnosticArray>::SharedPtr diag_sub_;
 
   std::vector<DiagnosticArray::ConstSharedPtr> received_diags_;

@@ -55,7 +55,7 @@ protected:
 
   // ROS
   rclcpp::Node::SharedPtr raw_node_;
-  rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_pub_;
+  tilde:;TildePublisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_pub_;
   rclcpp::TimerBase::SharedPtr pub_timer_;
 
   // GUI

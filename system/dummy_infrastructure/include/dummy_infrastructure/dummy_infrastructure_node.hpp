@@ -57,7 +57,7 @@ private:
   InfrastructureCommandArray::ConstSharedPtr command_array_{};
 
   // Publisher
-  rclcpp::Publisher<VirtualTrafficLightStateArray>::SharedPtr pub_state_array_{};
+  tilde:;TildePublisher<VirtualTrafficLightStateArray>::SharedPtr pub_state_array_{};
 
   // Timer
   rclcpp::TimerBase::SharedPtr timer_{};

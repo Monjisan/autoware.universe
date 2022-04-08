@@ -101,8 +101,8 @@ private:
     std::shared_ptr<std_srvs::srv::Trigger::Response> response);
 
   // Publisher
-  rclcpp::Publisher<autoware_auto_system_msgs::msg::AutowareState>::SharedPtr pub_autoware_state_;
-  rclcpp::Publisher<autoware_auto_vehicle_msgs::msg::Engage>::SharedPtr pub_autoware_engage_;
+  tilde:;TildePublisher<autoware_auto_system_msgs::msg::AutowareState>::SharedPtr pub_autoware_state_;
+  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::Engage>::SharedPtr pub_autoware_engage_;
 
   bool isEngaged();
   void setDisengage();

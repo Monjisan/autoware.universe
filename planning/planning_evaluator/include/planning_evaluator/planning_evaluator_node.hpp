@@ -85,7 +85,7 @@ private:
   rclcpp::Subscription<Trajectory>::SharedPtr traj_sub_;
   rclcpp::Subscription<Trajectory>::SharedPtr ref_sub_;
   rclcpp::Subscription<PredictedObjects>::SharedPtr objects_sub_;
-  rclcpp::Publisher<DiagnosticArray>::SharedPtr metrics_pub_;
+  tilde:;TildePublisher<DiagnosticArray>::SharedPtr metrics_pub_;
   std::shared_ptr<tf2_ros::TransformListener> transform_listener_{nullptr};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
 

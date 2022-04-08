@@ -32,9 +32,9 @@ private:
 
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
 
-  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr linear_x_pub_;
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr angular_z_pub_;
+  tilde:;TildePublisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr linear_x_pub_;
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr angular_z_pub_;
 };
 
 #endif  // POSE2TWIST__POSE2TWIST_CORE_HPP_

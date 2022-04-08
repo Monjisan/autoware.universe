@@ -30,7 +30,7 @@ class ShapeEstimationNode : public rclcpp::Node
 {
 private:
   // ros
-  rclcpp::Publisher<DetectedObjectsWithFeature>::SharedPtr pub_;
+  tilde:;TildePublisher<DetectedObjectsWithFeature>::SharedPtr pub_;
   rclcpp::Subscription<DetectedObjectsWithFeature>::SharedPtr sub_;
 
   void callback(const DetectedObjectsWithFeature::ConstSharedPtr input_msg);

@@ -57,7 +57,7 @@ public:
     const int64_t module_id, std::shared_ptr<const PlannerData> planner_data,
     const PlannerParam & planner_param, const rclcpp::Logger logger,
     const rclcpp::Clock::SharedPtr clock,
-    const rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr publisher);
+    const tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr publisher);
 
   /**
    * @brief plan occlusion spot velocity at unknown area in occupancy grid
@@ -69,7 +69,7 @@ public:
 
 private:
   autoware_auto_perception_msgs::msg::PredictedObjects::ConstSharedPtr predicted_objects_array_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr publisher_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr publisher_;
 
   // Parameter
   PlannerParam param_;

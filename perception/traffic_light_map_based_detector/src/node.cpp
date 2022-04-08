@@ -427,7 +427,7 @@ bool MapBasedDetector::isInImageFrame(
 void MapBasedDetector::publishVisibleTrafficLights(
   const geometry_msgs::msg::PoseStamped camera_pose_stamped,
   const std::vector<lanelet::ConstLineString3d> & visible_traffic_lights,
-  const rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub)
+  const tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub)
 {
   visualization_msgs::msg::MarkerArray output_msg;
   for (const auto & traffic_light : visible_traffic_lights) {

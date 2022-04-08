@@ -198,9 +198,9 @@ protected:
   rclcpp::Clock::SharedPtr clock_;
   // Debug
   rclcpp::Logger logger_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_debug_;
-  rclcpp::Publisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr pub_stop_reason_;
-  rclcpp::Publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr
+  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_debug_;
+  tilde:;TildePublisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr pub_stop_reason_;
+  tilde:;TildePublisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr
     pub_infrastructure_commands_;
 };
 }  // namespace behavior_velocity_planner

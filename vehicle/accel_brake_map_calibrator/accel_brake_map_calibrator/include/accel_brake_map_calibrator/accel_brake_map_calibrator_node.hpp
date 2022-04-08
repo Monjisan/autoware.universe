@@ -63,20 +63,20 @@ class AccelBrakeMapCalibrator : public rclcpp::Node
 private:
   std::shared_ptr<tier4_autoware_utils::TransformListener> transform_listener_;
   std::string csv_default_map_dir_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr original_map_occ_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr update_map_occ_pub_;
-  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr original_map_raw_pub_;
-  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr update_map_raw_pub_;
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32MultiArrayStamped>::SharedPtr debug_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_count_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_count_with_self_pose_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_ave_pub_;
-  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_std_pub_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr index_pub_;
-  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr update_suggest_pub_;
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr current_map_error_pub_;
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr updated_map_error_pub_;
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr map_error_ratio_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr original_map_occ_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr update_map_occ_pub_;
+  tilde:;TildePublisher<std_msgs::msg::Float32MultiArray>::SharedPtr original_map_raw_pub_;
+  tilde:;TildePublisher<std_msgs::msg::Float32MultiArray>::SharedPtr update_map_raw_pub_;
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32MultiArrayStamped>::SharedPtr debug_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_count_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_count_with_self_pose_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_ave_pub_;
+  tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr data_std_pub_;
+  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr index_pub_;
+  tilde:;TildePublisher<std_msgs::msg::Bool>::SharedPtr update_suggest_pub_;
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr current_map_error_pub_;
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr updated_map_error_pub_;
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr map_error_ratio_pub_;
 
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr velocity_sub_;
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr steer_sub_;

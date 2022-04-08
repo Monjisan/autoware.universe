@@ -64,9 +64,9 @@ public:
   explicit MotionVelocitySmootherNode(const rclcpp::NodeOptions & node_options);
 
 private:
-  rclcpp::Publisher<Trajectory>::SharedPtr
+  tilde:;TildePublisher<Trajectory>::SharedPtr
     pub_trajectory_;  //!< @brief publisher for output trajectory
-  rclcpp::Publisher<StopSpeedExceeded>::SharedPtr
+  tilde:;TildePublisher<StopSpeedExceeded>::SharedPtr
     pub_over_stop_velocity_;  //!< @brief publisher for over stop velocity warning
   rclcpp::Subscription<Odometry>::SharedPtr
     sub_current_odometry_;  //!< @brief subscriber for current velocity
@@ -186,7 +186,7 @@ private:
 
   void publishClosestVelocity(
     const TrajectoryPoints & trajectory, const Pose & current_pose,
-    const rclcpp::Publisher<Float32Stamped>::SharedPtr pub) const;
+    const tilde:;TildePublisher<Float32Stamped>::SharedPtr pub) const;
 
   Trajectory toTrajectoryMsg(
     const TrajectoryPoints & points, const std_msgs::msg::Header & header) const;
@@ -208,23 +208,23 @@ private:
   tier4_autoware_utils::StopWatch<std::chrono::milliseconds> stop_watch_;
   std::shared_ptr<rclcpp::Time> prev_time_;
   double prev_acc_;
-  rclcpp::Publisher<Float32Stamped>::SharedPtr pub_dist_to_stopline_;
-  rclcpp::Publisher<Trajectory>::SharedPtr pub_trajectory_raw_;
-  rclcpp::Publisher<VelocityLimit>::SharedPtr pub_velocity_limit_;
-  rclcpp::Publisher<Trajectory>::SharedPtr pub_trajectory_vel_lim_;
-  rclcpp::Publisher<Trajectory>::SharedPtr pub_trajectory_latacc_filtered_;
-  rclcpp::Publisher<Trajectory>::SharedPtr pub_trajectory_resampled_;
-  rclcpp::Publisher<Float32Stamped>::SharedPtr debug_closest_velocity_;
-  rclcpp::Publisher<Float32Stamped>::SharedPtr debug_closest_acc_;
-  rclcpp::Publisher<Float32Stamped>::SharedPtr debug_closest_jerk_;
-  rclcpp::Publisher<Float32Stamped>::SharedPtr debug_calculation_time_;
-  rclcpp::Publisher<Float32Stamped>::SharedPtr debug_closest_max_velocity_;
+  tilde:;TildePublisher<Float32Stamped>::SharedPtr pub_dist_to_stopline_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr pub_trajectory_raw_;
+  tilde:;TildePublisher<VelocityLimit>::SharedPtr pub_velocity_limit_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr pub_trajectory_vel_lim_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr pub_trajectory_latacc_filtered_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr pub_trajectory_resampled_;
+  tilde:;TildePublisher<Float32Stamped>::SharedPtr debug_closest_velocity_;
+  tilde:;TildePublisher<Float32Stamped>::SharedPtr debug_closest_acc_;
+  tilde:;TildePublisher<Float32Stamped>::SharedPtr debug_closest_jerk_;
+  tilde:;TildePublisher<Float32Stamped>::SharedPtr debug_calculation_time_;
+  tilde:;TildePublisher<Float32Stamped>::SharedPtr debug_closest_max_velocity_;
 
   // For Jerk Filtered Algorithm Debug
-  rclcpp::Publisher<Trajectory>::SharedPtr pub_forward_filtered_trajectory_;
-  rclcpp::Publisher<Trajectory>::SharedPtr pub_backward_filtered_trajectory_;
-  rclcpp::Publisher<Trajectory>::SharedPtr pub_merged_filtered_trajectory_;
-  rclcpp::Publisher<Float32Stamped>::SharedPtr pub_closest_merged_velocity_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr pub_forward_filtered_trajectory_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr pub_backward_filtered_trajectory_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr pub_merged_filtered_trajectory_;
+  tilde:;TildePublisher<Float32Stamped>::SharedPtr pub_closest_merged_velocity_;
 };
 }  // namespace motion_velocity_smoother
 

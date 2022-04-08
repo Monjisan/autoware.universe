@@ -29,7 +29,7 @@ public:
 
 private:
   rclcpp::Subscription<autoware_auto_planning_msgs::msg::HADMapRoute>::SharedPtr sub_route_;
-  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_goal_pose_;
+  tilde:;TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_goal_pose_;
 
   void echoBackRouteCallback(
     const autoware_auto_planning_msgs::msg::HADMapRoute::ConstSharedPtr msg);

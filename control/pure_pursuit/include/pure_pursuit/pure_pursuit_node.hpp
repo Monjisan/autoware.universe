@@ -96,13 +96,13 @@ private:
   geometry_msgs::msg::PoseStamped::ConstSharedPtr current_pose_;
 
   // Publisher
-  rclcpp::Publisher<autoware_auto_control_msgs::msg::AckermannLateralCommand>::SharedPtr
+  tilde:;TildePublisher<autoware_auto_control_msgs::msg::AckermannLateralCommand>::SharedPtr
     pub_ctrl_cmd_;
 
   void publishCommand(const double target_curvature);
 
   // Debug Publisher
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_debug_marker_;
+  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_debug_marker_;
 
   void publishDebugMarker() const;
 

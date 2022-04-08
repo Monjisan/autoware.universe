@@ -87,9 +87,9 @@ public:
 
 private:
   // ros
-  rclcpp::Publisher<Trajectory>::SharedPtr trajectory_pub_;
-  rclcpp::Publisher<PoseArray>::SharedPtr debug_pose_array_pub_;
-  rclcpp::Publisher<PoseArray>::SharedPtr debug_partial_pose_array_pub_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr trajectory_pub_;
+  tilde:;TildePublisher<PoseArray>::SharedPtr debug_pose_array_pub_;
+  tilde:;TildePublisher<PoseArray>::SharedPtr debug_partial_pose_array_pub_;
 
   rclcpp::Subscription<HADMapRoute>::SharedPtr route_sub_;
   rclcpp::Subscription<OccupancyGrid>::SharedPtr occupancy_grid_sub_;

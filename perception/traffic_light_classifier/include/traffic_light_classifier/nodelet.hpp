@@ -79,7 +79,7 @@ private:
   typedef message_filters::Synchronizer<ApproximateSyncPolicy> ApproximateSync;
   std::shared_ptr<ApproximateSync> approximate_sync_;
   bool is_approximate_sync_;
-  rclcpp::Publisher<autoware_auto_perception_msgs::msg::TrafficSignalArray>::SharedPtr
+  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::TrafficSignalArray>::SharedPtr
     traffic_signal_array_pub_;
   std::shared_ptr<ClassifierInterface> classifier_ptr_;
 };

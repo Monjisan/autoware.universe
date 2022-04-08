@@ -54,7 +54,7 @@ private:
 
   rclcpp::Subscription<PointCloud2>::SharedPtr input_points_sub_;
   rclcpp::Subscription<VelocityReport>::SharedPtr velocity_report_sub_;
-  rclcpp::Publisher<PointCloud2>::SharedPtr undistorted_points_pub_;
+  tilde:;TildePublisher<PointCloud2>::SharedPtr undistorted_points_pub_;
 
   tf2_ros::Buffer tf2_buffer_{get_clock()};
   tf2_ros::TransformListener tf2_listener_{tf2_buffer_};

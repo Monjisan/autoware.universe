@@ -88,7 +88,7 @@ private:
     const sensor_msgs::msg::RegionOfInterest & roi_1,
     const sensor_msgs::msg::RegionOfInterest & roi_2);
 
-  rclcpp::Publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr
+  tilde:;TildePublisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr
     labeled_cluster_pub_;
   std::vector<rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr> v_camera_info_sub_;
   tf2_ros::Buffer tf_buffer_;

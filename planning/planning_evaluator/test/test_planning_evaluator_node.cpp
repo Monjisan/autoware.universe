@@ -170,9 +170,9 @@ protected:
   rclcpp::Node::SharedPtr dummy_node;
   EvalNode::SharedPtr eval_node;
   // Trajectory publishers
-  rclcpp::Publisher<Trajectory>::SharedPtr traj_pub_;
-  rclcpp::Publisher<Trajectory>::SharedPtr ref_traj_pub_;
-  rclcpp::Publisher<Objects>::SharedPtr objects_pub_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub_;
+  tilde:;TildePublisher<Trajectory>::SharedPtr ref_traj_pub_;
+  tilde:;TildePublisher<Objects>::SharedPtr objects_pub_;
   rclcpp::Subscription<DiagnosticArray>::SharedPtr metric_sub_;
   // TF broadcaster
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;

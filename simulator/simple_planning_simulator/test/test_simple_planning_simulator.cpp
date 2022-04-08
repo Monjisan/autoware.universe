@@ -52,9 +52,9 @@ public:
   }
 
   rclcpp::Subscription<Odometry>::SharedPtr current_odom_sub_;
-  rclcpp::Publisher<AckermannControlCommand>::SharedPtr pub_ackermann_command_;
-  rclcpp::Publisher<GearCommand>::SharedPtr pub_gear_cmd_;
-  rclcpp::Publisher<PoseWithCovarianceStamped>::SharedPtr pub_initialpose_;
+  tilde:;TildePublisher<AckermannControlCommand>::SharedPtr pub_ackermann_command_;
+  tilde:;TildePublisher<GearCommand>::SharedPtr pub_gear_cmd_;
+  tilde:;TildePublisher<PoseWithCovarianceStamped>::SharedPtr pub_initialpose_;
 
   Odometry::SharedPtr current_odom_;
 };

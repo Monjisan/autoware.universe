@@ -51,7 +51,7 @@ public:
   }
 
 private:
-  rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr pub_processing_time_;
+  tilde:;TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr pub_processing_time_;
 
   template <class T>
   std::string to_string_with_precision(const T & value, const int precision)

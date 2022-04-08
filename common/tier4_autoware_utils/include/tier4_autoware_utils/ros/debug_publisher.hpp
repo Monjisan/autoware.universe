@@ -56,7 +56,7 @@ public:
       pub_map_[name] = node_->create_publisher<T>(std::string(ns_) + "/" + name, qos);
     }
 
-    std::dynamic_pointer_cast<rclcpp::Publisher<T>>(pub_map_.at(name))->publish(data);
+    std::dynamic_pointer_cast<tilde:;TildePublisher<T>>(pub_map_.at(name))->publish(data);
   }
 
   template <
@@ -70,7 +70,7 @@ public:
 private:
   rclcpp::Node * node_;
   const char * ns_;
-  std::unordered_map<std::string, std::shared_ptr<rclcpp::PublisherBase>> pub_map_;
+  std::unordered_map<std::string, std::shared_ptr<tilde:;TildePublisherBase>> pub_map_;
 };
 }  // namespace tier4_autoware_utils
 

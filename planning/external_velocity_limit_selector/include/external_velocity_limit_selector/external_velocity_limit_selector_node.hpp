@@ -57,7 +57,7 @@ private:
   rclcpp::Subscription<VelocityLimit>::SharedPtr sub_external_velocity_limit_from_api_;
   rclcpp::Subscription<VelocityLimit>::SharedPtr sub_external_velocity_limit_from_internal_;
   rclcpp::Subscription<VelocityLimitClearCommand>::SharedPtr sub_velocity_limit_clear_command_;
-  rclcpp::Publisher<VelocityLimit>::SharedPtr pub_external_velocity_limit_;
+  tilde:;TildePublisher<VelocityLimit>::SharedPtr pub_external_velocity_limit_;
 
   void publishVelocityLimit(const VelocityLimit & velocity_limit);
   void setVelocityLimitFromAPI(const VelocityLimit & velocity_limit);

@@ -27,7 +27,7 @@ public:
   explicit Lanelet2MapLoaderNode(const rclcpp::NodeOptions & options);
 
 private:
-  rclcpp::Publisher<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr pub_map_bin_;
+  tilde:;TildePublisher<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr pub_map_bin_;
 };
 
 #endif  // MAP_LOADER__LANELET2_MAP_LOADER_NODE_HPP_

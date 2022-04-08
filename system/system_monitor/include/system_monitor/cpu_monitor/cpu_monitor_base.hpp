@@ -166,7 +166,7 @@ protected:
     {DiagStatus::OK, "OK"}, {DiagStatus::WARN, "unused"}, {DiagStatus::ERROR, "throttling"}};
 
   // Publisher
-  rclcpp::Publisher<tier4_external_api_msgs::msg::CpuUsage>::SharedPtr pub_cpu_usage_;
+  tilde:;TildePublisher<tier4_external_api_msgs::msg::CpuUsage>::SharedPtr pub_cpu_usage_;
 
   virtual void publishCpuUsage(tier4_external_api_msgs::msg::CpuUsage usage);
 };

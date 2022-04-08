@@ -41,7 +41,7 @@ public:
     const autoware_auto_mapping_msgs::msg::HADMapBin::ConstSharedPtr input_map_msg);
 
 private:
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr light_marker_pub_;
+  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr light_marker_pub_;
   rclcpp::Subscription<autoware_auto_perception_msgs::msg::TrafficSignalArray>::SharedPtr
     tl_state_sub_;
   rclcpp::Subscription<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr vector_map_sub_;

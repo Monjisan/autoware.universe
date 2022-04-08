@@ -39,7 +39,7 @@ private:
   void onPointCloud(const sensor_msgs::msg::PointCloud2::ConstSharedPtr msg);
 
   // Publisher
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_pointcloud_;
+  tilde:;TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_pointcloud_;
 };
 }  // namespace livox_tag_filter
 

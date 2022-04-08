@@ -50,11 +50,11 @@ private:
     sub_vehicle_pose_;  //!< @brief subscription for vehicle pose
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr
     sub_ground_truth_pose_;  //!< @brief subscription for gnss pose
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr
     pub_control_lateral_error_;  //!< @brief publisher for control lateral error
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr
     pub_localization_lateral_error_;  //!< @brief publisher for localization lateral error
-  rclcpp::Publisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr
+  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr
     pub_lateral_error_;  //!< @brief publisher for lateral error (control + localization)
 
   /**

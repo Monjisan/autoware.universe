@@ -86,9 +86,9 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr
     m_sub_current_velocity;
   rclcpp::Subscription<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr m_sub_trajectory;
-  rclcpp::Publisher<autoware_auto_control_msgs::msg::LongitudinalCommand>::SharedPtr m_pub_control_cmd;
-  rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr m_pub_slope;
-  rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr m_pub_debug;
+  tilde:;TildePublisher<autoware_auto_control_msgs::msg::LongitudinalCommand>::SharedPtr m_pub_control_cmd;
+  tilde:;TildePublisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr m_pub_slope;
+  tilde:;TildePublisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr m_pub_debug;
   rclcpp::TimerBase::SharedPtr m_timer_control;
 
   rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_tf_sub;

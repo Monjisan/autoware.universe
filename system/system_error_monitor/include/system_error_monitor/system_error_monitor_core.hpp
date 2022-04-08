@@ -114,9 +114,9 @@ private:
   autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr control_mode_;
 
   // Publisher
-  rclcpp::Publisher<autoware_auto_system_msgs::msg::HazardStatusStamped>::SharedPtr
+  tilde:;TildePublisher<autoware_auto_system_msgs::msg::HazardStatusStamped>::SharedPtr
     pub_hazard_status_;
-  rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr pub_diagnostics_err_;
+  tilde:;TildePublisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr pub_diagnostics_err_;
   void publishHazardStatus(const autoware_auto_system_msgs::msg::HazardStatus & hazard_status);
 
   // Service

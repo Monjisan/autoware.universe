@@ -78,15 +78,15 @@ private:
   void onControlMode(const autoware_auto_vehicle_msgs::msg::ControlModeReport::ConstSharedPtr msg);
 
   // Publisher
-  rclcpp::Publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
+  tilde:;TildePublisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
     pub_control_command_;
 
-  // rclcpp::Publisher<tier4_vehicle_msgs::msg::ShiftStamped>::SharedPtr pub_shift_;
-  // rclcpp::Publisher<tier4_vehicle_msgs::msg::TurnSignal>::SharedPtr pub_turn_signal_;
-  rclcpp::Publisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>::SharedPtr
+  // tilde:;TildePublisher<tier4_vehicle_msgs::msg::ShiftStamped>::SharedPtr pub_shift_;
+  // tilde:;TildePublisher<tier4_vehicle_msgs::msg::TurnSignal>::SharedPtr pub_turn_signal_;
+  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>::SharedPtr
     pub_hazard_cmd_;
-  rclcpp::Publisher<autoware_auto_vehicle_msgs::msg::GearCommand>::SharedPtr pub_gear_cmd_;
-  rclcpp::Publisher<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr pub_emergency_state_;
+  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::GearCommand>::SharedPtr pub_gear_cmd_;
+  tilde:;TildePublisher<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr pub_emergency_state_;
 
   autoware_auto_vehicle_msgs::msg::HazardLightsCommand createHazardCmdMsg();
   autoware_auto_vehicle_msgs::msg::GearCommand createGearCmdMsg();
