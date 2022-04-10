@@ -8,6 +8,7 @@
   <arg name="pedal_accel_graph_output" default="true"/>
   <arg name="progress_file_output" default="false"/>
   <arg name="use_sim_time" default="false"/>
+  <arg name="use_actuation_status" default="true"/>
 
   <!-- calibration interface -->
   <node pkg="accel_brake_map_calibrator" exec="accel_brake_map_calibrator" name="accel_brake_map_calibrator" output="screen">
@@ -22,6 +23,7 @@
     <param name="pedal_accel_graph_output" value="$(var pedal_accel_graph_output)"/>
     <param name="progress_file_output" value="$(var progress_file_output)"/>
     <param name="use_sim_time" value="$(var use_sim_time)"/>
+    <param name="use_actuation_status" value="$(var use_actuation_status)"/>
   </node>
 
   <!-- Rviz -->

@@ -35,6 +35,7 @@
 #include "std_msgs/msg/string.hpp"
 #include "tier4_debug_msgs/msg/float32_multi_array_stamped.hpp"
 #include "tier4_debug_msgs/msg/float32_stamped.hpp"
+#include "tier4_vehicle_msgs/msg/actuation_command_stamped.hpp"
 #include "tier4_vehicle_msgs/msg/actuation_status_stamped.hpp"
 #include "tier4_vehicle_msgs/srv/update_accel_brake_map.hpp"
 
@@ -82,6 +83,8 @@ private:
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr steer_sub_;
   rclcpp::Subscription<tier4_vehicle_msgs::msg::ActuationStatusStamped>::SharedPtr
     actuation_status_sub_;
+  rclcpp::Subscription<tier4_vehicle_msgs::msg::ActuationCommandStamped>::SharedPtr
+    actuation_cmd_sub_;
 
   // Service
   rclcpp::Service<tier4_vehicle_msgs::srv::UpdateAccelBrakeMap>::SharedPtr update_map_dir_server_;
@@ -142,7 +145,7 @@ private:
   const double max_jerk_ = 5.0;
   bool pedal_accel_graph_output_ = false;
   bool progress_file_output_ = false;
-
+  bool use_actuation_status_ = true;
   // Algorithm
   AccelMap accel_map_;
   BrakeMap brake_map_;
@@ -206,6 +209,8 @@ private:
   void updateTotalMapOffset(const double measured_acc, const double map_acc);
   void callbackActuationStatus(
     const tier4_vehicle_msgs::msg::ActuationStatusStamped::ConstSharedPtr msg);
+  void callbackActuationCommand(
+    const tier4_vehicle_msgs::msg::ActuationCommandStamped::ConstSharedPtr msg);
   void callbackVelocity(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg);
   void callbackSteer(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg);
   bool callbackUpdateMapService(

@@ -47,6 +47,7 @@ AccelBrakeMapCalibrator::AccelBrakeMapCalibrator(const rclcpp::NodeOptions & nod
   max_data_count_ = this->declare_parameter<int>("max_data_count", 200);
   pedal_accel_graph_output_ = this->declare_parameter<bool>("pedal_accel_graph_output", false);
   progress_file_output_ = this->declare_parameter<bool>("progress_file_output", false);
+  use_actuation_status_ = this->declare_parameter<bool>("use_actuation_status", true);
   const auto get_pitch_method_str =
     this->declare_parameter<std::string>("get_pitch_method", std::string("tf"));
   if (get_pitch_method_str == std::string("tf")) {
@@ -185,10 +186,15 @@ AccelBrakeMapCalibrator::AccelBrakeMapCalibrator(const rclcpp::NodeOptions & nod
     std::bind(&AccelBrakeMapCalibrator::callbackVelocity, this, _1));
   steer_sub_ = create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
     "~/input/steer", queue_size, std::bind(&AccelBrakeMapCalibrator::callbackSteer, this, _1));
-  actuation_status_sub_ = create_subscription<tier4_vehicle_msgs::msg::ActuationStatusStamped>(
-    "~/input/actuation_status", queue_size,
-    std::bind(&AccelBrakeMapCalibrator::callbackActuationStatus, this, _1));
-
+  if (use_actuation_status_) {
+    actuation_status_sub_ = create_subscription<tier4_vehicle_msgs::msg::ActuationStatusStamped>(
+      "~/input/actuation_status", queue_size,
+      std::bind(&AccelBrakeMapCalibrator::callbackActuationStatus, this, _1));
+  } else {
+    actuation_cmd_sub_ = create_subscription<tier4_vehicle_msgs::msg::ActuationCommandStamped>(
+      "~/input/actuation_command", queue_size,
+      std::bind(&AccelBrakeMapCalibrator::callbackActuationCommand, this, _1));
+  }
   // Service
   update_map_dir_server_ = create_service<tier4_vehicle_msgs::srv::UpdateAccelBrakeMap>(
     "~/input/update_map_dir",
@@ -506,6 +512,44 @@ void AccelBrakeMapCalibrator::callbackActuationStatus(
   // get brake data
   brake_pedal_ptr_ =
     std::make_shared<DataStamped>(msg->status.brake_status, rclcpp::Time(msg->header.stamp));
+  if (!brake_pedal_vec_.empty()) {
+    const auto past_brake_ptr =
+      getNearestTimeDataFromVec(brake_pedal_ptr_, dif_pedal_time_, brake_pedal_vec_);
+    const double raw_brake_pedal_speed =
+      getPedalSpeed(past_brake_ptr, brake_pedal_ptr_, brake_pedal_speed_);
+    brake_pedal_speed_ = lowpass(brake_pedal_speed_, raw_brake_pedal_speed, 0.5);
+    debug_values_.data.at(CURRENT_RAW_BRAKE_SPEED) = raw_brake_pedal_speed;
+    debug_values_.data.at(CURRENT_BRAKE_SPEED) = brake_pedal_speed_;
+  }
+  debug_values_.data.at(CURRENT_BRAKE_PEDAL) = brake_pedal_ptr_->data;
+  pushDataToVec(brake_pedal_ptr_, pedal_vec_max_size_, &brake_pedal_vec_);
+  delayed_brake_pedal_ptr_ =
+    getNearestTimeDataFromVec(brake_pedal_ptr_, pedal_to_accel_delay_, brake_pedal_vec_);
+}
+
+void AccelBrakeMapCalibrator::callbackActuationCommand(
+  const tier4_vehicle_msgs::msg::ActuationCommandStamped::ConstSharedPtr msg)
+{
+  // get accel data
+  accel_pedal_ptr_ =
+    std::make_shared<DataStamped>(msg->actuation.accel_cmd, rclcpp::Time(msg->header.stamp));
+  if (!accel_pedal_vec_.empty()) {
+    const auto past_accel_ptr =
+      getNearestTimeDataFromVec(accel_pedal_ptr_, dif_pedal_time_, accel_pedal_vec_);
+    const double raw_accel_pedal_speed =
+      getPedalSpeed(past_accel_ptr, accel_pedal_ptr_, accel_pedal_speed_);
+    accel_pedal_speed_ = lowpass(accel_pedal_speed_, raw_accel_pedal_speed, 0.5);
+    debug_values_.data.at(CURRENT_RAW_ACCEL_SPEED) = raw_accel_pedal_speed;
+    debug_values_.data.at(CURRENT_ACCEL_SPEED) = accel_pedal_speed_;
+  }
+  debug_values_.data.at(CURRENT_ACCEL_PEDAL) = accel_pedal_ptr_->data;
+  pushDataToVec(accel_pedal_ptr_, pedal_vec_max_size_, &accel_pedal_vec_);
+  delayed_accel_pedal_ptr_ =
+    getNearestTimeDataFromVec(accel_pedal_ptr_, pedal_to_accel_delay_, accel_pedal_vec_);
+
+  // get brake data
+  brake_pedal_ptr_ =
+    std::make_shared<DataStamped>(msg->actuation.brake_cmd, rclcpp::Time(msg->header.stamp));
   if (!brake_pedal_vec_.empty()) {
     const auto past_brake_ptr =
       getNearestTimeDataFromVec(brake_pedal_ptr_, dif_pedal_time_, brake_pedal_vec_);
