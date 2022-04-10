@@ -85,11 +85,13 @@ bool OcclusionSpotModule::modifyPathVelocity(
     param_.v.a_ego = planner_data_->current_accel.get();
     param_.v.delay_time = planner_data_->system_delay;
     const double detection_area_offset = 5.0;  // for visualization and stability
-    const double detection_area_max_length =  planning_utils::calcJudgeLineDistWithJerkLimit(
-        param_.v.v_ego, param_.v.a_ego, param_.v.non_effective_accel, param_.v.non_effective_jerk,
-        planner_data_->delay_response_time);
-    param_.detection_area_max_length = lowpassFilter(detection_area_max_length,prev_detection_area_length_ , 5.0,0.1) + detection_area_offset;
-    prev_detection_area_length_= param_.detection_area_max_length;
+    const double detection_area_max_length = planning_utils::calcJudgeLineDistWithJerkLimit(
+      param_.v.v_ego, param_.v.a_ego, param_.v.non_effective_accel, param_.v.non_effective_jerk,
+      planner_data_->delay_response_time);
+    param_.detection_area_max_length =
+      lowpassFilter(detection_area_max_length, prev_detection_area_length_, 5.0, 0.1) +
+      detection_area_offset;
+    prev_detection_area_length_ = param_.detection_area_max_length;
   }
   const geometry_msgs::msg::Pose ego_pose = planner_data_->current_pose.pose;
   PathWithLaneId clipped_path;
