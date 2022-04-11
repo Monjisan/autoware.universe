@@ -50,9 +50,9 @@ SurroundObstacleCheckerNode::SurroundObstacleCheckerNode(const rclcpp::NodeOptio
 
   // Publishers
   path_pub_ =
-    this->create_publisher<autoware_auto_planning_msgs::msg::Trajectory>("~/output/trajectory", 1);
+    this->create_tilde_publisher<autoware_auto_planning_msgs::msg::Trajectory>("~/output/trajectory", 1);
   stop_reason_diag_pub_ =
-    this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>("~/output/no_start_reason", 1);
+    this->create_tilde_publisher<diagnostic_msgs::msg::DiagnosticStatus>("~/output/no_start_reason", 1);
 
   // Subscriber
   path_sub_ = this->create_subscription<autoware_auto_planning_msgs::msg::Trajectory>(

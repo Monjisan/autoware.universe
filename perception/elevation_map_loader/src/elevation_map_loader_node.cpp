@@ -74,10 +74,10 @@ ElevationMapLoaderNode::ElevationMapLoaderNode(const rclcpp::NodeOptions & optio
   rclcpp::QoS durable_qos{1};
   durable_qos.transient_local();
   pub_elevation_map_ =
-    this->create_publisher<grid_map_msgs::msg::GridMap>("output/elevation_map", durable_qos);
+    this->create_tilde_publisher<grid_map_msgs::msg::GridMap>("output/elevation_map", durable_qos);
 
   if (use_elevation_map_cloud_publisher_) {
-    pub_elevation_map_cloud_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
+    pub_elevation_map_cloud_ = this->create_tilde_publisher<sensor_msgs::msg::PointCloud2>(
       "output/elevation_map_cloud", durable_qos);
   }
 

@@ -448,10 +448,10 @@ AutowareStateMonitorNode::AutowareStateMonitorNode()
     rmw_qos_profile_services_default, callback_group_services_);
 
   // Publisher
-  pub_autoware_state_ = this->create_publisher<autoware_auto_system_msgs::msg::AutowareState>(
+  pub_autoware_state_ = this->create_tilde_publisher<autoware_auto_system_msgs::msg::AutowareState>(
     "output/autoware_state", 1);
   pub_autoware_engage_ =
-    this->create_publisher<autoware_auto_vehicle_msgs::msg::Engage>("output/autoware_engage", 1);
+    this->create_tilde_publisher<autoware_auto_vehicle_msgs::msg::Engage>("output/autoware_engage", 1);
 
   // Diagnostic Updater
   setupDiagnosticUpdater();

@@ -71,7 +71,7 @@ ImageTransportDecompressor::ImageTransportDecompressor(const rclcpp::NodeOptions
     "~/input/compressed_image", rclcpp::SensorDataQoS(),
     std::bind(&ImageTransportDecompressor::onCompressedImage, this, std::placeholders::_1));
   raw_image_pub_ =
-    create_publisher<sensor_msgs::msg::Image>("~/output/raw_image", rclcpp::SensorDataQoS());
+    create_tilde_publisher<sensor_msgs::msg::Image>("~/output/raw_image", rclcpp::SensorDataQoS());
 }
 
 void ImageTransportDecompressor::onCompressedImage(

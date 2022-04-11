@@ -112,7 +112,7 @@ TEST_F(EKFLocalizerTestSuite, measurementUpdatePose)
   rclcpp::NodeOptions node_options;
   auto ekf = std::make_shared<TestEKFLocalizerNode>("EKFLocalizerTestSuite", node_options);
 
-  auto pub_pose = ekf->create_publisher<geometry_msgs::msg::PoseStamped>("/in_pose", 1);
+  auto pub_pose = ekf->create_tilde_publisher<geometry_msgs::msg::PoseStamped>("/in_pose", 1);
 
   geometry_msgs::msg::PoseStamped in_pose;
   in_pose.header.frame_id = "world";
@@ -164,7 +164,7 @@ TEST_F(EKFLocalizerTestSuite, measurementUpdateTwist)
   rclcpp::NodeOptions node_options;
   auto ekf = std::make_shared<TestEKFLocalizerNode>("EKFLocalizerTestSuite", node_options);
 
-  auto pub_twist = ekf->create_publisher<geometry_msgs::msg::TwistStamped>("/in_twist", 1);
+  auto pub_twist = ekf->create_tilde_publisher<geometry_msgs::msg::TwistStamped>("/in_twist", 1);
   geometry_msgs::msg::TwistStamped in_twist;
   in_twist.header.frame_id = "base_link";
 
@@ -210,7 +210,7 @@ TEST_F(EKFLocalizerTestSuite, measurementUpdatePoseWithCovariance)
   rclcpp::sleep_for(std::chrono::milliseconds(200));
   auto ekf = std::make_shared<TestEKFLocalizerNode>("EKFLocalizerTestSuite", node_options);
 
-  auto pub_pose = ekf->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
+  auto pub_pose = ekf->create_tilde_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "/in_pose_with_covariance", 1);
   geometry_msgs::msg::PoseWithCovarianceStamped in_pose;
   in_pose.header.frame_id = "world";
@@ -264,7 +264,7 @@ TEST_F(EKFLocalizerTestSuite, measurementUpdateTwistWithCovariance)
   rclcpp::NodeOptions node_options;
   auto ekf = std::make_shared<TestEKFLocalizerNode>("EKFLocalizerTestSuite", node_options);
 
-  auto pub_twist = ekf->create_publisher<geometry_msgs::msg::TwistWithCovarianceStamped>(
+  auto pub_twist = ekf->create_tilde_publisher<geometry_msgs::msg::TwistWithCovarianceStamped>(
     "/in_twist_with_covariance", 1);
   geometry_msgs::msg::TwistWithCovarianceStamped in_twist;
   in_twist.header.frame_id = "base_link";

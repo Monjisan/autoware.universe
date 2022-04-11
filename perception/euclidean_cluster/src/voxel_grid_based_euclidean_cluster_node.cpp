@@ -39,9 +39,9 @@ VoxelGridBasedEuclideanClusterNode::VoxelGridBasedEuclideanClusterNode(
     "input", rclcpp::SensorDataQoS().keep_last(1),
     std::bind(&VoxelGridBasedEuclideanClusterNode::onPointCloud, this, _1));
 
-  cluster_pub_ = this->create_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
+  cluster_pub_ = this->create_tilde_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
     "output", rclcpp::QoS{1});
-  debug_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("debug/clusters", 1);
+  debug_pub_ = this->create_tilde_publisher<sensor_msgs::msg::PointCloud2>("debug/clusters", 1);
 }
 
 void VoxelGridBasedEuclideanClusterNode::onPointCloud(

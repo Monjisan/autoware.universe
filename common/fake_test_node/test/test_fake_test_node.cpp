@@ -43,7 +43,7 @@ class NodeUnderTest : public rclcpp::Node
 public:
   NodeUnderTest()
   : rclcpp::Node{"is_positive_node"},
-    m_pub{this->create_publisher<Bool>("/output_topic", 10)},
+    m_pub{this->create_tilde_publisher<Bool>("/output_topic", 10)},
     m_sub{this->create_subscription<Int32>(
         "/input_topic", 10,
         [&](const Int32::SharedPtr msg) {
@@ -67,7 +67,7 @@ void run_test(int32_t value_in_message, FixtureT * fixture)
   const auto node = std::make_shared<NodeUnderTest>();
 
   Bool::SharedPtr last_received_msg{};
-  auto fake_odom_publisher = fixture->template create_publisher<Int32>("/input_topic");
+  auto fake_odom_publisher = fixture->template create_tilde_publisher<Int32>("/input_topic");
   auto result_odom_subscription = fixture->template create_subscription<Bool>(
     "/output_topic", *node,
     [&last_received_msg](const Bool::SharedPtr msg) {last_received_msg = msg;});

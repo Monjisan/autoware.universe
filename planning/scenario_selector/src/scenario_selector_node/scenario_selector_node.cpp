@@ -354,8 +354,8 @@ ScenarioSelectorNode::ScenarioSelectorNode(const rclcpp::NodeOptions & node_opti
 
   // Output
   pub_scenario_ =
-    this->create_publisher<tier4_planning_msgs::msg::Scenario>("output/scenario", rclcpp::QoS{1});
-  pub_trajectory_ = this->create_publisher<autoware_auto_planning_msgs::msg::Trajectory>(
+    this->create_tilde_publisher<tier4_planning_msgs::msg::Scenario>("output/scenario", rclcpp::QoS{1});
+  pub_trajectory_ = this->create_tilde_publisher<autoware_auto_planning_msgs::msg::Trajectory>(
     "output/trajectory", rclcpp::QoS{1});
 
   // Timer Callback

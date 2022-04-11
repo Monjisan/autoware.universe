@@ -98,7 +98,7 @@ class TestFaultInjectionLink(unittest.TestCase):
         Expect fault_injection_node publish /diagnostics.status
         when the talker to publish strings
         """
-        pub_events = self.test_node.create_publisher(SimulationEvents, "/simulation/events", 10)
+        pub_events = self.test_node.create_tilde_publisher(SimulationEvents, "/simulation/events", 10)
 
         msg_buffer = []
         self.test_node.create_subscription(

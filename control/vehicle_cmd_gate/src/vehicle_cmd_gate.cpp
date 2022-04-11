@@ -52,24 +52,24 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
 
   // Publisher
   vehicle_cmd_emergency_pub_ =
-    this->create_publisher<VehicleEmergencyStamped>("output/vehicle_cmd_emergency", durable_qos);
+    this->create_tilde_publisher<VehicleEmergencyStamped>("output/vehicle_cmd_emergency", durable_qos);
   control_cmd_pub_ =
-    this->create_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+    this->create_tilde_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "output/control_cmd", durable_qos);
-  gear_cmd_pub_ = this->create_publisher<autoware_auto_vehicle_msgs::msg::GearCommand>(
+  gear_cmd_pub_ = this->create_tilde_publisher<autoware_auto_vehicle_msgs::msg::GearCommand>(
     "output/gear_cmd", durable_qos);
   turn_indicator_cmd_pub_ =
-    this->create_publisher<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>(
+    this->create_tilde_publisher<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>(
       "output/turn_indicators_cmd", durable_qos);
   hazard_light_cmd_pub_ =
-    this->create_publisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
+    this->create_tilde_publisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
       "output/hazard_lights_cmd", durable_qos);
 
   gate_mode_pub_ =
-    this->create_publisher<tier4_control_msgs::msg::GateMode>("output/gate_mode", durable_qos);
+    this->create_tilde_publisher<tier4_control_msgs::msg::GateMode>("output/gate_mode", durable_qos);
   engage_pub_ =
-    this->create_publisher<autoware_auto_vehicle_msgs::msg::Engage>("output/engage", durable_qos);
-  pub_external_emergency_ = this->create_publisher<tier4_external_api_msgs::msg::Emergency>(
+    this->create_tilde_publisher<autoware_auto_vehicle_msgs::msg::Engage>("output/engage", durable_qos);
+  pub_external_emergency_ = this->create_tilde_publisher<tier4_external_api_msgs::msg::Emergency>(
     "output/external_emergency", durable_qos);
 
   // Subscriber
@@ -686,7 +686,7 @@ VehicleCmdGate::StartRequest::StartRequest(rclcpp::Node * node, bool use_start_r
 
   request_start_cli_ =
     node_->create_client<std_srvs::srv::Trigger>("/api/autoware/set/start_request");
-  request_start_pub_ = node_->create_publisher<tier4_debug_msgs::msg::BoolStamped>(
+  request_start_pub_ = node_->create_tilde_publisher<tier4_debug_msgs::msg::BoolStamped>(
     "/api/autoware/get/start_accepted", rclcpp::QoS(1));
   current_twist_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
     "/localization/kinematic_state", rclcpp::QoS(1),

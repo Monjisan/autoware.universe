@@ -96,7 +96,7 @@ TensorrtYoloNodelet::TensorrtYoloNodelet(const rclcpp::NodeOptions & options)
 
   std::lock_guard<std::mutex> lock(connect_mutex_);
 
-  objects_pub_ = this->create_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
+  objects_pub_ = this->create_tilde_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
     "out/objects", 1);
   image_pub_ = image_transport::create_publisher(this, "out/image");
 

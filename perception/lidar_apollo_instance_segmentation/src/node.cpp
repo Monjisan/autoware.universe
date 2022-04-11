@@ -27,7 +27,7 @@ LidarInstanceSegmentationNode::LidarInstanceSegmentationNode(
     "input/pointcloud", rclcpp::SensorDataQoS().keep_last(1),
     std::bind(&LidarInstanceSegmentationNode::pointCloudCallback, this, _1));
   dynamic_objects_pub_ =
-    this->create_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
+    this->create_tilde_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
       "output/labeled_clusters", rclcpp::QoS{1});
 }
 

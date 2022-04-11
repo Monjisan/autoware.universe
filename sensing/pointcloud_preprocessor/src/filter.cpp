@@ -88,7 +88,7 @@ pointcloud_preprocessor::Filter::Filter(
 
   // Set publisher
   {
-    pub_output_ = this->create_publisher<PointCloud2>(
+    pub_output_ = this->create_tilde_publisher<PointCloud2>(
       "output", rclcpp::SensorDataQoS().keep_last(max_queue_size_));
   }
 

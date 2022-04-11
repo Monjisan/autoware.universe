@@ -86,7 +86,7 @@ void MissionCheckpointTool::onInitialize()
 void MissionCheckpointTool::updateTopic()
 {
   rclcpp::Node::SharedPtr raw_node = context_->getRosNodeAbstraction().lock()->get_raw_node();
-  pose_pub_ = raw_node->create_publisher<geometry_msgs::msg::PoseStamped>(
+  pose_pub_ = raw_node->create_tilde_publisher<geometry_msgs::msg::PoseStamped>(
     pose_topic_property_->getStdString(), 1);
   clock_ = raw_node->get_clock();
 }

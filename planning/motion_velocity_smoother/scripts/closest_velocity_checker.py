@@ -143,7 +143,7 @@ class VelocityChecker(Node):
         )
 
         # publish data
-        self.pub_v_arr = self.create_publisher(Float32MultiArrayStamped, "closest_speeds", 1)
+        self.pub_v_arr = self.create_tilde_publisher(Float32MultiArrayStamped, "closest_speeds", 1)
 
         time.sleep(1.0)  # wait for ready to publish/subscribe
 

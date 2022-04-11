@@ -34,8 +34,8 @@ GyroOdometer::GyroOdometer()
   imu_sub_ = create_subscription<sensor_msgs::msg::Imu>(
     "imu", rclcpp::QoS{100}, std::bind(&GyroOdometer::callbackImu, this, std::placeholders::_1));
 
-  twist_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>("twist", rclcpp::QoS{10});
-  twist_with_covariance_pub_ = create_publisher<geometry_msgs::msg::TwistWithCovarianceStamped>(
+  twist_pub_ = create_tilde_publisher<geometry_msgs::msg::TwistStamped>("twist", rclcpp::QoS{10});
+  twist_with_covariance_pub_ = create_tilde_publisher<geometry_msgs::msg::TwistWithCovarianceStamped>(
     "twist_with_covariance", rclcpp::QoS{10});
 
   // TODO(YamatoAndo) createTimer

@@ -87,7 +87,7 @@ ExternalVelocityLimitSelectorNode::ExternalVelocityLimitSelectorNode(
 
   // Output
   pub_external_velocity_limit_ =
-    this->create_publisher<VelocityLimit>("output/external_velocity_limit", 1);
+    this->create_tilde_publisher<VelocityLimit>("output/external_velocity_limit", 1);
 
   // Params
   {

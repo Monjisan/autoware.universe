@@ -35,7 +35,7 @@ ShapeEstimationNode::ShapeEstimationNode(const rclcpp::NodeOptions & node_option
   sub_ = create_subscription<DetectedObjectsWithFeature>(
     "input", rclcpp::QoS{1}, std::bind(&ShapeEstimationNode::callback, this, _1));
 
-  pub_ = create_publisher<DetectedObjectsWithFeature>("objects", rclcpp::QoS{1});
+  pub_ = create_tilde_publisher<DetectedObjectsWithFeature>("objects", rclcpp::QoS{1});
   bool use_corrector = declare_parameter("use_corrector", true);
   bool use_filter = declare_parameter("use_filter", true);
   use_vehicle_reference_yaw_ = declare_parameter("use_vehicle_reference_yaw", true);

@@ -32,7 +32,7 @@ OcclusionSpotModuleManager::OcclusionSpotModuleManager(rclcpp::Node & node)
 {
   const std::string ns(getModuleName());
   pub_debug_occupancy_grid_ =
-    node.create_publisher<nav_msgs::msg::OccupancyGrid>("~/debug/" + ns + "/occupancy_grid", 1);
+    node.create_tilde_publisher<nav_msgs::msg::OccupancyGrid>("~/debug/" + ns + "/occupancy_grid", 1);
 
   // for crosswalk parameters
   auto & pp = planner_param_;

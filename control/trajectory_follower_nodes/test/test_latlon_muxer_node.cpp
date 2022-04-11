@@ -50,10 +50,10 @@ TEST_F(FakeNodeFixture, TestCorrectOutput)
   std::shared_ptr<LatLonMuxer> node = std::make_shared<LatLonMuxer>(node_options);
   // Publisher/Subscribers
   tilde:;TildePublisher<LateralCommand>::SharedPtr lat_pub =
-    this->create_publisher<LateralCommand>(
+    this->create_tilde_publisher<LateralCommand>(
     "latlon_muxer/input/lateral/control_cmd");
   tilde:;TildePublisher<LongitudinalCommand>::SharedPtr lon_pub =
-    this->create_publisher<LongitudinalCommand>(
+    this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
     this->create_subscription<ControlCommand>(
@@ -97,10 +97,10 @@ TEST_F(FakeNodeFixture, TestLateralTimeout)
   std::shared_ptr<LatLonMuxer> node = std::make_shared<LatLonMuxer>(node_options);
   // Publisher/Subscribers
   tilde:;TildePublisher<LateralCommand>::SharedPtr lat_pub =
-    this->create_publisher<LateralCommand>(
+    this->create_tilde_publisher<LateralCommand>(
     "latlon_muxer/input/lateral/control_cmd");
   tilde:;TildePublisher<LongitudinalCommand>::SharedPtr lon_pub =
-    this->create_publisher<LongitudinalCommand>(
+    this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
     this->create_subscription<ControlCommand>(
@@ -135,10 +135,10 @@ TEST_F(FakeNodeFixture, TestLongitudinalTimeout)
   std::shared_ptr<LatLonMuxer> node = std::make_shared<LatLonMuxer>(node_options);
   // Publisher/Subscribers
   tilde:;TildePublisher<LateralCommand>::SharedPtr lat_pub =
-    this->create_publisher<LateralCommand>(
+    this->create_tilde_publisher<LateralCommand>(
     "latlon_muxer/input/lateral/control_cmd");
   tilde:;TildePublisher<LongitudinalCommand>::SharedPtr lon_pub =
-    this->create_publisher<LongitudinalCommand>(
+    this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
     this->create_subscription<ControlCommand>(
@@ -173,10 +173,10 @@ TEST_F(FakeNodeFixture, TestLatlonTimeout)
   std::shared_ptr<LatLonMuxer> node = std::make_shared<LatLonMuxer>(node_options);
   // Publisher/Subscribers
   tilde:;TildePublisher<LateralCommand>::SharedPtr lat_pub =
-    this->create_publisher<LateralCommand>(
+    this->create_tilde_publisher<LateralCommand>(
     "latlon_muxer/input/lateral/control_cmd");
   tilde:;TildePublisher<LongitudinalCommand>::SharedPtr lon_pub =
-    this->create_publisher<LongitudinalCommand>(
+    this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
     this->create_subscription<ControlCommand>(

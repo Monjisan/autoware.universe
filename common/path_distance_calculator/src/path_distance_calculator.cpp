@@ -29,7 +29,7 @@ PathDistanceCalculator::PathDistanceCalculator(const rclcpp::NodeOptions & optio
     "~/input/path", rclcpp::QoS(1),
     [this](const autoware_auto_planning_msgs::msg::Path::SharedPtr msg) { path_ = msg; });
   pub_dist_ =
-    create_publisher<tier4_debug_msgs::msg::Float64Stamped>("~/output/distance", rclcpp::QoS(1));
+    create_tilde_publisher<tier4_debug_msgs::msg::Float64Stamped>("~/output/distance", rclcpp::QoS(1));
 
   using std::chrono_literals::operator""s;
   timer_ = rclcpp::create_timer(this, get_clock(), 1s, [this]() {

@@ -51,13 +51,13 @@ EmergencyHandler::EmergencyHandler() : Node("emergency_handler")
     *this, "~/input/hazard_status", param_.timeout_hazard_status);
 
   // Publisher
-  pub_control_command_ = create_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+  pub_control_command_ = create_tilde_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>(
     "~/output/control_command", rclcpp::QoS{1});
-  pub_hazard_cmd_ = create_publisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
+  pub_hazard_cmd_ = create_tilde_publisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
     "~/output/hazard", rclcpp::QoS{1});
   pub_gear_cmd_ =
-    create_publisher<autoware_auto_vehicle_msgs::msg::GearCommand>("~/output/gear", rclcpp::QoS{1});
-  pub_emergency_state_ = create_publisher<autoware_auto_system_msgs::msg::EmergencyState>(
+    create_tilde_publisher<autoware_auto_vehicle_msgs::msg::GearCommand>("~/output/gear", rclcpp::QoS{1});
+  pub_emergency_state_ = create_tilde_publisher<autoware_auto_system_msgs::msg::EmergencyState>(
     "~/output/emergency_state", rclcpp::QoS{1});
 
   // Initialize

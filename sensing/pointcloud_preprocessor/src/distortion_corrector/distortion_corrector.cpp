@@ -29,7 +29,7 @@ DistortionCorrectorComponent::DistortionCorrectorComponent(const rclcpp::NodeOpt
 
   // Publisher
   undistorted_points_pub_ =
-    this->create_publisher<PointCloud2>("~/output/pointcloud", rclcpp::SensorDataQoS());
+    this->create_tilde_publisher<PointCloud2>("~/output/pointcloud", rclcpp::SensorDataQoS());
 
   // Subscriber
   velocity_report_sub_ = this->create_subscription<VelocityReport>(

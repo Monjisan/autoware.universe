@@ -43,9 +43,9 @@ MissionPlanner::MissionPlanner(
   rclcpp::QoS durable_qos{1};
   durable_qos.transient_local();
   route_publisher_ =
-    create_publisher<autoware_auto_planning_msgs::msg::HADMapRoute>("output/route", durable_qos);
+    create_tilde_publisher<autoware_auto_planning_msgs::msg::HADMapRoute>("output/route", durable_qos);
   marker_publisher_ =
-    create_publisher<visualization_msgs::msg::MarkerArray>("debug/route_marker", durable_qos);
+    create_tilde_publisher<visualization_msgs::msg::MarkerArray>("debug/route_marker", durable_qos);
 }
 
 bool MissionPlanner::getEgoVehiclePose(geometry_msgs::msg::PoseStamped * ego_vehicle_pose)

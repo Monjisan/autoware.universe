@@ -49,7 +49,7 @@ LivoxTagFilterNode::LivoxTagFilterNode(const rclcpp::NodeOptions & node_options)
 
   // Publisher
   pub_pointcloud_ =
-    this->create_publisher<sensor_msgs::msg::PointCloud2>("output", rclcpp::SensorDataQoS());
+    this->create_tilde_publisher<sensor_msgs::msg::PointCloud2>("output", rclcpp::SensorDataQoS());
 }
 
 void LivoxTagFilterNode::onPointCloud(const sensor_msgs::msg::PointCloud2::ConstSharedPtr msg)

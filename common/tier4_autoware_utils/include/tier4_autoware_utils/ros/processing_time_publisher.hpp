@@ -33,7 +33,7 @@ public:
     const rclcpp::QoS & qos = rclcpp::QoS(1))
   {
     pub_processing_time_ =
-      node->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(name, qos);
+      node->create_tilde_publisher<diagnostic_msgs::msg::DiagnosticStatus>(name, qos);
   }
 
   void publish(const std::map<std::string, double> & processing_time_map)

@@ -33,12 +33,12 @@ ExternalCmdSelector::ExternalCmdSelector(const rclcpp::NodeOptions & node_option
 
   // Publisher
   pub_current_selector_mode_ =
-    create_publisher<CommandSourceMode>("~/output/current_selector_mode", 1);
-  pub_control_cmd_ = create_publisher<ExternalControlCommand>("~/output/control_cmd", 1);
-  pub_shift_cmd_ = create_publisher<InternalGearShift>("~/output/gear_cmd", 1);
-  pub_turn_signal_cmd_ = create_publisher<InternalTurnSignal>("~/output/turn_indicators_cmd", 1);
-  pub_hazard_signal_cmd_ = create_publisher<InternalHazardSignal>("~/output/hazard_lights_cmd", 1);
-  pub_heartbeat_ = create_publisher<InternalHeartbeat>("~/output/heartbeat", 1);
+    create_tilde_publisher<CommandSourceMode>("~/output/current_selector_mode", 1);
+  pub_control_cmd_ = create_tilde_publisher<ExternalControlCommand>("~/output/control_cmd", 1);
+  pub_shift_cmd_ = create_tilde_publisher<InternalGearShift>("~/output/gear_cmd", 1);
+  pub_turn_signal_cmd_ = create_tilde_publisher<InternalTurnSignal>("~/output/turn_indicators_cmd", 1);
+  pub_hazard_signal_cmd_ = create_tilde_publisher<InternalHazardSignal>("~/output/hazard_lights_cmd", 1);
+  pub_heartbeat_ = create_tilde_publisher<InternalHeartbeat>("~/output/heartbeat", 1);
 
   // Callback Groups
   callback_group_subscribers_ =

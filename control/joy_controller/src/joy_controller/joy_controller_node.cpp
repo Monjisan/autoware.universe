@@ -481,20 +481,20 @@ AutowareJoyControllerNode::AutowareJoyControllerNode(const rclcpp::NodeOptions &
 
   // Publisher
   pub_control_command_ =
-    this->create_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+    this->create_tilde_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "output/control_command", 1);
   pub_external_control_command_ =
-    this->create_publisher<tier4_external_api_msgs::msg::ControlCommandStamped>(
+    this->create_tilde_publisher<tier4_external_api_msgs::msg::ControlCommandStamped>(
       "output/external_control_command", 1);
   pub_shift_ =
-    this->create_publisher<tier4_external_api_msgs::msg::GearShiftStamped>("output/shift", 1);
-  pub_turn_signal_ = this->create_publisher<tier4_external_api_msgs::msg::TurnSignalStamped>(
+    this->create_tilde_publisher<tier4_external_api_msgs::msg::GearShiftStamped>("output/shift", 1);
+  pub_turn_signal_ = this->create_tilde_publisher<tier4_external_api_msgs::msg::TurnSignalStamped>(
     "output/turn_signal", 1);
-  pub_gate_mode_ = this->create_publisher<tier4_control_msgs::msg::GateMode>("output/gate_mode", 1);
+  pub_gate_mode_ = this->create_tilde_publisher<tier4_control_msgs::msg::GateMode>("output/gate_mode", 1);
   pub_heartbeat_ =
-    this->create_publisher<tier4_external_api_msgs::msg::Heartbeat>("output/heartbeat", 1);
+    this->create_tilde_publisher<tier4_external_api_msgs::msg::Heartbeat>("output/heartbeat", 1);
   pub_vehicle_engage_ =
-    this->create_publisher<autoware_auto_vehicle_msgs::msg::Engage>("output/vehicle_engage", 1);
+    this->create_tilde_publisher<autoware_auto_vehicle_msgs::msg::Engage>("output/vehicle_engage", 1);
 
   // Service Client
   client_emergency_stop_ = this->create_client<tier4_external_api_msgs::srv::SetEmergency>(

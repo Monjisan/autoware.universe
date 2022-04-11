@@ -57,7 +57,7 @@ PlanningEvaluatorNode::PlanningEvaluatorNode(const rclcpp::NodeOptions & node_op
   ego_frame_str_ = declare_parameter<std::string>("ego_frame");
 
   // List of metrics to calculate and publish
-  metrics_pub_ = create_publisher<DiagnosticArray>("~/metrics", 1);
+  metrics_pub_ = create_tilde_publisher<DiagnosticArray>("~/metrics", 1);
   for (const std::string & selected_metric :
        declare_parameter<std::vector<std::string>>("selected_metrics")) {
     Metric metric = str_to_metric.at(selected_metric);

@@ -26,9 +26,9 @@ ExternalCmdConverterNode::ExternalCmdConverterNode(const rclcpp::NodeOptions & n
 {
   using std::placeholders::_1;
 
-  pub_cmd_ = create_publisher<AckermannControlCommand>("out/control_cmd", rclcpp::QoS{1});
+  pub_cmd_ = create_tilde_publisher<AckermannControlCommand>("out/control_cmd", rclcpp::QoS{1});
   pub_current_cmd_ =
-    create_publisher<ExternalControlCommand>("out/latest_external_control_cmd", rclcpp::QoS{1});
+    create_tilde_publisher<ExternalControlCommand>("out/latest_external_control_cmd", rclcpp::QoS{1});
   sub_velocity_ = create_subscription<Odometry>(
     "in/odometry", 1, std::bind(&ExternalCmdConverterNode::onVelocity, this, _1));
   sub_control_cmd_ = create_subscription<ExternalControlCommand>(

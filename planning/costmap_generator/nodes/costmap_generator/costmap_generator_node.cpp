@@ -157,9 +157,9 @@ CostmapGenerator::CostmapGenerator(const rclcpp::NodeOptions & node_options)
     "~/input/scenario", 1, std::bind(&CostmapGenerator::onScenario, this, _1));
 
   // Publishers
-  pub_costmap_ = this->create_publisher<grid_map_msgs::msg::GridMap>("~/output/grid_map", 1);
+  pub_costmap_ = this->create_tilde_publisher<grid_map_msgs::msg::GridMap>("~/output/grid_map", 1);
   pub_occupancy_grid_ =
-    this->create_publisher<nav_msgs::msg::OccupancyGrid>("~/output/occupancy_grid", 1);
+    this->create_tilde_publisher<nav_msgs::msg::OccupancyGrid>("~/output/occupancy_grid", 1);
 
   // Timer
   const auto period_ns = rclcpp::Rate(update_rate_).period();

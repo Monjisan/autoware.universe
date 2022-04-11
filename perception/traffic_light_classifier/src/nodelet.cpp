@@ -37,7 +37,7 @@ TrafficLightClassifierNodelet::TrafficLightClassifierNodelet(const rclcpp::NodeO
   }
 
   traffic_signal_array_pub_ =
-    this->create_publisher<autoware_auto_perception_msgs::msg::TrafficSignalArray>(
+    this->create_tilde_publisher<autoware_auto_perception_msgs::msg::TrafficSignalArray>(
       "~/output/traffic_signals", rclcpp::QoS{1});
 
   using std::chrono_literals::operator""ms;

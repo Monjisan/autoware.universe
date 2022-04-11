@@ -39,9 +39,9 @@ DummyPerceptionPublisherNode::DummyPerceptionPublisherNode()
   rclcpp::QoS qos{1};
   qos.transient_local();
   detected_object_with_feature_pub_ =
-    this->create_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
+    this->create_tilde_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
       "output/dynamic_object", qos);
-  pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("output/points_raw", qos);
+  pointcloud_pub_ = this->create_tilde_publisher<sensor_msgs::msg::PointCloud2>("output/points_raw", qos);
   object_sub_ = this->create_subscription<dummy_perception_publisher::msg::Object>(
     "input/object", 100,
     std::bind(&DummyPerceptionPublisherNode::objectCallback, this, std::placeholders::_1));

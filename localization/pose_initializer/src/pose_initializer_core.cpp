@@ -86,7 +86,7 @@ PoseInitializer::PoseInitializer()
       std::bind(&PoseInitializer::callbackPoseInitializationRequest, this, std::placeholders::_1));
 
   initial_pose_pub_ =
-    this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("initialpose3d", 10);
+    this->create_tilde_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("initialpose3d", 10);
 
   ndt_client_ =
     this->create_client<tier4_localization_msgs::srv::PoseWithCovarianceStamped>("ndt_align_srv");

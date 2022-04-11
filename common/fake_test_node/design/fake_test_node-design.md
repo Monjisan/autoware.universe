@@ -40,7 +40,7 @@ TEST_F(FakeNodeFixture, Test) {
   const auto node = std::make_shared<NodeUnderTest>();
 
   Bool::SharedPtr last_received_msg{};
-  auto fake_odom_publisher = create_publisher<Int32>("/input_topic");
+  auto fake_odom_publisher = create_tilde_publisher<Int32>("/input_topic");
   auto result_odom_subscription = create_subscription<Bool>("/output_topic", *node,
     [&last_received_msg](const Bool::SharedPtr msg) {last_received_msg = msg;});
 

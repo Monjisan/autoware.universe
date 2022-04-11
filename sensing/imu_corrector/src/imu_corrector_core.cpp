@@ -26,7 +26,7 @@ ImuCorrector::ImuCorrector(const rclcpp::NodeOptions & node_options)
   imu_sub_ = create_subscription<sensor_msgs::msg::Imu>(
     "input", rclcpp::QoS{1}, std::bind(&ImuCorrector::callbackImu, this, std::placeholders::_1));
 
-  imu_pub_ = create_publisher<sensor_msgs::msg::Imu>("output", rclcpp::QoS{10});
+  imu_pub_ = create_tilde_publisher<sensor_msgs::msg::Imu>("output", rclcpp::QoS{10});
 }
 
 void ImuCorrector::callbackImu(const sensor_msgs::msg::Imu::ConstSharedPtr imu_msg_ptr)

@@ -492,12 +492,12 @@ ObstacleStopPlannerNode::ObstacleStopPlannerNode(const rclcpp::NodeOptions & nod
   last_detection_time_ = this->now();
 
   // Publishers
-  path_pub_ = this->create_publisher<Trajectory>("~/output/trajectory", 1);
+  path_pub_ = this->create_tilde_publisher<Trajectory>("~/output/trajectory", 1);
   stop_reason_diag_pub_ =
-    this->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>("~/output/stop_reason", 1);
+    this->create_tilde_publisher<diagnostic_msgs::msg::DiagnosticStatus>("~/output/stop_reason", 1);
   pub_clear_velocity_limit_ =
-    this->create_publisher<VelocityLimitClearCommand>("~/output/velocity_limit_clear_command", 1);
-  pub_velocity_limit_ = this->create_publisher<VelocityLimit>("~/output/max_velocity", 1);
+    this->create_tilde_publisher<VelocityLimitClearCommand>("~/output/velocity_limit_clear_command", 1);
+  pub_velocity_limit_ = this->create_tilde_publisher<VelocityLimit>("~/output/max_velocity", 1);
 
   // Subscribers
   obstacle_pointcloud_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(

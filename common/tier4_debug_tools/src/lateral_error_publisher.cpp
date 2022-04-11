@@ -36,11 +36,11 @@ LateralErrorPublisher::LateralErrorPublisher(const rclcpp::NodeOptions & node_op
     "~/input/ground_truth_pose_with_covariance", rclcpp::QoS{1},
     std::bind(&LateralErrorPublisher::onGroundTruthPose, this, _1));
   pub_control_lateral_error_ =
-    create_publisher<tier4_debug_msgs::msg::Float32Stamped>("~/control_lateral_error", 1);
+    create_tilde_publisher<tier4_debug_msgs::msg::Float32Stamped>("~/control_lateral_error", 1);
   pub_localization_lateral_error_ =
-    create_publisher<tier4_debug_msgs::msg::Float32Stamped>("~/localization_lateral_error", 1);
+    create_tilde_publisher<tier4_debug_msgs::msg::Float32Stamped>("~/localization_lateral_error", 1);
   pub_lateral_error_ =
-    create_publisher<tier4_debug_msgs::msg::Float32Stamped>("~/lateral_error", 1);
+    create_tilde_publisher<tier4_debug_msgs::msg::Float32Stamped>("~/lateral_error", 1);
 }
 
 void LateralErrorPublisher::onTrajectory(

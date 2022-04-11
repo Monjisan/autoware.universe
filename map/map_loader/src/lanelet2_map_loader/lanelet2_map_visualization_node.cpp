@@ -77,7 +77,7 @@ Lanelet2MapVisualizationNode::Lanelet2MapVisualizationNode(const rclcpp::NodeOpt
     "input/lanelet2_map", rclcpp::QoS{1}.transient_local(),
     std::bind(&Lanelet2MapVisualizationNode::onMapBin, this, _1));
 
-  pub_marker_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(
+  pub_marker_ = this->create_tilde_publisher<visualization_msgs::msg::MarkerArray>(
     "output/lanelet2_map_marker", rclcpp::QoS{1}.transient_local());
 }
 

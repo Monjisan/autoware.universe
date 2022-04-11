@@ -65,11 +65,11 @@ protected:
     }
 
     traj_pub_ =
-      rclcpp::create_publisher<Trajectory>(dummy_node, "/planning_evaluator/input/trajectory", 1);
-    ref_traj_pub_ = rclcpp::create_publisher<Trajectory>(
+      rclcpp::create_tilde_publisher<Trajectory>(dummy_node, "/planning_evaluator/input/trajectory", 1);
+    ref_traj_pub_ = rclcpp::create_tilde_publisher<Trajectory>(
       dummy_node, "/planning_evaluator/input/reference_trajectory", 1);
     objects_pub_ =
-      rclcpp::create_publisher<Objects>(dummy_node, "/planning_evaluator/input/objects", 1);
+      rclcpp::create_tilde_publisher<Objects>(dummy_node, "/planning_evaluator/input/objects", 1);
 
     tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(dummy_node);
     publishEgoPose(0.0, 0.0, 0.0);

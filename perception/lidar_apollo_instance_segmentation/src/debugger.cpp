@@ -24,7 +24,7 @@
 Debugger::Debugger(rclcpp::Node * node)
 {
   instance_pointcloud_pub_ =
-    node->create_publisher<sensor_msgs::msg::PointCloud2>("debug/instance_pointcloud", 1);
+    node->create_tilde_publisher<sensor_msgs::msg::PointCloud2>("debug/instance_pointcloud", 1);
 }
 
 void Debugger::publishColoredPointCloud(

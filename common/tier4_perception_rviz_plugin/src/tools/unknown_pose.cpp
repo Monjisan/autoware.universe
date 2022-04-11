@@ -95,7 +95,7 @@ void UnknownInitialPoseTool::onInitialize()
 void UnknownInitialPoseTool::updateTopic()
 {
   rclcpp::Node::SharedPtr raw_node = context_->getRosNodeAbstraction().lock()->get_raw_node();
-  dummy_object_info_pub_ = raw_node->create_publisher<dummy_perception_publisher::msg::Object>(
+  dummy_object_info_pub_ = raw_node->create_tilde_publisher<dummy_perception_publisher::msg::Object>(
     topic_property_->getStdString(), 1);
   clock_ = raw_node->get_clock();
 }

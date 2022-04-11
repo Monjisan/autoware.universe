@@ -25,7 +25,7 @@ public:
   EmptyObjectsPublisher() : Node("empty_objects_publisher")
   {
     empty_objects_pub_ =
-      this->create_publisher<autoware_auto_perception_msgs::msg::PredictedObjects>(
+      this->create_tilde_publisher<autoware_auto_perception_msgs::msg::PredictedObjects>(
         "~/output/objects", 1);
 
     using std::chrono_literals::operator""ms;

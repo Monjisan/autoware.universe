@@ -46,7 +46,7 @@ LocalizationErrorMonitor::LocalizationErrorMonitor()
   rclcpp::QoS durable_qos(1);
   durable_qos.transient_local();  // option for latching
   ellipse_marker_pub_ =
-    this->create_publisher<visualization_msgs::msg::Marker>("debug/ellipse_marker", durable_qos);
+    this->create_tilde_publisher<visualization_msgs::msg::Marker>("debug/ellipse_marker", durable_qos);
 
   updater_.setHardwareID("localization_error_monitor");
   updater_.add("localization_accuracy", this, &LocalizationErrorMonitor::checkLocalizationAccuracy);

@@ -24,10 +24,10 @@ ObjectRangeSplitterNode::ObjectRangeSplitterNode(const rclcpp::NodeOptions & nod
   sub_ = this->create_subscription<autoware_auto_perception_msgs::msg::DetectedObjects>(
     "input/object", rclcpp::QoS{1}, std::bind(&ObjectRangeSplitterNode::objectCallback, this, _1));
   long_range_object_pub_ =
-    this->create_publisher<autoware_auto_perception_msgs::msg::DetectedObjects>(
+    this->create_tilde_publisher<autoware_auto_perception_msgs::msg::DetectedObjects>(
       "output/long_range_object", rclcpp::QoS{1});
   short_range_object_pub_ =
-    this->create_publisher<autoware_auto_perception_msgs::msg::DetectedObjects>(
+    this->create_tilde_publisher<autoware_auto_perception_msgs::msg::DetectedObjects>(
       "output/short_range_object", rclcpp::QoS{1});
 }
 

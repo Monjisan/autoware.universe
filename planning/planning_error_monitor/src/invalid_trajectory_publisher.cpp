@@ -31,7 +31,7 @@ InvalidTrajectoryPublisherNode::InvalidTrajectoryPublisherNode(
     "~/input/trajectory", 1,
     std::bind(&InvalidTrajectoryPublisherNode::onCurrentTrajectory, this, _1));
 
-  traj_pub_ = create_publisher<Trajectory>("~/output/trajectory", 1);
+  traj_pub_ = create_tilde_publisher<Trajectory>("~/output/trajectory", 1);
 
   timer_ = rclcpp::create_timer(
     this, get_clock(), 100ms, std::bind(&InvalidTrajectoryPublisherNode::onTimer, this));

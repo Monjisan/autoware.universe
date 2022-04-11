@@ -225,9 +225,9 @@ AutowareErrorMonitor::AutowareErrorMonitor()
     std::bind(&AutowareErrorMonitor::onControlMode, this, _1));
 
   // Publisher
-  pub_hazard_status_ = create_publisher<autoware_auto_system_msgs::msg::HazardStatusStamped>(
+  pub_hazard_status_ = create_tilde_publisher<autoware_auto_system_msgs::msg::HazardStatusStamped>(
     "~/output/hazard_status", rclcpp::QoS{1});
-  pub_diagnostics_err_ = create_publisher<diagnostic_msgs::msg::DiagnosticArray>(
+  pub_diagnostics_err_ = create_tilde_publisher<diagnostic_msgs::msg::DiagnosticArray>(
     "~/output/diagnostics_err", rclcpp::QoS{1});
 
   // Service

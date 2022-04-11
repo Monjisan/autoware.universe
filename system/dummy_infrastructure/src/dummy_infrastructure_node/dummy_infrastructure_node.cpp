@@ -85,7 +85,7 @@ DummyInfrastructureNode::DummyInfrastructureNode(const rclcpp::NodeOptions & nod
     std::bind(&DummyInfrastructureNode::onCommandArray, this, _1));
 
   // Publisher
-  pub_state_array_ = create_publisher<VirtualTrafficLightStateArray>("~/output/state_array", 1);
+  pub_state_array_ = create_tilde_publisher<VirtualTrafficLightStateArray>("~/output/state_array", 1);
 
   // Timer
   const auto update_period_ns = rclcpp::Rate(node_param_.update_rate_hz).period();

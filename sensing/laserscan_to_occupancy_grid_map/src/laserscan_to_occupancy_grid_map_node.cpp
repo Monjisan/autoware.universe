@@ -147,7 +147,7 @@ OccupancyGridMapNode::OccupancyGridMapNode(const rclcpp::NodeOptions & node_opti
 
   sync_ptr_->registerCallback(
     std::bind(&OccupancyGridMapNode::onLaserscanPointCloud2WithObstacleAndRaw, this, _1, _2, _3));
-  occupancy_grid_map_pub_ = create_publisher<OccupancyGrid>("~/output/occupancy_grid_map", 1);
+  occupancy_grid_map_pub_ = create_tilde_publisher<OccupancyGrid>("~/output/occupancy_grid_map", 1);
 
   /* Occupancy grid */
   occupancy_grid_map_updater_ptr_ = std::make_shared<OccupancyGridMapBBFUpdater>(

@@ -53,7 +53,7 @@ public:
   void publish(const std::string & name, const T & data, const rclcpp::QoS & qos = rclcpp::QoS(1))
   {
     if (pub_map_.count(name) == 0) {
-      pub_map_[name] = node_->create_publisher<T>(std::string(ns_) + "/" + name, qos);
+      pub_map_[name] = node_->create_tilde_publisher<T>(std::string(ns_) + "/" + name, qos);
     }
 
     std::dynamic_pointer_cast<tilde:;TildePublisher<T>>(pub_map_.at(name))->publish(data);

@@ -80,12 +80,12 @@ PurePursuitNode::PurePursuitNode(const rclcpp::NodeOptions & node_options)
     "input/current_odometry", 1, std::bind(&PurePursuitNode::onCurrentOdometry, this, _1));
 
   // Publishers
-  pub_ctrl_cmd_ = this->create_publisher<autoware_auto_control_msgs::msg::AckermannLateralCommand>(
+  pub_ctrl_cmd_ = this->create_tilde_publisher<autoware_auto_control_msgs::msg::AckermannLateralCommand>(
     "output/control_raw", 1);
 
   // Debug Publishers
   pub_debug_marker_ =
-    this->create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/markers", 0);
+    this->create_tilde_publisher<visualization_msgs::msg::MarkerArray>("~/debug/markers", 0);
 
   // Timer
   {

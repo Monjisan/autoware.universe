@@ -82,7 +82,7 @@ ControlPerformanceAnalysisNode::ControlPerformanceAnalysisNode(
     "~/input/odometry", 1, std::bind(&ControlPerformanceAnalysisNode::onVelocity, this, _1));
 
   // Publishers
-  pub_error_msg_ = create_publisher<ErrorStamped>("~/output/error_stamped", 1);
+  pub_error_msg_ = create_tilde_publisher<ErrorStamped>("~/output/error_stamped", 1);
 
   // Timer
   {
