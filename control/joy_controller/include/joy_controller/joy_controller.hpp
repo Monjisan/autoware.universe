@@ -42,7 +42,7 @@ using GearShiftType = tier4_external_api_msgs::msg::GearShift::_data_type;
 using TurnSignalType = tier4_external_api_msgs::msg::TurnSignal::_data_type;
 using GateModeType = tier4_control_msgs::msg::GateMode::_data_type;
 
-class AutowareJoyControllerNode : public rclcpp::Node
+class AutowareJoyControllerNode : public tilde::TildeNode
 {
 public:
   explicit AutowareJoyControllerNode(const rclcpp::NodeOptions & node_options);

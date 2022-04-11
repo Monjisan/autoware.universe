@@ -19,7 +19,7 @@
 #include <memory>
 #include <utility>
 
-class EmptyObjectsPublisher : public rclcpp::Node
+class EmptyObjectsPublisher : public tilde::TildeNode
 {
 public:
   EmptyObjectsPublisher() : TildeNode("empty_objects_publisher")

@@ -32,7 +32,7 @@
 
 namespace bp = boost::process;
 
-class ProcessMonitor : public rclcpp::Node
+class ProcessMonitor : public tilde::TildeNode
 {
 public:
   /**

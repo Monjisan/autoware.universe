@@ -66,7 +66,7 @@ private:
   std::array<double, static_cast<int>(TYPE::SIZE)> values_;
 };
 
-class RawVehicleCommandConverterNode : public rclcpp::Node
+class RawVehicleCommandConverterNode : public tilde::TildeNode
 {
 public:
   explicit RawVehicleCommandConverterNode(const rclcpp::NodeOptions & node_options);

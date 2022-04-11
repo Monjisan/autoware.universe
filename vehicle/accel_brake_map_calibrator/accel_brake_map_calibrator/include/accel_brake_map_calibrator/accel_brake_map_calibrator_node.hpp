@@ -58,7 +58,7 @@ struct DataStamped
 };
 using DataStampedPtr = std::shared_ptr<DataStamped>;
 
-class AccelBrakeMapCalibrator : public rclcpp::Node
+class AccelBrakeMapCalibrator : public tilde::TildeNode
 {
 private:
   std::shared_ptr<tier4_autoware_utils::TransformListener> transform_listener_;

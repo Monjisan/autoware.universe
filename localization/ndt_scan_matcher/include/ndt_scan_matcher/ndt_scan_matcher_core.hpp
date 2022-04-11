@@ -75,7 +75,7 @@ std::shared_ptr<NormalDistributionsTransformBase<PointSource, PointTarget>> getN
   throw std::runtime_error(s);
 }
 
-class NDTScanMatcher : public rclcpp::Node
+class NDTScanMatcher : public tilde::TildeNode
 {
   using PointSource = pcl::PointXYZ;
   using PointTarget = pcl::PointXYZ;

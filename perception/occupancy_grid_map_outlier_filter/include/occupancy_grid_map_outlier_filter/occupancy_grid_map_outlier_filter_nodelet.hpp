@@ -65,7 +65,7 @@ private:
   pcl::search::Search<pcl::PointXY>::Ptr kd_tree_;
 };
 
-class OccupancyGridMapOutlierFilterComponent : public rclcpp::Node
+class OccupancyGridMapOutlierFilterComponent : public tilde::TildeNode
 {
 public:
   explicit OccupancyGridMapOutlierFilterComponent(const rclcpp::NodeOptions & options);

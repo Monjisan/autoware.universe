@@ -58,7 +58,7 @@ struct KeyName
   static constexpr const char * external_control = "external_control";
 };
 
-class AutowareErrorMonitor : public rclcpp::Node
+class AutowareErrorMonitor : public tilde::TildeNode
 {
 public:
   AutowareErrorMonitor();

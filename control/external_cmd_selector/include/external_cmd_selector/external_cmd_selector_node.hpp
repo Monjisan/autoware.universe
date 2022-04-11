@@ -31,7 +31,7 @@
 
 #include <memory>
 
-class ExternalCmdSelector : public rclcpp::Node
+class ExternalCmdSelector : public tilde::TildeNode
 {
 public:
   explicit ExternalCmdSelector(const rclcpp::NodeOptions & node_options);

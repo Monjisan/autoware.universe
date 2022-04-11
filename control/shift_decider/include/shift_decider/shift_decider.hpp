@@ -22,7 +22,7 @@
 
 #include <memory>
 
-class ShiftDecider : public rclcpp::Node
+class ShiftDecider : public tilde::TildeNode
 {
 public:
   explicit ShiftDecider(const rclcpp::NodeOptions & node_options);

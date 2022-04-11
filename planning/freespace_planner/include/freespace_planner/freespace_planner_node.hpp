@@ -80,7 +80,7 @@ struct NodeParam
   bool replan_when_course_out;
 };
 
-class FreespacePlannerNode : public rclcpp::Node
+class FreespacePlannerNode : public tilde::TildeNode
 {
 public:
   explicit FreespacePlannerNode(const rclcpp::NodeOptions & node_options);

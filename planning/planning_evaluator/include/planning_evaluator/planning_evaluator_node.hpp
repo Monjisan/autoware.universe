@@ -43,7 +43,7 @@ using diagnostic_msgs::msg::DiagnosticStatus;
 /**
  * @brief Node for planning evaluation
  */
-class PlanningEvaluatorNode : public rclcpp::Node
+class PlanningEvaluatorNode : public tilde::TildeNode
 {
 public:
   explicit PlanningEvaluatorNode(const rclcpp::NodeOptions & node_options);

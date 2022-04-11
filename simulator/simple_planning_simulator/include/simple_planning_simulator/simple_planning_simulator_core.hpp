@@ -118,7 +118,7 @@ public:
   std::shared_ptr<std::normal_distribution<>> steer_dist_;
 };
 
-class PLANNING_SIMULATOR_PUBLIC SimplePlanningSimulator : public rclcpp::Node
+class PLANNING_SIMULATOR_PUBLIC SimplePlanningSimulator : public tilde::TildeNode
 {
 public:
   explicit SimplePlanningSimulator(const rclcpp::NodeOptions & options);

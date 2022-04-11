@@ -41,7 +41,7 @@ using raw_vehicle_cmd_converter::BrakeMap;
 using ControlCommandStamped = autoware_auto_control_msgs::msg::AckermannControlCommand;
 using Odometry = nav_msgs::msg::Odometry;
 
-class ExternalCmdConverterNode : public rclcpp::Node
+class ExternalCmdConverterNode : public tilde::TildeNode
 {
 public:
   explicit ExternalCmdConverterNode(const rclcpp::NodeOptions & node_options);

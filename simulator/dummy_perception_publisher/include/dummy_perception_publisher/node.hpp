@@ -36,7 +36,7 @@
 #include <random>
 #include <vector>
 
-class DummyPerceptionPublisherNode : public rclcpp::Node
+class DummyPerceptionPublisherNode : public tilde::TildeNode
 {
 private:
   tilde:;TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;

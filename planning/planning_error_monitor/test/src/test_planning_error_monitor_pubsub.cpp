@@ -31,7 +31,7 @@ using diagnostic_msgs::msg::DiagnosticArray;
 using diagnostic_msgs::msg::DiagnosticStatus;
 using planning_diagnostics::PlanningErrorMonitorNode;
 
-class PubSubManager : public rclcpp::Node
+class PubSubManager : public tilde::TildeNode
 {
 public:
   PubSubManager() : TildeNode("test_pub_sub")

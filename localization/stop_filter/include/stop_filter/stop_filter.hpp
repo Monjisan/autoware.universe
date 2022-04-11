@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 
-class StopFilter : public rclcpp::Node
+class StopFilter : public tilde::TildeNode
 {
 public:
   StopFilter(const std::string & node_name, const rclcpp::NodeOptions & options);

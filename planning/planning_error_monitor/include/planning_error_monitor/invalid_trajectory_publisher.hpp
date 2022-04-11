@@ -26,7 +26,7 @@ namespace planning_diagnostics
 using autoware_auto_planning_msgs::msg::Trajectory;
 using autoware_auto_planning_msgs::msg::TrajectoryPoint;
 
-class InvalidTrajectoryPublisherNode : public rclcpp::Node
+class InvalidTrajectoryPublisherNode : public tilde::TildeNode
 {
 public:
   explicit InvalidTrajectoryPublisherNode(const rclcpp::NodeOptions & node_options);

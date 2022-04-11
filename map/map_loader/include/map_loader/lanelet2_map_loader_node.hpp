@@ -21,7 +21,7 @@
 
 #include <memory>
 
-class Lanelet2MapLoaderNode : public rclcpp::Node
+class Lanelet2MapLoaderNode : public tilde::TildeNode
 {
 public:
   explicit Lanelet2MapLoaderNode(const rclcpp::NodeOptions & options);

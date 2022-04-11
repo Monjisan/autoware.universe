@@ -38,7 +38,7 @@ using std_msgs::msg::Int32;
 namespace
 {
 
-class NodeUnderTest : public rclcpp::Node
+class NodeUnderTest : public tilde::TildeNode
 {
 public:
   NodeUnderTest()

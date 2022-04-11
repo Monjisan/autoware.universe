@@ -58,7 +58,7 @@ using tier4_debug_msgs::msg::Float32Stamped;        // temporary
 using tier4_planning_msgs::msg::StopSpeedExceeded;  // temporary
 using tier4_planning_msgs::msg::VelocityLimit;      // temporary
 
-class MotionVelocitySmootherNode : public rclcpp::Node
+class MotionVelocitySmootherNode : public tilde::TildeNode
 {
 public:
   explicit MotionVelocitySmootherNode(const rclcpp::NodeOptions & node_options);

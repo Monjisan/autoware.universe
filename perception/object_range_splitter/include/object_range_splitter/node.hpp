@@ -23,7 +23,7 @@
 
 namespace object_range_splitter
 {
-class ObjectRangeSplitterNode : public rclcpp::Node
+class ObjectRangeSplitterNode : public tilde::TildeNode
 {
 public:
   explicit ObjectRangeSplitterNode(const rclcpp::NodeOptions & node_options);

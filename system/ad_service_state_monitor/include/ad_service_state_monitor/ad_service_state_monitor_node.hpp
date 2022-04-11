@@ -40,7 +40,7 @@
 #include <string>
 #include <vector>
 
-class AutowareStateMonitorNode : public rclcpp::Node
+class AutowareStateMonitorNode : public tilde::TildeNode
 {
 public:
   AutowareStateMonitorNode();

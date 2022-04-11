@@ -31,7 +31,7 @@
 
 namespace object_association
 {
-class ObjectAssociationMergerNode : public rclcpp::Node
+class ObjectAssociationMergerNode : public tilde::TildeNode
 {
 public:
   explicit ObjectAssociationMergerNode(const rclcpp::NodeOptions & node_options);

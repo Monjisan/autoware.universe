@@ -49,7 +49,7 @@
 
 namespace traffic_light
 {
-class TrafficLightClassifierNodelet : public rclcpp::Node
+class TrafficLightClassifierNodelet : public tilde::TildeNode
 {
 public:
   explicit TrafficLightClassifierNodelet(const rclcpp::NodeOptions & options);

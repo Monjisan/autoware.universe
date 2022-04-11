@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-class Lanelet2MapVisualizationNode : public rclcpp::Node
+class Lanelet2MapVisualizationNode : public tilde::TildeNode
 {
 public:
   explicit Lanelet2MapVisualizationNode(const rclcpp::NodeOptions & options);

@@ -38,7 +38,7 @@
 
 namespace object_recognition
 {
-class TensorrtYoloNodelet : public rclcpp::Node
+class TensorrtYoloNodelet : public tilde::TildeNode
 {
 public:
   explicit TensorrtYoloNodelet(const rclcpp::NodeOptions & options);

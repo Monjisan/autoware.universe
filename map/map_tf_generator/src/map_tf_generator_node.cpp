@@ -25,7 +25,7 @@
 #include <memory>
 #include <string>
 
-class MapTFGeneratorNode : public rclcpp::Node
+class MapTFGeneratorNode : public tilde::TildeNode
 {
 public:
   using PointCloud = pcl::PointCloud<pcl::PointXYZ>;

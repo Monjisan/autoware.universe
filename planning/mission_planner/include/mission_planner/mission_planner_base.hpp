@@ -33,7 +33,7 @@
 
 namespace mission_planner
 {
-class MissionPlanner : public rclcpp::Node
+class MissionPlanner : public tilde::TildeNode
 {
 protected:
   MissionPlanner(const std::string & node_name, const rclcpp::NodeOptions & node_options);

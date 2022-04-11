@@ -32,7 +32,7 @@ using autoware_auto_planning_msgs::msg::TrajectoryPoint;
 using diagnostic_updater::DiagnosticStatusWrapper;
 using diagnostic_updater::Updater;
 
-class PlanningErrorMonitorNode : public rclcpp::Node
+class PlanningErrorMonitorNode : public tilde::TildeNode
 {
 public:
   explicit PlanningErrorMonitorNode(const rclcpp::NodeOptions & node_options);

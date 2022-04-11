@@ -31,7 +31,7 @@ struct DiagConfig
   std::string msg_stale;
 };
 
-class DummyDiagPublisherNode : public rclcpp::Node
+class DummyDiagPublisherNode : public tilde::TildeNode
 {
 public:
   DummyDiagPublisherNode();

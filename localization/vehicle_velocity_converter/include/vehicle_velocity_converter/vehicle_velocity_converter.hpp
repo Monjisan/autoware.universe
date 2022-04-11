@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-class VehicleVelocityConverter : public rclcpp::Node
+class VehicleVelocityConverter : public tilde::TildeNode
 {
 public:
   VehicleVelocityConverter();

@@ -60,7 +60,7 @@ private:
   std::vector<boost::circular_buffer<sensor_msgs::msg::Image::ConstSharedPtr>> image_buffers_;
 };
 
-class RoiClusterFusionNodelet : public rclcpp::Node
+class RoiClusterFusionNodelet : public tilde::TildeNode
 {
 public:
   explicit RoiClusterFusionNodelet(const rclcpp::NodeOptions & options);

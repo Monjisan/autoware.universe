@@ -32,7 +32,7 @@
 #include <memory>
 #include <string>
 
-class PoseInitializer : public rclcpp::Node
+class PoseInitializer : public tilde::TildeNode
 {
 public:
   PoseInitializer();

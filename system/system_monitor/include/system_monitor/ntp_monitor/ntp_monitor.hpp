@@ -27,7 +27,7 @@
 #include <string>
 #include <thread>
 
-class NTPMonitor : public rclcpp::Node
+class NTPMonitor : public tilde::TildeNode
 {
 public:
   /**

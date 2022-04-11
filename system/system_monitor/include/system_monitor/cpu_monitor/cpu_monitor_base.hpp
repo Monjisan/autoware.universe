@@ -54,7 +54,7 @@ typedef struct cpu_freq_info
   cpu_freq_info(int index, const std::string & path) : index_(index), path_(path) {}
 } cpu_freq_info;
 
-class CPUMonitorBase : public rclcpp::Node
+class CPUMonitorBase : public tilde::TildeNode
 {
 public:
   /**

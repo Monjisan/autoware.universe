@@ -36,7 +36,7 @@
 
 namespace gnss_poser
 {
-class GNSSPoser : public rclcpp::Node
+class GNSSPoser : public tilde::TildeNode
 {
 public:
   explicit GNSSPoser(const rclcpp::NodeOptions & node_options);

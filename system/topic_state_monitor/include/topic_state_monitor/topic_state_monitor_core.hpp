@@ -33,7 +33,7 @@ struct NodeParam
   double update_rate;
 };
 
-class TopicStateMonitorNode : public rclcpp::Node
+class TopicStateMonitorNode : public tilde::TildeNode
 {
 public:
   explicit TopicStateMonitorNode(const rclcpp::NodeOptions & node_options);

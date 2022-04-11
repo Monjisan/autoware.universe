@@ -26,7 +26,7 @@
 
 using autoware_auto_perception_msgs::msg::DetectedObjects;
 using tier4_perception_msgs::msg::DetectedObjectsWithFeature;
-class ShapeEstimationNode : public rclcpp::Node
+class ShapeEstimationNode : public tilde::TildeNode
 {
 private:
   // ros

@@ -29,7 +29,7 @@ using tier4_planning_msgs::msg::VelocityLimit;
 using tier4_planning_msgs::msg::VelocityLimitClearCommand;
 using tier4_planning_msgs::msg::VelocityLimitConstraints;
 
-class ExternalVelocityLimitSelectorNode : public rclcpp::Node
+class ExternalVelocityLimitSelectorNode : public tilde::TildeNode
 {
 public:
   explicit ExternalVelocityLimitSelectorNode(const rclcpp::NodeOptions & node_options);

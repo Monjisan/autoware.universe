@@ -50,7 +50,7 @@ struct Param
   HazardLampPolicy turning_hazard_on{};
 };
 
-class EmergencyHandler : public rclcpp::Node
+class EmergencyHandler : public tilde::TildeNode
 {
 public:
   EmergencyHandler();

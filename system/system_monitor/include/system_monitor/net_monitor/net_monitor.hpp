@@ -42,7 +42,7 @@ typedef struct bytes
   bytes() : rx_bytes(0), tx_bytes(0) {}
 } bytes;
 
-class NetMonitor : public rclcpp::Node
+class NetMonitor : public tilde::TildeNode
 {
 public:
   /**

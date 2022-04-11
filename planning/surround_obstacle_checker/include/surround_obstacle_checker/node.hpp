@@ -54,7 +54,7 @@ using TrajectoryPoints = std::vector<TrajectoryPoint>;
 
 enum class State { PASS, STOP };
 
-class SurroundObstacleCheckerNode : public rclcpp::Node
+class SurroundObstacleCheckerNode : public tilde::TildeNode
 {
 public:
   explicit SurroundObstacleCheckerNode(const rclcpp::NodeOptions & node_options);

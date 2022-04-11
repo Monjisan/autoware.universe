@@ -40,7 +40,7 @@
 #include <string>
 #include <vector>
 
-class MultiObjectTracker : public rclcpp::Node
+class MultiObjectTracker : public tilde::TildeNode
 {
 public:
   explicit MultiObjectTracker(const rclcpp::NodeOptions & node_options);

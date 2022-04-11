@@ -36,7 +36,7 @@ std::string toStrInfo(const Odometry & o)
   return ss.str();
 }
 
-class PubSubNode : public rclcpp::Node
+class PubSubNode : public tilde::TildeNode
 {
 public:
   PubSubNode() : Node{"test_simple_planning_simulator_pubsub"}

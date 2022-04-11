@@ -64,7 +64,7 @@ struct MPTParam;
 struct DebugData;
 struct Trajectories;
 
-class ObstacleAvoidancePlanner : public rclcpp::Node
+class ObstacleAvoidancePlanner : public tilde::TildeNode
 {
 private:
   OnSetParametersCallbackHandle::SharedPtr set_param_res_;

@@ -37,7 +37,7 @@ struct NodeParam
   bool oneshot;
 };
 
-class GoalDistanceCalculatorNode : public rclcpp::Node
+class GoalDistanceCalculatorNode : public tilde::TildeNode
 {
 public:
   explicit GoalDistanceCalculatorNode(const rclcpp::NodeOptions & options);

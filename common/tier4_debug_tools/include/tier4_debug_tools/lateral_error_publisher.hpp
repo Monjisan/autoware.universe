@@ -26,7 +26,7 @@
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 #include <tier4_debug_msgs/msg/float32_stamped.hpp>
 
-class LateralErrorPublisher : public rclcpp::Node
+class LateralErrorPublisher : public tilde::TildeNode
 {
 public:
   explicit LateralErrorPublisher(const rclcpp::NodeOptions & node_options);

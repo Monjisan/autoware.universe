@@ -38,7 +38,7 @@
 
 namespace behavior_velocity_planner
 {
-class BehaviorVelocityPlannerNode : public rclcpp::Node
+class BehaviorVelocityPlannerNode : public tilde::TildeNode
 {
 public:
   explicit BehaviorVelocityPlannerNode(const rclcpp::NodeOptions & node_options);

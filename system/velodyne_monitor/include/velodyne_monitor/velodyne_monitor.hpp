@@ -35,7 +35,7 @@ namespace http = web::http;
 namespace client = web::http::client;
 namespace json = web::json;
 
-class VelodyneMonitor : public rclcpp::Node
+class VelodyneMonitor : public tilde::TildeNode
 {
 public:
   /**

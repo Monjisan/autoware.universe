@@ -53,7 +53,7 @@ struct Commands
   }
 };
 
-class VehicleCmdGate : public rclcpp::Node
+class VehicleCmdGate : public tilde::TildeNode
 {
   using VehicleEmergencyStamped = tier4_vehicle_msgs::msg::VehicleEmergencyStamped;
 

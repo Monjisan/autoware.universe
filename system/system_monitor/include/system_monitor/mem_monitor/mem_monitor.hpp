@@ -26,7 +26,7 @@
 #include <map>
 #include <string>
 
-class MemMonitor : public rclcpp::Node
+class MemMonitor : public tilde::TildeNode
 {
 public:
   /**

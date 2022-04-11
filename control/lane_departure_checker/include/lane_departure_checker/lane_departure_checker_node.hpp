@@ -49,7 +49,7 @@ struct NodeParam
   bool visualize_lanelet;
 };
 
-class LaneDepartureCheckerNode : public rclcpp::Node
+class LaneDepartureCheckerNode : public tilde::TildeNode
 {
 public:
   explicit LaneDepartureCheckerNode(const rclcpp::NodeOptions & options);

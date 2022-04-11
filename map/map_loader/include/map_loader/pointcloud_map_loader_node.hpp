@@ -38,7 +38,7 @@
 #include <string>
 #include <vector>
 
-class PointCloudMapLoaderNode : public rclcpp::Node
+class PointCloudMapLoaderNode : public tilde::TildeNode
 {
 public:
   explicit PointCloudMapLoaderNode(const rclcpp::NodeOptions & options);

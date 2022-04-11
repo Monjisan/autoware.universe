@@ -92,7 +92,7 @@ using point_cloud_msg_wrapper::PointCloud2Modifier;
  * PointCloud output message.
  * \author Radu Bogdan Rusu
  */
-class PointCloudConcatenateDataSynchronizerComponent : public rclcpp::Node
+class PointCloudConcatenateDataSynchronizerComponent : public tilde::TildeNode
 {
 public:
   typedef sensor_msgs::msg::PointCloud2 PointCloud2;

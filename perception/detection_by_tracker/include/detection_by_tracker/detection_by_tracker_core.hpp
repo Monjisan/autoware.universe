@@ -52,7 +52,7 @@ public:
     const rclcpp::Time & time, autoware_auto_perception_msgs::msg::TrackedObjects & output);
 };
 
-class DetectionByTracker : public rclcpp::Node
+class DetectionByTracker : public tilde::TildeNode
 {
 public:
   explicit DetectionByTracker(const rclcpp::NodeOptions & node_options);

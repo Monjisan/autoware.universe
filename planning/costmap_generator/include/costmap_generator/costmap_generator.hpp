@@ -68,7 +68,7 @@
 #include <string>
 #include <vector>
 
-class CostmapGenerator : public rclcpp::Node
+class CostmapGenerator : public tilde::TildeNode
 {
 public:
   explicit CostmapGenerator(const rclcpp::NodeOptions & node_options);

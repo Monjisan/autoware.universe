@@ -98,7 +98,7 @@ bool get_param(const std::vector<rclcpp::Parameter> & p, const std::string & nam
 /** \brief @b Filter represents the base filter class. Some generic 3D operations that are
  * applicable to all filters are defined here as static methods. \author Radu Bogdan Rusu
  */
-class Filter : public rclcpp::Node
+class Filter : public tilde::TildeNode
 {
 public:
   using PointCloud2 = sensor_msgs::msg::PointCloud2;

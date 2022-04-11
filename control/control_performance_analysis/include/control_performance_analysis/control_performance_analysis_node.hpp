@@ -51,7 +51,7 @@ struct Param
   double control_period;
 };
 
-class ControlPerformanceAnalysisNode : public rclcpp::Node
+class ControlPerformanceAnalysisNode : public tilde::TildeNode
 {
 public:
   explicit ControlPerformanceAnalysisNode(const rclcpp::NodeOptions & node_options);

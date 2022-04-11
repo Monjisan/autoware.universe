@@ -42,7 +42,7 @@
 #include <string>
 #include <vector>
 
-class EKFLocalizer : public rclcpp::Node
+class EKFLocalizer : public tilde::TildeNode
 {
 public:
   EKFLocalizer(const std::string & node_name, const rclcpp::NodeOptions & options);

@@ -20,7 +20,7 @@
 
 namespace imu_corrector
 {
-class ImuCorrector : public rclcpp::Node
+class ImuCorrector : public tilde::TildeNode
 {
 public:
   explicit ImuCorrector(const rclcpp::NodeOptions & node_options);

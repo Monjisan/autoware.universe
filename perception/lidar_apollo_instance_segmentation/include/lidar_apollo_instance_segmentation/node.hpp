@@ -31,7 +31,7 @@ public:
     tier4_perception_msgs::msg::DetectedObjectsWithFeature & output) = 0;
 };
 
-class LidarInstanceSegmentationNode : public rclcpp::Node
+class LidarInstanceSegmentationNode : public tilde::TildeNode
 {
 private:
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_sub_;

@@ -26,7 +26,7 @@
 
 namespace euclidean_cluster
 {
-class EuclideanClusterNode : public rclcpp::Node
+class EuclideanClusterNode : public tilde::TildeNode
 {
 public:
   explicit EuclideanClusterNode(const rclcpp::NodeOptions & options);

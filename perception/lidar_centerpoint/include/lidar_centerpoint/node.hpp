@@ -33,7 +33,7 @@ namespace centerpoint
 {
 using Label = autoware_auto_perception_msgs::msg::ObjectClassification;
 
-class LidarCenterPointNode : public rclcpp::Node
+class LidarCenterPointNode : public tilde::TildeNode
 {
 public:
   explicit LidarCenterPointNode(const rclcpp::NodeOptions & node_options);

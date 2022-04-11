@@ -39,7 +39,7 @@ using tier4_autoware_utils::Point2d;
 
 namespace pointcloud_preprocessor
 {
-class Lanelet2MapFilterComponent : public rclcpp::Node
+class Lanelet2MapFilterComponent : public tilde::TildeNode
 {
   using PointCloud2 = sensor_msgs::msg::PointCloud2;
   using PointCloud2Ptr = sensor_msgs::msg::PointCloud2::SharedPtr;

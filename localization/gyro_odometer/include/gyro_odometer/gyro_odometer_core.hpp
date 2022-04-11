@@ -28,7 +28,7 @@
 
 #include <string>
 
-class GyroOdometer : public rclcpp::Node
+class GyroOdometer : public tilde::TildeNode
 {
 public:
   GyroOdometer();

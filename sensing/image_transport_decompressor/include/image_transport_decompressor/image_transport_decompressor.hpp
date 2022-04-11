@@ -26,7 +26,7 @@
 
 namespace image_preprocessor
 {
-class ImageTransportDecompressor : public rclcpp::Node
+class ImageTransportDecompressor : public tilde::TildeNode
 {
 public:
   explicit ImageTransportDecompressor(const rclcpp::NodeOptions & node_options);

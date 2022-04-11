@@ -71,7 +71,7 @@ struct DebugData
   geometry_msgs::msg::Point next_target;
 };
 
-class PurePursuitNode : public rclcpp::Node
+class PurePursuitNode : public tilde::TildeNode
 {
 public:
   explicit PurePursuitNode(const rclcpp::NodeOptions & node_options);

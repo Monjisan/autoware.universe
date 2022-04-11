@@ -21,7 +21,7 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <tier4_debug_msgs/msg/float32_stamped.hpp>
 
-class Pose2Twist : public rclcpp::Node
+class Pose2Twist : public tilde::TildeNode
 {
 public:
   Pose2Twist();

@@ -86,7 +86,7 @@ enum class Maneuver {
 
 class MapBasedPrediction;
 
-class MapBasedPredictionROS : public rclcpp::Node
+class MapBasedPredictionROS : public tilde::TildeNode
 {
 private:
   double prediction_time_horizon_;

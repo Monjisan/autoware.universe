@@ -57,7 +57,7 @@
 
 namespace traffic_light
 {
-class MapBasedDetector : public rclcpp::Node
+class MapBasedDetector : public tilde::TildeNode
 {
 public:
   explicit MapBasedDetector(const rclcpp::NodeOptions & node_options);

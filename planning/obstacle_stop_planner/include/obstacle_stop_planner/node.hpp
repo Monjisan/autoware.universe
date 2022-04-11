@@ -88,7 +88,7 @@ struct SlowDownSection
   double velocity;
 };
 
-class ObstacleStopPlannerNode : public rclcpp::Node
+class ObstacleStopPlannerNode : public tilde::TildeNode
 {
 public:
   explicit ObstacleStopPlannerNode(const rclcpp::NodeOptions & node_options);

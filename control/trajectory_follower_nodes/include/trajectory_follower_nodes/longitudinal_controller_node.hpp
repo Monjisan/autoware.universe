@@ -57,7 +57,7 @@ namespace motion_common = ::autoware::motion::motion_common;
 
 /// \class LongitudinalController
 /// \brief The node class used for generating longitudinal control commands (velocity/acceleration)
-class TRAJECTORY_FOLLOWER_PUBLIC LongitudinalController : public rclcpp::Node
+class TRAJECTORY_FOLLOWER_PUBLIC LongitudinalController : public tilde::TildeNode
 {
 public:
   explicit LongitudinalController(const rclcpp::NodeOptions & node_options);

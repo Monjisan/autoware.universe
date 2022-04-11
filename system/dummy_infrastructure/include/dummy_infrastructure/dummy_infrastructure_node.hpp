@@ -32,7 +32,7 @@ using tier4_v2x_msgs::msg::InfrastructureCommandArray;
 using tier4_v2x_msgs::msg::VirtualTrafficLightState;
 using tier4_v2x_msgs::msg::VirtualTrafficLightStateArray;
 
-class DummyInfrastructureNode : public rclcpp::Node
+class DummyInfrastructureNode : public tilde::TildeNode
 {
 public:
   explicit DummyInfrastructureNode(const rclcpp::NodeOptions & node_options);

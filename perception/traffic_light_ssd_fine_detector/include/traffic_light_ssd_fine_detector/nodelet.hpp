@@ -47,7 +47,7 @@ typedef struct Detection
 
 namespace traffic_light
 {
-class TrafficLightSSDFineDetectorNodelet : public rclcpp::Node
+class TrafficLightSSDFineDetectorNodelet : public tilde::TildeNode
 {
 public:
   explicit TrafficLightSSDFineDetectorNodelet(const rclcpp::NodeOptions & options);

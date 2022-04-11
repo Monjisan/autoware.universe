@@ -32,7 +32,7 @@ struct Ellipse
   double size_lateral_direction;
 };
 
-class LocalizationErrorMonitor : public rclcpp::Node
+class LocalizationErrorMonitor : public tilde::TildeNode
 {
 private:
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_with_cov_sub_;

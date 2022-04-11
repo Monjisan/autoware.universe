@@ -25,7 +25,7 @@ namespace detected_object_feature_remover
 using autoware_auto_perception_msgs::msg::DetectedObjects;
 using tier4_perception_msgs::msg::DetectedObjectsWithFeature;
 
-class DetectedObjectFeatureRemover : public rclcpp::Node
+class DetectedObjectFeatureRemover : public tilde::TildeNode
 {
 public:
   explicit DetectedObjectFeatureRemover(const rclcpp::NodeOptions & node_options);

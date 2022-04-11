@@ -41,7 +41,7 @@ struct NodeParam
   double update_rate;
 };
 
-class ObstacleCollisionCheckerNode : public rclcpp::Node
+class ObstacleCollisionCheckerNode : public tilde::TildeNode
 {
 public:
   explicit ObstacleCollisionCheckerNode(const rclcpp::NodeOptions & node_options);

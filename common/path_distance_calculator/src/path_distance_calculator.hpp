@@ -21,7 +21,7 @@
 #include <autoware_auto_planning_msgs/msg/path.hpp>
 #include <tier4_debug_msgs/msg/float64_stamped.hpp>
 
-class PathDistanceCalculator : public rclcpp::Node
+class PathDistanceCalculator : public tilde::TildeNode
 {
 public:
   explicit PathDistanceCalculator(const rclcpp::NodeOptions & options);

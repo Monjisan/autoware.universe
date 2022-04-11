@@ -24,7 +24,7 @@
 
 namespace livox_tag_filter
 {
-class LivoxTagFilterNode : public rclcpp::Node
+class LivoxTagFilterNode : public tilde::TildeNode
 {
 public:
   explicit LivoxTagFilterNode(const rclcpp::NodeOptions & node_options);

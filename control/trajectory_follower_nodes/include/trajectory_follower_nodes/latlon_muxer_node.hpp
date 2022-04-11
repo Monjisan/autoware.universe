@@ -39,7 +39,7 @@ namespace trajectory_follower_nodes
 {
 /// \class LatLonMuxer
 /// \brief The node class used for muxing lateral and longitudinal messages
-class LatLonMuxer : public rclcpp::Node
+class LatLonMuxer : public tilde::TildeNode
 {
 public:
   explicit TRAJECTORY_FOLLOWER_PUBLIC LatLonMuxer(const rclcpp::NodeOptions & node_options);

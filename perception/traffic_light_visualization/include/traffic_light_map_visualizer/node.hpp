@@ -29,7 +29,7 @@
 
 namespace traffic_light
 {
-class TrafficLightMapVisualizerNode : public rclcpp::Node
+class TrafficLightMapVisualizerNode : public tilde::TildeNode
 {
 public:
   TrafficLightMapVisualizerNode(const std::string & node_name, const rclcpp::NodeOptions & options);

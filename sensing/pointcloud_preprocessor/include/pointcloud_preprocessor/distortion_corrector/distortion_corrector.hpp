@@ -36,7 +36,7 @@ using autoware_auto_vehicle_msgs::msg::VelocityReport;
 using rcl_interfaces::msg::SetParametersResult;
 using sensor_msgs::msg::PointCloud2;
 
-class DistortionCorrectorComponent : public rclcpp::Node
+class DistortionCorrectorComponent : public tilde::TildeNode
 {
 public:
   explicit DistortionCorrectorComponent(const rclcpp::NodeOptions & options);

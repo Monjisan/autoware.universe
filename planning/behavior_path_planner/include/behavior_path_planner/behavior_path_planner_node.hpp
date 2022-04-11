@@ -69,7 +69,7 @@ using tier4_planning_msgs::msg::PathChangeModule;
 using tier4_planning_msgs::msg::PathChangeModuleArray;
 using visualization_msgs::msg::MarkerArray;
 
-class BehaviorPathPlannerNode : public rclcpp::Node
+class BehaviorPathPlannerNode : public tilde::TildeNode
 {
 public:
   explicit BehaviorPathPlannerNode(const rclcpp::NodeOptions & node_options);

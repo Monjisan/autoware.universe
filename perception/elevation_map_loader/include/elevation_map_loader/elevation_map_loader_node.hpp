@@ -55,7 +55,7 @@ public:
   bool use_lane_filter_ = false;
 };
 
-class ElevationMapLoaderNode : public rclcpp::Node
+class ElevationMapLoaderNode : public tilde::TildeNode
 {
 public:
   explicit ElevationMapLoaderNode(const rclcpp::NodeOptions & options);

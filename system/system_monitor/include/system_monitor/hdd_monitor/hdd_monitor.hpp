@@ -41,7 +41,7 @@ struct HDDParam
   HDDParam() : temp_warn_(55.0), temp_error_(70.0), free_warn_(5120), free_error_(100) {}
 };
 
-class HDDMonitor : public rclcpp::Node
+class HDDMonitor : public tilde::TildeNode
 {
 public:
   /**

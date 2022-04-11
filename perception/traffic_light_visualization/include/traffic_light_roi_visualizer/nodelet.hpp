@@ -42,7 +42,7 @@ struct ClassificationResult
   std::string label;
 };
 
-class TrafficLightRoiVisualizerNodelet : public rclcpp::Node
+class TrafficLightRoiVisualizerNodelet : public tilde::TildeNode
 {
 public:
   explicit TrafficLightRoiVisualizerNodelet(const rclcpp::NodeOptions & options);

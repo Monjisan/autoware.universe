@@ -22,7 +22,7 @@
 
 namespace mission_planner
 {
-class GoalPoseVisualizer : public rclcpp::Node
+class GoalPoseVisualizer : public tilde::TildeNode
 {
 public:
   explicit GoalPoseVisualizer(const rclcpp::NodeOptions & node_options);

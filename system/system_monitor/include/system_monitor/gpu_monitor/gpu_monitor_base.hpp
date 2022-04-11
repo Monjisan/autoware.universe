@@ -26,7 +26,7 @@
 #include <map>
 #include <string>
 
-class GPUMonitorBase : public rclcpp::Node
+class GPUMonitorBase : public tilde::TildeNode
 {
 public:
   /**

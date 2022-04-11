@@ -35,7 +35,7 @@
 #include <memory>
 #include <string>
 
-class ScenarioSelectorNode : public rclcpp::Node
+class ScenarioSelectorNode : public tilde::TildeNode
 {
 public:
   explicit ScenarioSelectorNode(const rclcpp::NodeOptions & node_options);

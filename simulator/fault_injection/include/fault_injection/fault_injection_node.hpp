@@ -29,7 +29,7 @@ namespace fault_injection
 {
 using tier4_simulation_msgs::msg::SimulationEvents;
 
-class FaultInjectionNode : public rclcpp::Node
+class FaultInjectionNode : public tilde::TildeNode
 {
 public:
   explicit FaultInjectionNode(rclcpp::NodeOptions node_options);

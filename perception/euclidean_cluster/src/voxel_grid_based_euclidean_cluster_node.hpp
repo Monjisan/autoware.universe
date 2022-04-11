@@ -26,7 +26,7 @@
 
 namespace euclidean_cluster
 {
-class VoxelGridBasedEuclideanClusterNode : public rclcpp::Node
+class VoxelGridBasedEuclideanClusterNode : public tilde::TildeNode
 {
 public:
   explicit VoxelGridBasedEuclideanClusterNode(const rclcpp::NodeOptions & options);
