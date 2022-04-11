@@ -55,6 +55,9 @@
 
 #include "simple_planning_simulator/vehicle_model/sim_model_interface.hpp"
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 
 namespace simulation
 {

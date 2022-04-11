@@ -27,6 +27,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 /**
  * @brief error and warning temperature levels
  */

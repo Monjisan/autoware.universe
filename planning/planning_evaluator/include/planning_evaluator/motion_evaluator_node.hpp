@@ -31,6 +31,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace planning_diagnostics
 {
 using autoware_auto_planning_msgs::msg::Trajectory;

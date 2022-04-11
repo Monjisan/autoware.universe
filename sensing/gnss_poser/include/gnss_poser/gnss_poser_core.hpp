@@ -34,6 +34,9 @@
 
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace gnss_poser
 {
 class GNSSPoser : public tilde::TildeNode

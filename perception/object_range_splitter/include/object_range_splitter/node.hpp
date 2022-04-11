@@ -21,6 +21,9 @@
 
 #include <memory>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace object_range_splitter
 {
 class ObjectRangeSplitterNode : public tilde::TildeNode

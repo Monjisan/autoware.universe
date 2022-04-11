@@ -24,6 +24,9 @@
 #include <string>
 #include <utility>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace image_preprocessor
 {
 class ImageTransportDecompressor : public tilde::TildeNode

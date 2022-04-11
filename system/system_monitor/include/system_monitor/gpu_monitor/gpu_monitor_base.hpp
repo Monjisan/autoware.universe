@@ -26,6 +26,9 @@
 #include <map>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class GPUMonitorBase : public tilde::TildeNode
 {
 public:

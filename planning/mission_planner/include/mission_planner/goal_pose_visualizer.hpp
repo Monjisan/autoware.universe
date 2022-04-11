@@ -20,6 +20,9 @@
 #include <autoware_auto_planning_msgs/msg/had_map_route.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace mission_planner
 {
 class GoalPoseVisualizer : public tilde::TildeNode

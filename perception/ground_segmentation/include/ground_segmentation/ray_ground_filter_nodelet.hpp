@@ -70,6 +70,9 @@
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/optional.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace bg = boost::geometry;
 using Point = bg::model::d2::point_xy<double>;
 using Polygon = bg::model::polygon<Point>;

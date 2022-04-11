@@ -61,6 +61,9 @@
 
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace pointcloud_preprocessor
 {
 class CropBoxFilterComponent : public pointcloud_preprocessor::Filter

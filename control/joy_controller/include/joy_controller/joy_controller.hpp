@@ -36,6 +36,9 @@
 #include <memory>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace joy_controller
 {
 using GearShiftType = tier4_external_api_msgs::msg::GearShift::_data_type;

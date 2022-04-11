@@ -26,6 +26,9 @@
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 #include <tier4_debug_msgs/msg/float32_stamped.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class LateralErrorPublisher : public tilde::TildeNode
 {
 public:

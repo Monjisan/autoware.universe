@@ -40,6 +40,9 @@
 
 #include <memory>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 struct Commands
 {
   autoware_auto_control_msgs::msg::AckermannControlCommand control;

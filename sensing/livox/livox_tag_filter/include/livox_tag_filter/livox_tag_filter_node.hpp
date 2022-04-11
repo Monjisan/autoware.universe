@@ -22,6 +22,9 @@
 #include <memory>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace livox_tag_filter
 {
 class LivoxTagFilterNode : public tilde::TildeNode

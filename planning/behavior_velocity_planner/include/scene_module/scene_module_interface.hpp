@@ -32,6 +32,9 @@
 
 #include <visualization_msgs/msg/marker_array.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace behavior_velocity_planner
 {
 class SceneModuleInterface

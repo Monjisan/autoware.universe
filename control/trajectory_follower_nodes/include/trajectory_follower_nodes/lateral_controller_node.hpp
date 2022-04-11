@@ -50,6 +50,9 @@
 #include "tf2_ros/transform_listener.h"
 #include "vehicle_info_util/vehicle_info_util.hpp"
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 
 namespace autoware
 {

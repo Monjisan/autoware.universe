@@ -29,6 +29,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace centerpoint
 {
 using Label = autoware_auto_perception_msgs::msg::ObjectClassification;

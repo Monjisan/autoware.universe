@@ -19,6 +19,9 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace vehicle_info_util
 {
 /// This is a convenience class for saving you from declaring all parameters

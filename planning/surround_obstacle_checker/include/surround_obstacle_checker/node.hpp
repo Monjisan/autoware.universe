@@ -45,6 +45,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 using Point2d = boost::geometry::model::d2::point_xy<double>;
 using Polygon2d =
   boost::geometry::model::polygon<Point2d, false, false>;  // counter-clockwise, open

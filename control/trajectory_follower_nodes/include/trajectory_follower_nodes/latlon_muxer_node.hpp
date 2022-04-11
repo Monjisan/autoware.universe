@@ -28,6 +28,9 @@
 #include "rclcpp/time.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace autoware
 {
 namespace motion

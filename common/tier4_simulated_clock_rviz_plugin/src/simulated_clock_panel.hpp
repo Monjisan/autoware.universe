@@ -29,6 +29,9 @@
 
 #include <memory>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace rviz_plugins
 {
 class SimulatedClockPanel : public rviz_common::Panel

@@ -31,6 +31,9 @@
 
 #include <memory>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace control_performance_analysis
 {
 using autoware_auto_control_msgs::msg::AckermannLateralCommand;

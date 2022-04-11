@@ -26,6 +26,9 @@
 #include <map>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class MemMonitor : public tilde::TildeNode
 {
 public:

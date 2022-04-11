@@ -18,6 +18,9 @@
 
 #include <sensor_msgs/msg/imu.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace imu_corrector
 {
 class ImuCorrector : public tilde::TildeNode

@@ -18,6 +18,9 @@
 
 #include <tier4_perception_msgs/msg/detected_objects_with_feature.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class Debugger
 {
 public:

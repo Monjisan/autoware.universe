@@ -29,6 +29,9 @@
 
 #include <memory>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace goal_distance_calculator
 {
 struct NodeParam

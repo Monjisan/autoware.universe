@@ -24,6 +24,9 @@
 
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 #define raspiUnderVoltageDetected (1 << 0)              // 0x00001
 #define raspiArmFrequencyCapped (1 << 1)                // 0x00002
 #define raspiCurrentlyThrottled (1 << 2)                // 0x00004

@@ -29,6 +29,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 #define toMbit(X) (static_cast<float>(X) / 1000000 * 8)
 
 /**

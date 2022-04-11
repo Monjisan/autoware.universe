@@ -25,6 +25,9 @@
 #include <memory>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 enum class PoseType : int8_t { NoStart = 0 };
 enum class PointType : int8_t { NoStart = 0 };
 class SurroundObstacleCheckerDebugNode

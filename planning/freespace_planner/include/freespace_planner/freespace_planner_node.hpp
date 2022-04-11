@@ -52,6 +52,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace freespace_planner
 {
 using autoware_auto_planning_msgs::msg::HADMapRoute;

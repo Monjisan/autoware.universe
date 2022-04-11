@@ -29,6 +29,9 @@
 #include <mutex>
 #include <string>
 #include <vector>
+
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
 namespace compare_map_segmentation
 {
 class CompareElevationMapFilterComponent : public pointcloud_preprocessor::Filter

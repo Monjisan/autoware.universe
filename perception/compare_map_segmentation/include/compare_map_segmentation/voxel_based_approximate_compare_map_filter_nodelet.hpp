@@ -22,6 +22,9 @@
 
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace compare_map_segmentation
 {
 class VoxelBasedApproximateCompareMapFilterComponent : public pointcloud_preprocessor::Filter

@@ -25,6 +25,9 @@
 #include <string>
 #include <unordered_map>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 using tier4_planning_msgs::msg::VelocityLimit;
 using tier4_planning_msgs::msg::VelocityLimitClearCommand;
 using tier4_planning_msgs::msg::VelocityLimitConstraints;

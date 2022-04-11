@@ -23,6 +23,9 @@
 #include <sstream>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace tier4_autoware_utils
 {
 class ProcessingTimePublisher

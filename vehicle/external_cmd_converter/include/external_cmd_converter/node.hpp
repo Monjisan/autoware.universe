@@ -30,6 +30,9 @@
 #include <memory>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace external_cmd_converter
 {
 using GearCommand = autoware_auto_vehicle_msgs::msg::GearCommand;

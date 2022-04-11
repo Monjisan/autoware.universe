@@ -21,6 +21,9 @@
 #include <autoware_auto_planning_msgs/msg/path.hpp>
 #include <tier4_debug_msgs/msg/float64_stamped.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class PathDistanceCalculator : public tilde::TildeNode
 {
 public:

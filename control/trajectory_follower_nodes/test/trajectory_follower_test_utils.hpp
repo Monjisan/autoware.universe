@@ -24,6 +24,9 @@
 #include "rclcpp/time.hpp"
 #include "tf2_ros/static_transform_broadcaster.h"
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace test_utils
 {
 using FakeNodeFixture = autoware::tools::testing::FakeTestNode;

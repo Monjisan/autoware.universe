@@ -25,6 +25,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace dummy_infrastructure
 {
 using tier4_v2x_msgs::msg::InfrastructureCommand;

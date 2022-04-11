@@ -34,6 +34,9 @@
 #include <mutex>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace traffic_light
 {
 struct ClassificationResult

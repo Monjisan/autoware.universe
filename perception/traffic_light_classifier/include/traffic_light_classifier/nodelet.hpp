@@ -47,6 +47,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace traffic_light
 {
 class TrafficLightClassifierNodelet : public tilde::TildeNode

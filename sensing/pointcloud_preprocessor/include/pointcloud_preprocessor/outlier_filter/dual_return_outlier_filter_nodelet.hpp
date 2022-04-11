@@ -34,6 +34,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace pointcloud_preprocessor
 {
 using diagnostic_updater::DiagnosticStatusWrapper;

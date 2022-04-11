@@ -42,6 +42,9 @@
 #include "trajectory_follower/smooth_stop.hpp"
 #include "vehicle_info_util/vehicle_info_util.hpp"
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace autoware
 {
 namespace motion

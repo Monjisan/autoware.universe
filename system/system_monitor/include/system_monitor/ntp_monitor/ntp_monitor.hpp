@@ -27,6 +27,9 @@
 #include <string>
 #include <thread>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class NTPMonitor : public tilde::TildeNode
 {
 public:

@@ -38,6 +38,9 @@
 #include <memory>
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace occupancy_grid_map_outlier_filter
 {
 using geometry_msgs::msg::Pose;

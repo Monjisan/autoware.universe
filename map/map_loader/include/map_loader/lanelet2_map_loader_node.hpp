@@ -21,6 +21,9 @@
 
 #include <memory>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class Lanelet2MapLoaderNode : public tilde::TildeNode
 {
 public:

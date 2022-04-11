@@ -24,6 +24,9 @@
 
 #include <string>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class GPUMonitor : public GPUMonitorBase
 {
 public:

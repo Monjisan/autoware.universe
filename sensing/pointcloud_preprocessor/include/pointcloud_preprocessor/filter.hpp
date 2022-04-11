@@ -77,6 +77,9 @@
 #include <tf2_ros/create_timer_ros.h>
 #include <tf2_ros/transform_listener.h>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace pointcloud_preprocessor
 {
 namespace sync_policies = message_filters::sync_policies;

@@ -30,6 +30,9 @@
 #include <string>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 namespace bp = boost::process;
 
 class ProcessMonitor : public tilde::TildeNode

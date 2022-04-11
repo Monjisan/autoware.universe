@@ -34,6 +34,9 @@
 #define EIGEN_MPL2_ONLY
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
+
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
 namespace motion_planning
 {
 using tier4_debug_msgs::msg::Float32MultiArrayStamped;
