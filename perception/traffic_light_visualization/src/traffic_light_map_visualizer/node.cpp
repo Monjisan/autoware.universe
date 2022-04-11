@@ -121,10 +121,10 @@ TrafficLightMapVisualizerNode::TrafficLightMapVisualizerNode(
 {
   light_marker_pub_ =
     create_tilde_publisher<visualization_msgs::msg::MarkerArray>("~/output/traffic_light", 1);
-  tl_state_sub_ = create_subscription<autoware_auto_perception_msgs::msg::TrafficSignalArray>(
+  tl_state_sub_ = create_tilde_subscription<autoware_auto_perception_msgs::msg::TrafficSignalArray>(
     "~/input/tl_state", 1,
     std::bind(&TrafficLightMapVisualizerNode::trafficSignalsCallback, this, _1));
-  vector_map_sub_ = create_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
+  vector_map_sub_ = create_tilde_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
     "~/input/vector_map", rclcpp::QoS{1}.transient_local(),
     std::bind(&TrafficLightMapVisualizerNode::binMapCallback, this, _1));
 }

@@ -232,13 +232,13 @@ FreespacePlannerNode::FreespacePlannerNode(const rclcpp::NodeOptions & node_opti
 
   // Subscribers
   {
-    route_sub_ = create_subscription<HADMapRoute>(
+    route_sub_ = create_tilde_subscription<HADMapRoute>(
       "~/input/route", 1, std::bind(&FreespacePlannerNode::onRoute, this, _1));
-    occupancy_grid_sub_ = create_subscription<OccupancyGrid>(
+    occupancy_grid_sub_ = create_tilde_subscription<OccupancyGrid>(
       "~/input/occupancy_grid", 1, std::bind(&FreespacePlannerNode::onOccupancyGrid, this, _1));
-    scenario_sub_ = create_subscription<Scenario>(
+    scenario_sub_ = create_tilde_subscription<Scenario>(
       "~/input/scenario", 1, std::bind(&FreespacePlannerNode::onScenario, this, _1));
-    odom_sub_ = create_subscription<Odometry>(
+    odom_sub_ = create_tilde_subscription<Odometry>(
       "~/input/odometry", 100, std::bind(&FreespacePlannerNode::onOdometry, this, _1));
   }
 

@@ -148,13 +148,13 @@ LateralController::LateralController(const rclcpp::NodeOptions & node_options)
   m_pub_diagnostic =
     create_tilde_publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>(
     "~/output/diagnostic", 1);
-  m_sub_ref_path = create_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
+  m_sub_ref_path = create_tilde_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
     "~/input/reference_trajectory", rclcpp::QoS{1},
     std::bind(&LateralController::onTrajectory, this, _1));
-  m_sub_steering = create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
+  m_sub_steering = create_tilde_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
     "~/input/current_steering", rclcpp::QoS{1}, std::bind(
       &LateralController::onSteering, this, _1));
-  m_sub_odometry = create_subscription<nav_msgs::msg::Odometry>(
+  m_sub_odometry = create_tilde_subscription<nav_msgs::msg::Odometry>(
     "~/input/current_odometry", rclcpp::QoS{1}, std::bind(
       &LateralController::onOdometry, this, _1));
 

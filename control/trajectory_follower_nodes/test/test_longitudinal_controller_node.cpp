@@ -73,7 +73,7 @@ TEST_F(FakeNodeFixture, longitudinal_keep_velocity) {
   tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub = this->create_tilde_publisher<Trajectory>(
     "longitudinal_controller/input/current_trajectory");
   rclcpp::Subscription<LongitudinalCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LongitudinalCommand>(
+    this->create_tilde_subscription<LongitudinalCommand>(
     "longitudinal_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_longitudinal_command](const LongitudinalCommand::SharedPtr msg) {
       cmd_msg = msg;received_longitudinal_command = true;
@@ -143,7 +143,7 @@ TEST_F(FakeNodeFixture, longitudinal_slow_down) {
   tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub = this->create_tilde_publisher<Trajectory>(
     "longitudinal_controller/input/current_trajectory");
   rclcpp::Subscription<LongitudinalCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LongitudinalCommand>(
+    this->create_tilde_subscription<LongitudinalCommand>(
     "longitudinal_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_longitudinal_command](const LongitudinalCommand::SharedPtr msg) {
       cmd_msg = msg;received_longitudinal_command = true;
@@ -213,7 +213,7 @@ TEST_F(FakeNodeFixture, longitudinal_accelerate) {
   tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub = this->create_tilde_publisher<Trajectory>(
     "longitudinal_controller/input/current_trajectory");
   rclcpp::Subscription<LongitudinalCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LongitudinalCommand>(
+    this->create_tilde_subscription<LongitudinalCommand>(
     "longitudinal_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_longitudinal_command](const LongitudinalCommand::SharedPtr msg) {
       cmd_msg = msg;received_longitudinal_command = true;
@@ -283,7 +283,7 @@ TEST_F(FakeNodeFixture, longitudinal_stopped) {
   tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub = this->create_tilde_publisher<Trajectory>(
     "longitudinal_controller/input/current_trajectory");
   rclcpp::Subscription<LongitudinalCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LongitudinalCommand>(
+    this->create_tilde_subscription<LongitudinalCommand>(
     "longitudinal_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_longitudinal_command](const LongitudinalCommand::SharedPtr msg) {
       cmd_msg = msg;received_longitudinal_command = true;
@@ -345,7 +345,7 @@ TEST_F(FakeNodeFixture, longitudinal_reverse) {
   tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub = this->create_tilde_publisher<Trajectory>(
     "longitudinal_controller/input/current_trajectory");
   rclcpp::Subscription<LongitudinalCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LongitudinalCommand>(
+    this->create_tilde_subscription<LongitudinalCommand>(
     "longitudinal_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_longitudinal_command](const LongitudinalCommand::SharedPtr msg) {
       cmd_msg = msg;received_longitudinal_command = true;
@@ -407,7 +407,7 @@ TEST_F(FakeNodeFixture, longitudinal_emergency) {
   tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub = this->create_tilde_publisher<Trajectory>(
     "longitudinal_controller/input/current_trajectory");
   rclcpp::Subscription<LongitudinalCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LongitudinalCommand>(
+    this->create_tilde_subscription<LongitudinalCommand>(
     "longitudinal_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_longitudinal_command](const LongitudinalCommand::SharedPtr msg) {
       cmd_msg = msg;received_longitudinal_command = true;

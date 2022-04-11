@@ -39,9 +39,9 @@ GNSSPoser::GNSSPoser(const rclcpp::NodeOptions & node_options)
   int buff_epoch = declare_parameter("buff_epoch", 1);
   position_buffer_.set_capacity(buff_epoch);
 
-  nav_sat_fix_sub_ = create_subscription<sensor_msgs::msg::NavSatFix>(
+  nav_sat_fix_sub_ = create_tilde_subscription<sensor_msgs::msg::NavSatFix>(
     "fix", rclcpp::QoS{1}, std::bind(&GNSSPoser::callbackNavSatFix, this, std::placeholders::_1));
-  nav_pvt_sub_ = create_subscription<ublox_msgs::msg::NavPVT>(
+  nav_pvt_sub_ = create_tilde_subscription<ublox_msgs::msg::NavPVT>(
     "navpvt", rclcpp::QoS{1}, std::bind(&GNSSPoser::callbackNavPVT, this, std::placeholders::_1));
 
   pose_pub_ = create_tilde_publisher<geometry_msgs::msg::PoseStamped>("gnss_pose", rclcpp::QoS{1});

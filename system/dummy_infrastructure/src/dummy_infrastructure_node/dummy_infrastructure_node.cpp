@@ -80,7 +80,7 @@ DummyInfrastructureNode::DummyInfrastructureNode(const rclcpp::NodeOptions & nod
   node_param_.is_finalized = declare_parameter<bool>("is_finalized", false);
 
   // Subscriber
-  sub_command_array_ = create_subscription<InfrastructureCommandArray>(
+  sub_command_array_ = create_tilde_subscription<InfrastructureCommandArray>(
     "~/input/command_array", rclcpp::QoS{1},
     std::bind(&DummyInfrastructureNode::onCommandArray, this, _1));
 

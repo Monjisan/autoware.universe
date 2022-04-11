@@ -69,7 +69,7 @@ void AccelBrakeMapCalibratorButtonPanel::onInitialize()
   rclcpp::Node::SharedPtr raw_node =
     this->getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
 
-  update_suggest_sub_ = raw_node->create_subscription<std_msgs::msg::Bool>(
+  update_suggest_sub_ = raw_node->create_tilde_subscription<std_msgs::msg::Bool>(
     topic_edit_->text().toStdString(), 10,
     std::bind(
       &AccelBrakeMapCalibratorButtonPanel::callbackUpdateSuggest, this, std::placeholders::_1));
@@ -101,7 +101,7 @@ void AccelBrakeMapCalibratorButtonPanel::editTopic()
   update_suggest_sub_.reset();
   rclcpp::Node::SharedPtr raw_node =
     this->getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
-  update_suggest_sub_ = raw_node->create_subscription<std_msgs::msg::Bool>(
+  update_suggest_sub_ = raw_node->create_tilde_subscription<std_msgs::msg::Bool>(
     topic_edit_->text().toStdString(), 10,
     std::bind(
       &AccelBrakeMapCalibratorButtonPanel::callbackUpdateSuggest, this, std::placeholders::_1));

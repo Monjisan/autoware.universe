@@ -67,18 +67,18 @@ ControlPerformanceAnalysisNode::ControlPerformanceAnalysisNode(
     param_.wheel_base, param_.curvature_interval_length);
 
   // Subscribers.
-  sub_trajectory_ = create_subscription<Trajectory>(
+  sub_trajectory_ = create_tilde_subscription<Trajectory>(
     "~/input/reference_trajectory", 1,
     std::bind(&ControlPerformanceAnalysisNode::onTrajectory, this, _1));
 
-  sub_control_steering_ = create_subscription<AckermannLateralCommand>(
+  sub_control_steering_ = create_tilde_subscription<AckermannLateralCommand>(
     "~/input/control_raw", 1, std::bind(&ControlPerformanceAnalysisNode::onControlRaw, this, _1));
 
-  sub_vehicle_steering_ = create_subscription<SteeringReport>(
+  sub_vehicle_steering_ = create_tilde_subscription<SteeringReport>(
     "~/input/measured_steering", 1,
     std::bind(&ControlPerformanceAnalysisNode::onVecSteeringMeasured, this, _1));
 
-  sub_velocity_ = create_subscription<Odometry>(
+  sub_velocity_ = create_tilde_subscription<Odometry>(
     "~/input/odometry", 1, std::bind(&ControlPerformanceAnalysisNode::onVelocity, this, _1));
 
   // Publishers

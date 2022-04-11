@@ -41,7 +41,7 @@ class PubSubNode : public rclcpp::Node
 public:
   PubSubNode() : Node{"test_simple_planning_simulator_pubsub"}
   {
-    current_odom_sub_ = create_subscription<Odometry>(
+    current_odom_sub_ = create_tilde_subscription<Odometry>(
       "output/odometry", rclcpp::QoS{1}, [this](const Odometry::SharedPtr msg) {
         current_odom_ = msg;
       });

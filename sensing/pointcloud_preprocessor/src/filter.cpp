@@ -137,7 +137,7 @@ void pointcloud_preprocessor::Filter::subscribe()
     // CAN'T use auto-type here.
     std::function<void(const PointCloud2ConstPtr msg)> cb = std::bind(
       &Filter::input_indices_callback, this, std::placeholders::_1, PointIndicesConstPtr());
-    sub_input_ = create_subscription<PointCloud2>(
+    sub_input_ = create_tilde_subscription<PointCloud2>(
       "input", rclcpp::SensorDataQoS().keep_last(max_queue_size_), cb);
   }
 }

@@ -35,7 +35,7 @@ public:
     map_frame_ = declare_parameter("map_frame", "map");
     viewer_frame_ = declare_parameter("viewer_frame", "viewer");
 
-    sub_ = create_subscription<sensor_msgs::msg::PointCloud2>(
+    sub_ = create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
       "pointcloud_map", rclcpp::QoS{1}.transient_local(),
       std::bind(&MapTFGeneratorNode::onPointCloud, this, std::placeholders::_1));
 

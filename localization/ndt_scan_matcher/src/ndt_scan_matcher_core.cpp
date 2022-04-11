@@ -196,14 +196,14 @@ NDTScanMatcher::NDTScanMatcher()
   auto main_sub_opt = rclcpp::SubscriptionOptions();
   main_sub_opt.callback_group = main_callback_group;
 
-  initial_pose_sub_ = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+  initial_pose_sub_ = this->create_tilde_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "ekf_pose_with_covariance", 100,
     std::bind(&NDTScanMatcher::callbackInitialPose, this, std::placeholders::_1),
     initial_pose_sub_opt);
-  map_points_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+  map_points_sub_ = this->create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
     "pointcloud_map", rclcpp::QoS{1}.transient_local(),
     std::bind(&NDTScanMatcher::callbackMapPoints, this, std::placeholders::_1), main_sub_opt);
-  sensor_points_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+  sensor_points_sub_ = this->create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
     "points_raw", rclcpp::SensorDataQoS().keep_last(points_queue_size),
     std::bind(&NDTScanMatcher::callbackSensorPoints, this, std::placeholders::_1), main_sub_opt);
 

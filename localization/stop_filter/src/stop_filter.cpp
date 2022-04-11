@@ -36,7 +36,7 @@ StopFilter::StopFilter(const std::string & node_name, const rclcpp::NodeOptions 
   vx_threshold_ = declare_parameter("vx_threshold", 0.01);
   wz_threshold_ = declare_parameter("wz_threshold", 0.01);
 
-  sub_odom_ = create_subscription<nav_msgs::msg::Odometry>(
+  sub_odom_ = create_tilde_subscription<nav_msgs::msg::Odometry>(
     "input/odom", 1, std::bind(&StopFilter::callbackOdometry, this, _1));
 
   pub_odom_ = create_tilde_publisher<nav_msgs::msg::Odometry>("output/odom", 1);

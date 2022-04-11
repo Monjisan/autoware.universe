@@ -73,66 +73,66 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
     "output/external_emergency", durable_qos);
 
   // Subscriber
-  emergency_state_sub_ = this->create_subscription<autoware_auto_system_msgs::msg::EmergencyState>(
+  emergency_state_sub_ = this->create_tilde_subscription<autoware_auto_system_msgs::msg::EmergencyState>(
     "input/emergency_state", 1, std::bind(&VehicleCmdGate::onEmergencyState, this, _1));
   external_emergency_stop_heartbeat_sub_ =
-    this->create_subscription<tier4_external_api_msgs::msg::Heartbeat>(
+    this->create_tilde_subscription<tier4_external_api_msgs::msg::Heartbeat>(
       "input/external_emergency_stop_heartbeat", 1,
       std::bind(&VehicleCmdGate::onExternalEmergencyStopHeartbeat, this, _1));
-  gate_mode_sub_ = this->create_subscription<tier4_control_msgs::msg::GateMode>(
+  gate_mode_sub_ = this->create_tilde_subscription<tier4_control_msgs::msg::GateMode>(
     "input/gate_mode", 1, std::bind(&VehicleCmdGate::onGateMode, this, _1));
-  engage_sub_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
+  engage_sub_ = this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
     "input/engage", 1, std::bind(&VehicleCmdGate::onEngage, this, _1));
-  steer_sub_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
+  steer_sub_ = this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
     "input/steering", 1, std::bind(&VehicleCmdGate::onSteering, this, _1));
 
   // Subscriber for auto
   auto_control_cmd_sub_ =
-    this->create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+    this->create_tilde_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "input/auto/control_cmd", 1, std::bind(&VehicleCmdGate::onAutoCtrlCmd, this, _1));
 
   auto_turn_indicator_cmd_sub_ =
-    this->create_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>(
+    this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>(
       "input/auto/turn_indicators_cmd", 1,
       std::bind(&VehicleCmdGate::onAutoTurnIndicatorsCmd, this, _1));
 
   auto_hazard_light_cmd_sub_ =
-    this->create_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
+    this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
       "input/auto/hazard_lights_cmd", 1,
       std::bind(&VehicleCmdGate::onAutoHazardLightsCmd, this, _1));
 
-  auto_gear_cmd_sub_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::GearCommand>(
+  auto_gear_cmd_sub_ = this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::GearCommand>(
     "input/auto/gear_cmd", 1, std::bind(&VehicleCmdGate::onAutoShiftCmd, this, _1));
 
   // Subscriber for external
   remote_control_cmd_sub_ =
-    this->create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+    this->create_tilde_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "input/external/control_cmd", 1, std::bind(&VehicleCmdGate::onRemoteCtrlCmd, this, _1));
 
   remote_turn_indicator_cmd_sub_ =
-    this->create_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>(
+    this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>(
       "input/external/turn_indicators_cmd", 1,
       std::bind(&VehicleCmdGate::onRemoteTurnIndicatorsCmd, this, _1));
 
   remote_hazard_light_cmd_sub_ =
-    this->create_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
+    this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
       "input/external/hazard_lights_cmd", 1,
       std::bind(&VehicleCmdGate::onRemoteHazardLightsCmd, this, _1));
 
-  remote_gear_cmd_sub_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::GearCommand>(
+  remote_gear_cmd_sub_ = this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::GearCommand>(
     "input/external/gear_cmd", 1, std::bind(&VehicleCmdGate::onRemoteShiftCmd, this, _1));
 
   // Subscriber for emergency
   emergency_control_cmd_sub_ =
-    this->create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+    this->create_tilde_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "input/emergency/control_cmd", 1, std::bind(&VehicleCmdGate::onEmergencyCtrlCmd, this, _1));
 
   emergency_hazard_light_cmd_sub_ =
-    this->create_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
+    this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>(
       "input/emergency/hazard_lights_cmd", 1,
       std::bind(&VehicleCmdGate::onEmergencyHazardLightsCmd, this, _1));
 
-  emergency_gear_cmd_sub_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::GearCommand>(
+  emergency_gear_cmd_sub_ = this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::GearCommand>(
     "input/emergency/gear_cmd", 1, std::bind(&VehicleCmdGate::onEmergencyShiftCmd, this, _1));
 
   // Parameter
@@ -688,7 +688,7 @@ VehicleCmdGate::StartRequest::StartRequest(rclcpp::Node * node, bool use_start_r
     node_->create_client<std_srvs::srv::Trigger>("/api/autoware/set/start_request");
   request_start_pub_ = node_->create_tilde_publisher<tier4_debug_msgs::msg::BoolStamped>(
     "/api/autoware/get/start_accepted", rclcpp::QoS(1));
-  current_twist_sub_ = node_->create_subscription<nav_msgs::msg::Odometry>(
+  current_twist_sub_ = node_->create_tilde_subscription<nav_msgs::msg::Odometry>(
     "/localization/kinematic_state", rclcpp::QoS(1),
     std::bind(&VehicleCmdGate::StartRequest::onCurrentTwist, this, _1));
 }

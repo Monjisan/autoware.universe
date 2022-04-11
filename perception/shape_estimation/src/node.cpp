@@ -32,7 +32,7 @@ ShapeEstimationNode::ShapeEstimationNode(const rclcpp::NodeOptions & node_option
 : Node("shape_estimation", node_options)
 {
   using std::placeholders::_1;
-  sub_ = create_subscription<DetectedObjectsWithFeature>(
+  sub_ = create_tilde_subscription<DetectedObjectsWithFeature>(
     "input", rclcpp::QoS{1}, std::bind(&ShapeEstimationNode::callback, this, _1));
 
   pub_ = create_tilde_publisher<DetectedObjectsWithFeature>("objects", rclcpp::QoS{1});

@@ -33,7 +33,7 @@ Pose2Twist::Pose2Twist() : Node("pose2twist_core")
   angular_z_pub_ =
     create_tilde_publisher<tier4_debug_msgs::msg::Float32Stamped>("angular_z", durable_qos);
   // Note: this callback publishes topics above
-  pose_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
+  pose_sub_ = create_tilde_subscription<geometry_msgs::msg::PoseStamped>(
     "pose", queue_size, std::bind(&Pose2Twist::callbackPose, this, _1));
 }
 

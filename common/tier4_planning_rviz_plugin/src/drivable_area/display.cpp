@@ -232,7 +232,7 @@ void AutowareDrivableAreaDisplay::subscribeToUpdateTopic()
     update_subscription_ =
       rviz_ros_node_.lock()
         ->get_raw_node()
-        ->template create_subscription<map_msgs::msg::OccupancyGridUpdate>(
+        ->template create_tilde_subscription<map_msgs::msg::OccupancyGridUpdate>(
           update_topic_property_->getTopicStd(), update_profile_,
           [this](const map_msgs::msg::OccupancyGridUpdate::ConstSharedPtr message) {
             incomingUpdate(message);

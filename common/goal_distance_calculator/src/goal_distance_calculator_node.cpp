@@ -48,7 +48,7 @@ GoalDistanceCalculatorNode::GoalDistanceCalculatorNode(const rclcpp::NodeOptions
   goal_distance_calculator_->setParam(param_);
 
   // Subscriber
-  sub_route_ = create_subscription<autoware_auto_planning_msgs::msg::Route>(
+  sub_route_ = create_tilde_subscription<autoware_auto_planning_msgs::msg::Route>(
     "/planning/mission_planning/route", queue_size,
     [&](const autoware_auto_planning_msgs::msg::Route::SharedPtr msg_ptr) { route_ = msg_ptr; });
 

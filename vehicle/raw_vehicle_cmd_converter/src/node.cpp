@@ -84,11 +84,11 @@ RawVehicleCommandConverterNode::RawVehicleCommandConverterNode(
       min_ret_i_steer, max_ret_d_steer, min_ret_d_steer);
   }
   pub_actuation_cmd_ = create_tilde_publisher<ActuationCommandStamped>("~/output/actuation_cmd", 1);
-  sub_control_cmd_ = create_subscription<AckermannControlCommand>(
+  sub_control_cmd_ = create_tilde_subscription<AckermannControlCommand>(
     "~/input/control_cmd", 1, std::bind(&RawVehicleCommandConverterNode::onControlCmd, this, _1));
-  sub_velocity_ = create_subscription<Odometry>(
+  sub_velocity_ = create_tilde_subscription<Odometry>(
     "~/input/odometry", 1, std::bind(&RawVehicleCommandConverterNode::onVelocity, this, _1));
-  sub_steering_ = create_subscription<Steering>(
+  sub_steering_ = create_tilde_subscription<Steering>(
     "~/input/steering", 1, std::bind(&RawVehicleCommandConverterNode::onSteering, this, _1));
   debug_pub_steer_pid_ = create_tilde_publisher<Float32MultiArrayStamped>(
     "/vehicle/raw_vehicle_cmd_converter/debug/steer_pid", 1);

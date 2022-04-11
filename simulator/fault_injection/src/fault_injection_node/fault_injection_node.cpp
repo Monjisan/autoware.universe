@@ -50,7 +50,7 @@ FaultInjectionNode::FaultInjectionNode(rclcpp::NodeOptions node_options)
     this->add_on_set_parameters_callback(std::bind(&FaultInjectionNode::onSetParam, this, _1));
 
   // Subscriber
-  sub_simulation_events_ = this->create_subscription<SimulationEvents>(
+  sub_simulation_events_ = this->create_tilde_subscription<SimulationEvents>(
     "~/input/simulation_events", rclcpp::QoS{1},
     std::bind(&FaultInjectionNode::onSimulationEvents, this, _1));
 

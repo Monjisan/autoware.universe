@@ -42,7 +42,7 @@ DummyPerceptionPublisherNode::DummyPerceptionPublisherNode()
     this->create_tilde_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
       "output/dynamic_object", qos);
   pointcloud_pub_ = this->create_tilde_publisher<sensor_msgs::msg::PointCloud2>("output/points_raw", qos);
-  object_sub_ = this->create_subscription<dummy_perception_publisher::msg::Object>(
+  object_sub_ = this->create_tilde_subscription<dummy_perception_publisher::msg::Object>(
     "input/object", 100,
     std::bind(&DummyPerceptionPublisherNode::objectCallback, this, std::placeholders::_1));
 

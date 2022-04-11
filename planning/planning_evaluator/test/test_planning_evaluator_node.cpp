@@ -83,7 +83,7 @@ protected:
     const auto is_target_metric = [metric_str](const auto & status) {
       return status.name == metric_str;
     };
-    metric_sub_ = rclcpp::create_subscription<DiagnosticArray>(
+    metric_sub_ = rclcpp::create_tilde_subscription<DiagnosticArray>(
       dummy_node, "/planning_evaluator/metrics", 1, [=](const DiagnosticArray::ConstSharedPtr msg) {
         const auto it = std::find_if(msg->status.begin(), msg->status.end(), is_target_metric);
         if (it != msg->status.end()) {

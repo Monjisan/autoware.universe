@@ -29,15 +29,15 @@ ExternalCmdConverterNode::ExternalCmdConverterNode(const rclcpp::NodeOptions & n
   pub_cmd_ = create_tilde_publisher<AckermannControlCommand>("out/control_cmd", rclcpp::QoS{1});
   pub_current_cmd_ =
     create_tilde_publisher<ExternalControlCommand>("out/latest_external_control_cmd", rclcpp::QoS{1});
-  sub_velocity_ = create_subscription<Odometry>(
+  sub_velocity_ = create_tilde_subscription<Odometry>(
     "in/odometry", 1, std::bind(&ExternalCmdConverterNode::onVelocity, this, _1));
-  sub_control_cmd_ = create_subscription<ExternalControlCommand>(
+  sub_control_cmd_ = create_tilde_subscription<ExternalControlCommand>(
     "in/external_control_cmd", 1, std::bind(&ExternalCmdConverterNode::onExternalCmd, this, _1));
-  sub_shift_cmd_ = create_subscription<GearCommand>(
+  sub_shift_cmd_ = create_tilde_subscription<GearCommand>(
     "in/shift_cmd", 1, std::bind(&ExternalCmdConverterNode::onGearCommand, this, _1));
-  sub_gate_mode_ = create_subscription<tier4_control_msgs::msg::GateMode>(
+  sub_gate_mode_ = create_tilde_subscription<tier4_control_msgs::msg::GateMode>(
     "in/current_gate_mode", 1, std::bind(&ExternalCmdConverterNode::onGateMode, this, _1));
-  sub_emergency_stop_heartbeat_ = create_subscription<tier4_external_api_msgs::msg::Heartbeat>(
+  sub_emergency_stop_heartbeat_ = create_tilde_subscription<tier4_external_api_msgs::msg::Heartbeat>(
     "in/emergency_stop", 1,
     std::bind(&ExternalCmdConverterNode::onEmergencyStopHeartbeat, this, _1));
 

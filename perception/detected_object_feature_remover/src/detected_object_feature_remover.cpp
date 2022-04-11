@@ -21,7 +21,7 @@ DetectedObjectFeatureRemover::DetectedObjectFeatureRemover(const rclcpp::NodeOpt
 {
   using std::placeholders::_1;
   pub_ = this->create_tilde_publisher<DetectedObjects>("~/output", rclcpp::QoS(1));
-  sub_ = this->create_subscription<DetectedObjectsWithFeature>(
+  sub_ = this->create_tilde_subscription<DetectedObjectsWithFeature>(
     "~/input", 1, std::bind(&DetectedObjectFeatureRemover::objectCallback, this, _1));
 }
 

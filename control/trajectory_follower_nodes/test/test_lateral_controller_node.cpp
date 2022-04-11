@@ -80,7 +80,7 @@ TEST_F(FakeNodeFixture, no_input)
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LateralCommand>(
+    this->create_tilde_subscription<LateralCommand>(
     "lateral_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_lateral_command](const LateralCommand::SharedPtr msg) {
       cmd_msg = msg; received_lateral_command = true;
@@ -111,7 +111,7 @@ TEST_F(FakeNodeFixture, empty_trajectory)
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LateralCommand>(
+    this->create_tilde_subscription<LateralCommand>(
     "lateral_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_lateral_command](const LateralCommand::SharedPtr msg) {
       cmd_msg = msg; received_lateral_command = true;
@@ -164,7 +164,7 @@ TEST_F(FakeNodeFixture, straight_trajectory)
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LateralCommand>(
+    this->create_tilde_subscription<LateralCommand>(
     "lateral_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_lateral_command](const LateralCommand::SharedPtr msg) {
       cmd_msg = msg; received_lateral_command = true;
@@ -238,7 +238,7 @@ TEST_F(FakeNodeFixture, right_turn)
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LateralCommand>(
+    this->create_tilde_subscription<LateralCommand>(
     "lateral_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_lateral_command](const LateralCommand::SharedPtr msg) {
       cmd_msg = msg; received_lateral_command = true;
@@ -312,7 +312,7 @@ TEST_F(FakeNodeFixture, left_turn)
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LateralCommand>(
+    this->create_tilde_subscription<LateralCommand>(
     "lateral_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_lateral_command](const LateralCommand::SharedPtr msg) {
       cmd_msg = msg; received_lateral_command = true;
@@ -386,7 +386,7 @@ TEST_F(FakeNodeFixture, stopped)
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
-    this->create_subscription<LateralCommand>(
+    this->create_tilde_subscription<LateralCommand>(
     "lateral_controller/output/control_cmd", *this->get_fake_node(),
     [&cmd_msg, &received_lateral_command](const LateralCommand::SharedPtr msg) {
       cmd_msg = msg; received_lateral_command = true;

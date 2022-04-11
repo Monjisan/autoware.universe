@@ -23,7 +23,7 @@ VehicleVelocityConverter::VehicleVelocityConverter() : Node("vehicle_velocity_co
   }
   frame_id_ = declare_parameter("frame_id", "base_link");
 
-  vehicle_report_sub_ = create_subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>(
+  vehicle_report_sub_ = create_tilde_subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>(
     "velocity_status", rclcpp::QoS{100},
     std::bind(&VehicleVelocityConverter::callbackVelocityReport, this, std::placeholders::_1));
 

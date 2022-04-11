@@ -55,17 +55,17 @@ SurroundObstacleCheckerNode::SurroundObstacleCheckerNode(const rclcpp::NodeOptio
     this->create_tilde_publisher<diagnostic_msgs::msg::DiagnosticStatus>("~/output/no_start_reason", 1);
 
   // Subscriber
-  path_sub_ = this->create_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
+  path_sub_ = this->create_tilde_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
     "~/input/trajectory", 1,
     std::bind(&SurroundObstacleCheckerNode::pathCallback, this, std::placeholders::_1));
-  pointcloud_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+  pointcloud_sub_ = this->create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
     "~/input/pointcloud", rclcpp::SensorDataQoS(),
     std::bind(&SurroundObstacleCheckerNode::pointCloudCallback, this, std::placeholders::_1));
   dynamic_object_sub_ =
-    this->create_subscription<autoware_auto_perception_msgs::msg::PredictedObjects>(
+    this->create_tilde_subscription<autoware_auto_perception_msgs::msg::PredictedObjects>(
       "~/input/objects", 1,
       std::bind(&SurroundObstacleCheckerNode::dynamicObjectCallback, this, std::placeholders::_1));
-  current_velocity_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+  current_velocity_sub_ = this->create_tilde_subscription<nav_msgs::msg::Odometry>(
     "~/input/odometry", 1,
     std::bind(&SurroundObstacleCheckerNode::currentVelocityCallback, this, std::placeholders::_1));
 }

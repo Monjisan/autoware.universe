@@ -43,9 +43,9 @@ public:
   TestEKFLocalizerNode(const std::string & node_name, const rclcpp::NodeOptions & node_options)
   : EKFLocalizer(node_name, node_options)
   {
-    sub_twist = this->create_subscription<geometry_msgs::msg::TwistStamped>(
+    sub_twist = this->create_tilde_subscription<geometry_msgs::msg::TwistStamped>(
       "/ekf_twist", 1, std::bind(&TestEKFLocalizerNode::testCallbackTwist, this, _1));
-    sub_pose = this->create_subscription<geometry_msgs::msg::PoseStamped>(
+    sub_pose = this->create_tilde_subscription<geometry_msgs::msg::PoseStamped>(
       "/ekf_pose", 1, std::bind(&TestEKFLocalizerNode::testCallbackPose, this, _1));
 
     using std::chrono_literals::operator""ms;

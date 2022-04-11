@@ -82,13 +82,13 @@ ElevationMapLoaderNode::ElevationMapLoaderNode(const rclcpp::NodeOptions & optio
   }
 
   using std::placeholders::_1;
-  sub_map_hash_ = create_subscription<tier4_external_api_msgs::msg::MapHash>(
+  sub_map_hash_ = create_tilde_subscription<tier4_external_api_msgs::msg::MapHash>(
     "/api/autoware/get/map/info/hash", durable_qos,
     std::bind(&ElevationMapLoaderNode::onMapHash, this, _1));
-  sub_pointcloud_map_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+  sub_pointcloud_map_ = this->create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
     "input/pointcloud_map", durable_qos,
     std::bind(&ElevationMapLoaderNode::onPointcloudMap, this, _1));
-  sub_vector_map_ = this->create_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
+  sub_vector_map_ = this->create_tilde_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
     "input/vector_map", durable_qos, std::bind(&ElevationMapLoaderNode::onVectorMap, this, _1));
 }
 

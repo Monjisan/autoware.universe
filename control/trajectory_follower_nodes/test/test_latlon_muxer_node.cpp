@@ -56,7 +56,7 @@ TEST_F(FakeNodeFixture, TestCorrectOutput)
     this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
-    this->create_subscription<ControlCommand>(
+    this->create_tilde_subscription<ControlCommand>(
     "latlon_muxer/output/control_cmd", *node,
     [&cmd_msg, &received_combined_command](const ControlCommand::SharedPtr msg) {
       cmd_msg = msg; received_combined_command = true;
@@ -103,7 +103,7 @@ TEST_F(FakeNodeFixture, TestLateralTimeout)
     this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
-    this->create_subscription<ControlCommand>(
+    this->create_tilde_subscription<ControlCommand>(
     "latlon_muxer/output/control_cmd", *node,
     [&cmd_msg, &received_combined_command](const ControlCommand::SharedPtr msg) {
       cmd_msg = msg; received_combined_command = true;
@@ -141,7 +141,7 @@ TEST_F(FakeNodeFixture, TestLongitudinalTimeout)
     this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
-    this->create_subscription<ControlCommand>(
+    this->create_tilde_subscription<ControlCommand>(
     "latlon_muxer/output/control_cmd", *node,
     [&cmd_msg, &received_combined_command](const ControlCommand::SharedPtr msg) {
       cmd_msg = msg; received_combined_command = true;
@@ -179,7 +179,7 @@ TEST_F(FakeNodeFixture, TestLatlonTimeout)
     this->create_tilde_publisher<LongitudinalCommand>(
     "latlon_muxer/input/longitudinal/control_cmd");
   rclcpp::Subscription<ControlCommand>::SharedPtr cmd_sub =
-    this->create_subscription<ControlCommand>(
+    this->create_tilde_subscription<ControlCommand>(
     "latlon_muxer/output/control_cmd", *node,
     [&cmd_msg, &received_combined_command](const ControlCommand::SharedPtr msg) {
       cmd_msg = msg; received_combined_command = true;

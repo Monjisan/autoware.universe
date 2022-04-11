@@ -32,7 +32,7 @@ class StopReason2PoseNode(Node):
     def __init__(self, options):
         super().__init__("stop_reason2pose_node")
         self._options = options
-        self._sub_pose = self.create_subscription(
+        self._sub_pose = self.create_tilde_subscription(
             StopReasonArray, self._options.topic_name, self._on_stop_reasons, 1
         )
         self._pub_pose_map = {}

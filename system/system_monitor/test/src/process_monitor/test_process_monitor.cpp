@@ -102,7 +102,7 @@ protected:
     rclcpp::init(0, nullptr);
     rclcpp::NodeOptions node_options;
     monitor_ = std::make_unique<TestProcessMonitor>("test_process_monitor", node_options);
-    sub_ = monitor_->create_subscription<diagnostic_msgs::msg::DiagnosticArray>(
+    sub_ = monitor_->create_tilde_subscription<diagnostic_msgs::msg::DiagnosticArray>(
       "/diagnostics", 1000, std::bind(&TestProcessMonitor::diagCallback, monitor_.get(), _1));
 
     // Remove dummy executable if exists

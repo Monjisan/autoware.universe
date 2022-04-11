@@ -32,10 +32,10 @@ DistortionCorrectorComponent::DistortionCorrectorComponent(const rclcpp::NodeOpt
     this->create_tilde_publisher<PointCloud2>("~/output/pointcloud", rclcpp::SensorDataQoS());
 
   // Subscriber
-  velocity_report_sub_ = this->create_subscription<VelocityReport>(
+  velocity_report_sub_ = this->create_tilde_subscription<VelocityReport>(
     "~/input/velocity_report", 10,
     std::bind(&DistortionCorrectorComponent::onVelocityReport, this, std::placeholders::_1));
-  input_points_sub_ = this->create_subscription<PointCloud2>(
+  input_points_sub_ = this->create_tilde_subscription<PointCloud2>(
     "~/input/pointcloud", rclcpp::SensorDataQoS(),
     std::bind(&DistortionCorrectorComponent::onPointCloud, this, std::placeholders::_1));
 }

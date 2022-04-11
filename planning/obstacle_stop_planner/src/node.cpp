@@ -500,19 +500,19 @@ ObstacleStopPlannerNode::ObstacleStopPlannerNode(const rclcpp::NodeOptions & nod
   pub_velocity_limit_ = this->create_tilde_publisher<VelocityLimit>("~/output/max_velocity", 1);
 
   // Subscribers
-  obstacle_pointcloud_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+  obstacle_pointcloud_sub_ = this->create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
     "~/input/pointcloud", rclcpp::SensorDataQoS(),
     std::bind(&ObstacleStopPlannerNode::obstaclePointcloudCallback, this, std::placeholders::_1));
-  path_sub_ = this->create_subscription<Trajectory>(
+  path_sub_ = this->create_tilde_subscription<Trajectory>(
     "~/input/trajectory", 1,
     std::bind(&ObstacleStopPlannerNode::pathCallback, this, std::placeholders::_1));
-  current_velocity_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+  current_velocity_sub_ = this->create_tilde_subscription<nav_msgs::msg::Odometry>(
     "~/input/odometry", 1,
     std::bind(&ObstacleStopPlannerNode::currentVelocityCallback, this, std::placeholders::_1));
-  dynamic_object_sub_ = this->create_subscription<PredictedObjects>(
+  dynamic_object_sub_ = this->create_tilde_subscription<PredictedObjects>(
     "~/input/objects", 1,
     std::bind(&ObstacleStopPlannerNode::dynamicObjectCallback, this, std::placeholders::_1));
-  expand_stop_range_sub_ = this->create_subscription<ExpandStopRange>(
+  expand_stop_range_sub_ = this->create_tilde_subscription<ExpandStopRange>(
     "~/input/expand_stop_range", 1,
     std::bind(
       &ObstacleStopPlannerNode::externalExpandStopRangeCallback, this, std::placeholders::_1));

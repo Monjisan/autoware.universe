@@ -26,13 +26,13 @@ LateralErrorPublisher::LateralErrorPublisher(const rclcpp::NodeOptions & node_op
     declare_parameter("yaw_threshold_to_search_closest", M_PI / 4.0);
 
   /* Publishers and Subscribers */
-  sub_trajectory_ = create_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
+  sub_trajectory_ = create_tilde_subscription<autoware_auto_planning_msgs::msg::Trajectory>(
     "~/input/reference_trajectory", rclcpp::QoS{1},
     std::bind(&LateralErrorPublisher::onTrajectory, this, _1));
-  sub_vehicle_pose_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+  sub_vehicle_pose_ = create_tilde_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "~/input/vehicle_pose_with_covariance", rclcpp::QoS{1},
     std::bind(&LateralErrorPublisher::onVehiclePose, this, _1));
-  sub_ground_truth_pose_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+  sub_ground_truth_pose_ = create_tilde_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     "~/input/ground_truth_pose_with_covariance", rclcpp::QoS{1},
     std::bind(&LateralErrorPublisher::onGroundTruthPose, this, _1));
   pub_control_lateral_error_ =

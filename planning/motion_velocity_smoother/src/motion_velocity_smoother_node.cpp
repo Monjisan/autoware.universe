@@ -89,12 +89,12 @@ MotionVelocitySmootherNode::MotionVelocitySmootherNode(const rclcpp::NodeOptions
     "~/output/current_velocity_limit_mps", rclcpp::QoS{1}.transient_local());
   pub_dist_to_stopline_ = create_tilde_publisher<Float32Stamped>("~/distance_to_stopline", 1);
   pub_over_stop_velocity_ = create_tilde_publisher<StopSpeedExceeded>("~/stop_speed_exceeded", 1);
-  sub_current_trajectory_ = create_subscription<Trajectory>(
+  sub_current_trajectory_ = create_tilde_subscription<Trajectory>(
     "~/input/trajectory", 1, std::bind(&MotionVelocitySmootherNode::onCurrentTrajectory, this, _1));
-  sub_current_odometry_ = create_subscription<Odometry>(
+  sub_current_odometry_ = create_tilde_subscription<Odometry>(
     "/localization/kinematic_state", 1,
     std::bind(&MotionVelocitySmootherNode::onCurrentOdometry, this, _1));
-  sub_external_velocity_limit_ = create_subscription<VelocityLimit>(
+  sub_external_velocity_limit_ = create_tilde_subscription<VelocityLimit>(
     "~/input/external_velocity_limit_mps", 1,
     std::bind(&MotionVelocitySmootherNode::onExternalVelocityLimit, this, _1));
 

@@ -27,7 +27,7 @@ InvalidTrajectoryPublisherNode::InvalidTrajectoryPublisherNode(
   using std::placeholders::_1;
   using std::chrono_literals::operator""ms;
 
-  traj_sub_ = create_subscription<Trajectory>(
+  traj_sub_ = create_tilde_subscription<Trajectory>(
     "~/input/trajectory", 1,
     std::bind(&InvalidTrajectoryPublisherNode::onCurrentTrajectory, this, _1));
 

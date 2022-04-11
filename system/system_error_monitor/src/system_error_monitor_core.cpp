@@ -212,15 +212,15 @@ AutowareErrorMonitor::AutowareErrorMonitor()
   using std::placeholders::_1;
   using std::placeholders::_2;
   // Subscriber
-  sub_diag_array_ = create_subscription<diagnostic_msgs::msg::DiagnosticArray>(
+  sub_diag_array_ = create_tilde_subscription<diagnostic_msgs::msg::DiagnosticArray>(
     "input/diag_array", rclcpp::QoS{1}, std::bind(&AutowareErrorMonitor::onDiagArray, this, _1));
-  sub_current_gate_mode_ = create_subscription<tier4_control_msgs::msg::GateMode>(
+  sub_current_gate_mode_ = create_tilde_subscription<tier4_control_msgs::msg::GateMode>(
     "~/input/current_gate_mode", rclcpp::QoS{1},
     std::bind(&AutowareErrorMonitor::onCurrentGateMode, this, _1));
-  sub_autoware_state_ = create_subscription<autoware_auto_system_msgs::msg::AutowareState>(
+  sub_autoware_state_ = create_tilde_subscription<autoware_auto_system_msgs::msg::AutowareState>(
     "~/input/autoware_state", rclcpp::QoS{1},
     std::bind(&AutowareErrorMonitor::onAutowareState, this, _1));
-  sub_control_mode_ = create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
+  sub_control_mode_ = create_tilde_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
     "~/input/control_mode", rclcpp::QoS{1},
     std::bind(&AutowareErrorMonitor::onControlMode, this, _1));
 

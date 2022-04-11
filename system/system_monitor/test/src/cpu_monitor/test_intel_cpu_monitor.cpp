@@ -113,7 +113,7 @@ protected:
     rclcpp::init(0, nullptr);
     rclcpp::NodeOptions node_options;
     monitor_ = std::make_unique<TestCPUMonitor>("test_cpu_monitor", node_options);
-    sub_ = monitor_->create_subscription<diagnostic_msgs::msg::DiagnosticArray>(
+    sub_ = monitor_->create_tilde_subscription<diagnostic_msgs::msg::DiagnosticArray>(
       "/diagnostics", 1000, std::bind(&TestCPUMonitor::diagCallback, monitor_.get(), _1));
     monitor_->getTempNames();
     monitor_->getFreqNames();

@@ -76,16 +76,16 @@ ObstacleAvoidancePlanner::ObstacleAvoidancePlanner(const rclcpp::NodeOptions & n
   debug_area_with_objects_pub_ =
     create_tilde_publisher<nav_msgs::msg::OccupancyGrid>("~/debug/area_with_objects", durable_qos);
 
-  path_sub_ = create_subscription<autoware_auto_planning_msgs::msg::Path>(
+  path_sub_ = create_tilde_subscription<autoware_auto_planning_msgs::msg::Path>(
     "~/input/path", rclcpp::QoS{1},
     std::bind(&ObstacleAvoidancePlanner::pathCallback, this, std::placeholders::_1));
-  odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
+  odom_sub_ = create_tilde_subscription<nav_msgs::msg::Odometry>(
     "/localization/kinematic_state", rclcpp::QoS{1},
     std::bind(&ObstacleAvoidancePlanner::odomCallback, this, std::placeholders::_1));
-  objects_sub_ = create_subscription<autoware_auto_perception_msgs::msg::PredictedObjects>(
+  objects_sub_ = create_tilde_subscription<autoware_auto_perception_msgs::msg::PredictedObjects>(
     "~/input/objects", rclcpp::QoS{10},
     std::bind(&ObstacleAvoidancePlanner::objectsCallback, this, std::placeholders::_1));
-  is_avoidance_sub_ = create_subscription<tier4_planning_msgs::msg::EnableAvoidance>(
+  is_avoidance_sub_ = create_tilde_subscription<tier4_planning_msgs::msg::EnableAvoidance>(
     "/planning/scenario_planning/lane_driving/obstacle_avoidance_approval", rclcpp::QoS{10},
     std::bind(&ObstacleAvoidancePlanner::enableAvoidanceCallback, this, std::placeholders::_1));
 

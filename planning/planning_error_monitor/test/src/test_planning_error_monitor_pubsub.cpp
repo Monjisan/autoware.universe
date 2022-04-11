@@ -37,7 +37,7 @@ public:
   PubSubManager() : Node("test_pub_sub")
   {
     traj_pub_ = create_tilde_publisher<Trajectory>("/planning_error_monitor/input/trajectory", 1);
-    diag_sub_ = create_subscription<DiagnosticArray>(
+    diag_sub_ = create_tilde_subscription<DiagnosticArray>(
       "/diagnostics", 1,
       [this](const DiagnosticArray::ConstSharedPtr msg) { received_diags_.push_back(msg); });
   }

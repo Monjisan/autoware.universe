@@ -101,7 +101,7 @@ class TestFaultInjectionLink(unittest.TestCase):
         pub_events = self.test_node.create_tilde_publisher(SimulationEvents, "/simulation/events", 10)
 
         msg_buffer = []
-        self.test_node.create_subscription(
+        self.test_node.create_tilde_subscription(
             DiagnosticArray, "/diagnostics", lambda msg: msg_buffer.append(msg), 10
         )
 
@@ -124,7 +124,7 @@ class TestFaultInjectionLink(unittest.TestCase):
         """
         msg_buffer = []
 
-        self.test_node.create_subscription(
+        self.test_node.create_tilde_subscription(
             DiagnosticArray, "/diagnostics", lambda msg: msg_buffer.append(msg), 10
         )
 

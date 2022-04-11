@@ -44,7 +44,7 @@ LivoxTagFilterNode::LivoxTagFilterNode(const rclcpp::NodeOptions & node_options)
 
   // Subscriber
   using std::placeholders::_1;
-  sub_pointcloud_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+  sub_pointcloud_ = this->create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
     "input", rclcpp::SensorDataQoS(), std::bind(&LivoxTagFilterNode::onPointCloud, this, _1));
 
   // Publisher

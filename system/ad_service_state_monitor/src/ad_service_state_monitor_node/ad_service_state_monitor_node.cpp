@@ -425,16 +425,16 @@ AutowareStateMonitorNode::AutowareStateMonitorNode()
   }
 
   // Subscriber
-  sub_autoware_engage_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
+  sub_autoware_engage_ = this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::Engage>(
     "input/autoware_engage", 1, std::bind(&AutowareStateMonitorNode::onAutowareEngage, this, _1),
     subscriber_option);
-  sub_control_mode_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
+  sub_control_mode_ = this->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
     "input/control_mode", 1, std::bind(&AutowareStateMonitorNode::onVehicleControlMode, this, _1),
     subscriber_option);
-  sub_route_ = this->create_subscription<autoware_auto_planning_msgs::msg::HADMapRoute>(
+  sub_route_ = this->create_tilde_subscription<autoware_auto_planning_msgs::msg::HADMapRoute>(
     "input/route", rclcpp::QoS{1}.transient_local(),
     std::bind(&AutowareStateMonitorNode::onRoute, this, _1), subscriber_option);
-  sub_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
+  sub_odom_ = this->create_tilde_subscription<nav_msgs::msg::Odometry>(
     "input/odometry", 100, std::bind(&AutowareStateMonitorNode::onOdometry, this, _1),
     subscriber_option);
 

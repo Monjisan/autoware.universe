@@ -50,29 +50,29 @@ ExternalCmdSelector::ExternalCmdSelector(const rclcpp::NodeOptions & node_option
   subscriber_option.callback_group = callback_group_subscribers_;
 
   // Subscriber
-  sub_local_control_cmd_ = create_subscription<ExternalControlCommand>(
+  sub_local_control_cmd_ = create_tilde_subscription<ExternalControlCommand>(
     "~/input/local/control_cmd", 1, std::bind(&ExternalCmdSelector::onLocalControlCmd, this, _1),
     subscriber_option);
-  sub_local_shift_cmd_ = create_subscription<ExternalGearShift>(
+  sub_local_shift_cmd_ = create_tilde_subscription<ExternalGearShift>(
     "~/input/local/shift_cmd", 1, std::bind(&ExternalCmdSelector::onLocalShiftCmd, this, _1),
     subscriber_option);
-  sub_local_turn_signal_cmd_ = create_subscription<ExternalTurnSignal>(
+  sub_local_turn_signal_cmd_ = create_tilde_subscription<ExternalTurnSignal>(
     "~/input/local/turn_signal_cmd", 1,
     std::bind(&ExternalCmdSelector::onLocalTurnSignalCmd, this, _1), subscriber_option);
-  sub_local_heartbeat_ = create_subscription<ExternalHeartbeat>(
+  sub_local_heartbeat_ = create_tilde_subscription<ExternalHeartbeat>(
     "~/input/local/heartbeat", 1, std::bind(&ExternalCmdSelector::onLocalHeartbeat, this, _1),
     subscriber_option);
 
-  sub_remote_control_cmd_ = create_subscription<ExternalControlCommand>(
+  sub_remote_control_cmd_ = create_tilde_subscription<ExternalControlCommand>(
     "~/input/remote/control_cmd", 1, std::bind(&ExternalCmdSelector::onRemoteControlCmd, this, _1),
     subscriber_option);
-  sub_remote_shift_cmd_ = create_subscription<ExternalGearShift>(
+  sub_remote_shift_cmd_ = create_tilde_subscription<ExternalGearShift>(
     "~/input/remote/shift_cmd", 1, std::bind(&ExternalCmdSelector::onRemoteShiftCmd, this, _1),
     subscriber_option);
-  sub_remote_turn_signal_cmd_ = create_subscription<ExternalTurnSignal>(
+  sub_remote_turn_signal_cmd_ = create_tilde_subscription<ExternalTurnSignal>(
     "~/input/remote/turn_signal_cmd", 1,
     std::bind(&ExternalCmdSelector::onRemoteTurnSignalCmd, this, _1), subscriber_option);
-  sub_remote_heartbeat_ = create_subscription<ExternalHeartbeat>(
+  sub_remote_heartbeat_ = create_tilde_subscription<ExternalHeartbeat>(
     "~/input/remote/heartbeat", 1, std::bind(&ExternalCmdSelector::onRemoteHeartbeat, this, _1),
     subscriber_option);
 

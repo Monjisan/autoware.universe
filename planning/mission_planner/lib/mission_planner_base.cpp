@@ -35,9 +35,9 @@ MissionPlanner::MissionPlanner(
 
   using std::placeholders::_1;
 
-  goal_subscriber_ = create_subscription<geometry_msgs::msg::PoseStamped>(
+  goal_subscriber_ = create_tilde_subscription<geometry_msgs::msg::PoseStamped>(
     "input/goal_pose", 10, std::bind(&MissionPlanner::goalPoseCallback, this, _1));
-  checkpoint_subscriber_ = create_subscription<geometry_msgs::msg::PoseStamped>(
+  checkpoint_subscriber_ = create_tilde_subscription<geometry_msgs::msg::PoseStamped>(
     "input/checkpoint", 10, std::bind(&MissionPlanner::checkpointCallback, this, _1));
 
   rclcpp::QoS durable_qos{1};

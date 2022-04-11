@@ -32,17 +32,17 @@ EmergencyHandler::EmergencyHandler() : Node("emergency_handler")
 
   // Subscriber
   sub_hazard_status_stamped_ =
-    create_subscription<autoware_auto_system_msgs::msg::HazardStatusStamped>(
+    create_tilde_subscription<autoware_auto_system_msgs::msg::HazardStatusStamped>(
       "~/input/hazard_status", rclcpp::QoS{1},
       std::bind(&EmergencyHandler::onHazardStatusStamped, this, _1));
   sub_prev_control_command_ =
-    create_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
+    create_tilde_subscription<autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "~/input/prev_control_command", rclcpp::QoS{1},
       std::bind(&EmergencyHandler::onPrevControlCommand, this, _1));
-  sub_odom_ = create_subscription<nav_msgs::msg::Odometry>(
+  sub_odom_ = create_tilde_subscription<nav_msgs::msg::Odometry>(
     "~/input/odometry", rclcpp::QoS{1}, std::bind(&EmergencyHandler::onOdometry, this, _1));
   // subscribe control mode
-  sub_control_mode_ = create_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
+  sub_control_mode_ = create_tilde_subscription<autoware_auto_vehicle_msgs::msg::ControlModeReport>(
     "~/input/control_mode", rclcpp::QoS{1}, std::bind(&EmergencyHandler::onControlMode, this, _1));
 
   // Heartbeat

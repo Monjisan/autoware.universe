@@ -47,21 +47,21 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
     planner_data_->parameters = getCommonParam();
   }
 
-  velocity_subscriber_ = create_subscription<Odometry>(
+  velocity_subscriber_ = create_tilde_subscription<Odometry>(
     "~/input/odometry", 1, std::bind(&BehaviorPathPlannerNode::onVelocity, this, _1));
-  perception_subscriber_ = create_subscription<PredictedObjects>(
+  perception_subscriber_ = create_tilde_subscription<PredictedObjects>(
     "~/input/perception", 1, std::bind(&BehaviorPathPlannerNode::onPerception, this, _1));
-  external_approval_subscriber_ = create_subscription<ApprovalMsg>(
+  external_approval_subscriber_ = create_tilde_subscription<ApprovalMsg>(
     "~/input/external_approval", 1,
     std::bind(&BehaviorPathPlannerNode::onExternalApproval, this, _1));
-  force_approval_subscriber_ = create_subscription<PathChangeModule>(
+  force_approval_subscriber_ = create_tilde_subscription<PathChangeModule>(
     "~/input/force_approval", 1, std::bind(&BehaviorPathPlannerNode::onForceApproval, this, _1));
 
   // route_handler
-  vector_map_subscriber_ = create_subscription<HADMapBin>(
+  vector_map_subscriber_ = create_tilde_subscription<HADMapBin>(
     "~/input/vector_map", rclcpp::QoS{1}.transient_local(),
     std::bind(&BehaviorPathPlannerNode::onMap, this, _1));
-  route_subscriber_ = create_subscription<HADMapRoute>(
+  route_subscriber_ = create_tilde_subscription<HADMapRoute>(
     "~/input/route", 1, std::bind(&BehaviorPathPlannerNode::onRoute, this, _1));
 
   // publisher

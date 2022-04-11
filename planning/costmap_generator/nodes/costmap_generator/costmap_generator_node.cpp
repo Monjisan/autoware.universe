@@ -145,15 +145,15 @@ CostmapGenerator::CostmapGenerator(const rclcpp::NodeOptions & node_options)
 
   // Subscribers
   using std::placeholders::_1;
-  sub_objects_ = this->create_subscription<autoware_auto_perception_msgs::msg::PredictedObjects>(
+  sub_objects_ = this->create_tilde_subscription<autoware_auto_perception_msgs::msg::PredictedObjects>(
     "~/input/objects", 1, std::bind(&CostmapGenerator::onObjects, this, _1));
-  sub_points_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+  sub_points_ = this->create_tilde_subscription<sensor_msgs::msg::PointCloud2>(
     "~/input/points_no_ground", rclcpp::SensorDataQoS(),
     std::bind(&CostmapGenerator::onPoints, this, _1));
-  sub_lanelet_bin_map_ = this->create_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
+  sub_lanelet_bin_map_ = this->create_tilde_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
     "~/input/vector_map", rclcpp::QoS{1}.transient_local(),
     std::bind(&CostmapGenerator::onLaneletMapBin, this, _1));
-  sub_scenario_ = this->create_subscription<tier4_planning_msgs::msg::Scenario>(
+  sub_scenario_ = this->create_tilde_subscription<tier4_planning_msgs::msg::Scenario>(
     "~/input/scenario", 1, std::bind(&CostmapGenerator::onScenario, this, _1));
 
   // Publishers

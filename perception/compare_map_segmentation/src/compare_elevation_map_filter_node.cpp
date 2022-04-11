@@ -47,7 +47,7 @@ CompareElevationMapFilterComponent::CompareElevationMapFilterComponent(
   rclcpp::QoS durable_qos{1};
   durable_qos.transient_local();
 
-  sub_map_ = this->create_subscription<grid_map_msgs::msg::GridMap>(
+  sub_map_ = this->create_tilde_subscription<grid_map_msgs::msg::GridMap>(
     "input/elevation_map", durable_qos,
     std::bind(
       &CompareElevationMapFilterComponent::elevationMapCallback, this, std::placeholders::_1));
