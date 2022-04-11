@@ -34,7 +34,7 @@ using planning_diagnostics::PlanningErrorMonitorNode;
 class PubSubManager : public rclcpp::Node
 {
 public:
-  PubSubManager() : Node("test_pub_sub")
+  PubSubManager() : TildeNode("test_pub_sub")
   {
     traj_pub_ = create_tilde_publisher<Trajectory>("/planning_error_monitor/input/trajectory", 1);
     diag_sub_ = create_tilde_subscription<DiagnosticArray>(

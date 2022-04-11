@@ -45,7 +45,7 @@ def launch_setup(context, *args, **kwargs):
     with open(simulator_model_param_path, "r") as f:
         simulator_model_param = yaml.safe_load(f)["/**"]["ros__parameters"]
 
-    simple_planning_simulator_node = Node(
+    simple_planning_simulator_node = TildeNode(
         package='simple_planning_simulator',
         executable='simple_planning_simulator_exe',
         name='simple_planning_simulator',
@@ -77,7 +77,7 @@ def launch_setup(context, *args, **kwargs):
         ]
     )
 
-    map_to_odom_tf_publisher = Node(
+    map_to_odom_tf_publisher = TildeNode(
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_map_to_odom_tf_publisher',

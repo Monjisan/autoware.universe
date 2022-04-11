@@ -22,7 +22,7 @@ namespace pointcloud_preprocessor
 {
 /** @brief Constructor. */
 DistortionCorrectorComponent::DistortionCorrectorComponent(const rclcpp::NodeOptions & options)
-: Node("distortion_corrector_node", options)
+: TildeNode("distortion_corrector_node", options)
 {
   // Parameter
   time_stamp_field_name_ = declare_parameter("time_stamp_field_name", "time_stamp");

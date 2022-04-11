@@ -27,7 +27,7 @@
 #include <vector>
 
 AccelBrakeMapCalibrator::AccelBrakeMapCalibrator(const rclcpp::NodeOptions & node_options)
-: Node("accel_brake_map_calibrator", node_options)
+: TildeNode("accel_brake_map_calibrator", node_options)
 {
   transform_listener_ = std::make_shared<tier4_autoware_utils::TransformListener>(this);
   // get parameter

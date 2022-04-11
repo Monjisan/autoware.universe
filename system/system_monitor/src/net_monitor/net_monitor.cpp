@@ -41,7 +41,7 @@
 #include <vector>
 
 NetMonitor::NetMonitor(const rclcpp::NodeOptions & options)
-: Node("net_monitor", options),
+: TildeNode("net_monitor", options),
   updater_(this),
   last_update_time_{0, 0, this->get_clock()->get_clock_type()},
   device_params_(

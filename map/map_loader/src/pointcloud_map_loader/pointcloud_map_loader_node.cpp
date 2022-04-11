@@ -57,7 +57,7 @@ bool isPcdFile(const std::string & p)
 }  // namespace
 
 PointCloudMapLoaderNode::PointCloudMapLoaderNode(const rclcpp::NodeOptions & options)
-: Node("pointcloud_map_loader", options)
+: TildeNode("pointcloud_map_loader", options)
 {
   rclcpp::QoS durable_qos{1};
   durable_qos.transient_local();

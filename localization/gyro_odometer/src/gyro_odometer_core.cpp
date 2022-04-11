@@ -21,7 +21,7 @@
 #include <string>
 
 GyroOdometer::GyroOdometer()
-: Node("gyro_odometer"),
+: TildeNode("gyro_odometer"),
   tf_buffer_(this->get_clock()),
   tf_listener_(tf_buffer_),
   output_frame_(declare_parameter("base_link", "base_link")),

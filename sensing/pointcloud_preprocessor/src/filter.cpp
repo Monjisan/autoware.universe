@@ -63,7 +63,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 pointcloud_preprocessor::Filter::Filter(
   const std::string & filter_name, const rclcpp::NodeOptions & options)
-: Node(filter_name, options), filter_field_name_(filter_name)
+: TildeNode(filter_name, options), filter_field_name_(filter_name)
 {
   // Set parameters (moved from NodeletLazy onInit)
   {

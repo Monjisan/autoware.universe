@@ -18,7 +18,7 @@
 #include <string>
 #include <utility>
 
-EmergencyHandler::EmergencyHandler() : Node("emergency_handler")
+EmergencyHandler::EmergencyHandler() : TildeNode("emergency_handler")
 {
   // Parameter
   param_.update_rate = declare_parameter<int>("update_rate", 10);

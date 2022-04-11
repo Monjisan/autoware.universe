@@ -67,7 +67,7 @@ void setColor(std_msgs::msg::ColorRGBA * cl, double r, double g, double b, doubl
 }  // namespace
 
 Lanelet2MapVisualizationNode::Lanelet2MapVisualizationNode(const rclcpp::NodeOptions & options)
-: Node("lanelet2_map_visualization", options)
+: TildeNode("lanelet2_map_visualization", options)
 {
   using std::placeholders::_1;
 

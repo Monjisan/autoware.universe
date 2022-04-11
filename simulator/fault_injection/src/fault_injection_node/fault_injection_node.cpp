@@ -38,7 +38,7 @@ std::vector<std::string> split(const std::string & str, const char delim)
 namespace fault_injection
 {
 FaultInjectionNode::FaultInjectionNode(rclcpp::NodeOptions node_options)
-: Node("fault_injection", node_options.automatically_declare_parameters_from_overrides(true)),
+: TildeNode("fault_injection", node_options.automatically_declare_parameters_from_overrides(true)),
   updater_(this)
 {
   updater_.setHardwareID("fault_injection");

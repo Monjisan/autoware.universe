@@ -17,7 +17,7 @@
 #include <limits>
 
 LateralErrorPublisher::LateralErrorPublisher(const rclcpp::NodeOptions & node_options)
-: Node("lateral_error_publisher", node_options)
+: TildeNode("lateral_error_publisher", node_options)
 {
   using std::placeholders::_1;
 

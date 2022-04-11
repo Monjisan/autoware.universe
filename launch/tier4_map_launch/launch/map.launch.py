@@ -26,7 +26,7 @@ from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
-    map_hash_generator = Node(
+    map_hash_generator = TildeNode(
         package="map_loader",
         executable="map_hash_generator",
         name="map_hash_generator",

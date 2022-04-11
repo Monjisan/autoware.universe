@@ -66,7 +66,7 @@ boost::optional<InfrastructureCommand> findCommand(
 }  // namespace
 
 DummyInfrastructureNode::DummyInfrastructureNode(const rclcpp::NodeOptions & node_options)
-: Node("dummy_infrastructure", node_options)
+: TildeNode("dummy_infrastructure", node_options)
 {
   // Parameter Server
   set_param_res_ =

@@ -31,7 +31,7 @@ import shlex
 
 def resolve_node(context, *args, **kwargs):
 
-    smoke_test_node = Node(
+    smoke_test_node = TildeNode(
         package=LaunchConfiguration('arg_package'),
         executable=LaunchConfiguration('arg_package_exe'),
         namespace='test',

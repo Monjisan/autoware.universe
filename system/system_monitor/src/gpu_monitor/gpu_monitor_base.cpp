@@ -24,7 +24,7 @@
 #include <string>
 
 GPUMonitorBase::GPUMonitorBase(const std::string & node_name, const rclcpp::NodeOptions & options)
-: Node(node_name, options),
+: TildeNode(node_name, options),
   updater_(this),
   hostname_{""},
   temp_warn_(declare_parameter<float>("temp_warn", 90.0)),

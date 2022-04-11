@@ -74,7 +74,7 @@ void DummyDiagPublisherNode::onTimer()
   }
 }
 
-DummyDiagPublisherNode::DummyDiagPublisherNode() : Node("dummy_diag_publisher")
+DummyDiagPublisherNode::DummyDiagPublisherNode() : TildeNode("dummy_diag_publisher")
 {
   // Parameter
   update_rate_ = declare_parameter("update_rate", 10.0);

@@ -383,7 +383,7 @@ void AutowareStateMonitorNode::setDisengage()
 }
 
 AutowareStateMonitorNode::AutowareStateMonitorNode()
-: Node("ad_service_state_monitor"),
+: TildeNode("ad_service_state_monitor"),
   tf_buffer_(this->get_clock()),
   tf_listener_(tf_buffer_),
   updater_(this)

@@ -67,7 +67,7 @@ namespace pointcloud_preprocessor
 {
 PointCloudConcatenateDataSynchronizerComponent::PointCloudConcatenateDataSynchronizerComponent(
   const rclcpp::NodeOptions & node_options)
-: Node("point_cloud_concatenator_component", node_options)
+: TildeNode("point_cloud_concatenator_component", node_options)
 {
   // Set parameters
   {

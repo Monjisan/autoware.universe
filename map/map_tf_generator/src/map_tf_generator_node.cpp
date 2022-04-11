@@ -30,7 +30,7 @@ class MapTFGeneratorNode : public rclcpp::Node
 public:
   using PointCloud = pcl::PointCloud<pcl::PointXYZ>;
   explicit MapTFGeneratorNode(const rclcpp::NodeOptions & options)
-  : Node("map_tf_generator", options)
+  : TildeNode("map_tf_generator", options)
   {
     map_frame_ = declare_parameter("map_frame", "map");
     viewer_frame_ = declare_parameter("viewer_frame", "viewer");

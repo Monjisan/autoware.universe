@@ -22,7 +22,7 @@
 class EmptyObjectsPublisher : public rclcpp::Node
 {
 public:
-  EmptyObjectsPublisher() : Node("empty_objects_publisher")
+  EmptyObjectsPublisher() : TildeNode("empty_objects_publisher")
   {
     empty_objects_pub_ =
       this->create_tilde_publisher<autoware_auto_perception_msgs::msg::PredictedObjects>(

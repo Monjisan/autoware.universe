@@ -22,7 +22,7 @@
 namespace external_cmd_converter
 {
 ExternalCmdConverterNode::ExternalCmdConverterNode(const rclcpp::NodeOptions & node_options)
-: Node("external_cmd_converter", node_options)
+: TildeNode("external_cmd_converter", node_options)
 {
   using std::placeholders::_1;
 

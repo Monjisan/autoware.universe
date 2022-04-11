@@ -38,7 +38,7 @@ namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
 CPUMonitorBase::CPUMonitorBase(const std::string & node_name, const rclcpp::NodeOptions & options)
-: Node(node_name, options),
+: TildeNode(node_name, options),
   updater_(this),
   hostname_(),
   num_cores_(0),

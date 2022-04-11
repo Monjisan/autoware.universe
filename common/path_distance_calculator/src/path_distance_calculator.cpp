@@ -23,7 +23,7 @@
 #include <vector>
 
 PathDistanceCalculator::PathDistanceCalculator(const rclcpp::NodeOptions & options)
-: Node("path_distance_calculator", options), self_pose_listener_(this)
+: TildeNode("path_distance_calculator", options), self_pose_listener_(this)
 {
   sub_path_ = create_tilde_subscription<autoware_auto_planning_msgs::msg::Path>(
     "~/input/path", rclcpp::QoS(1),

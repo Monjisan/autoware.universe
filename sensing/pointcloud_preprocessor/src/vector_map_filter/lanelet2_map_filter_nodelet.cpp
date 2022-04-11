@@ -33,7 +33,7 @@
 namespace pointcloud_preprocessor
 {
 Lanelet2MapFilterComponent::Lanelet2MapFilterComponent(const rclcpp::NodeOptions & node_options)
-: Node("LaneletMapFilter", node_options)
+: TildeNode("LaneletMapFilter", node_options)
 {
   using std::placeholders::_1;
 

@@ -46,7 +46,7 @@
 #include <string>
 
 Lanelet2MapLoaderNode::Lanelet2MapLoaderNode(const rclcpp::NodeOptions & options)
-: Node("lanelet2_map_loader", options)
+: TildeNode("lanelet2_map_loader", options)
 {
   const auto lanelet2_filename = declare_parameter("lanelet2_map_path", "");
   lanelet::ErrorMessages errors{};

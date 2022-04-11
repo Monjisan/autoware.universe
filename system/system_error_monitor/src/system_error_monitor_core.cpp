@@ -188,7 +188,7 @@ int isInNoFaultCondition(
 }  // namespace
 
 AutowareErrorMonitor::AutowareErrorMonitor()
-: Node(
+: TildeNode(
     "system_error_monitor",
     rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true))
 {

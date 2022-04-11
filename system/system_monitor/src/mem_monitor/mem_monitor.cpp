@@ -31,7 +31,7 @@
 namespace bp = boost::process;
 
 MemMonitor::MemMonitor(const rclcpp::NodeOptions & options)
-: Node("mem_monitor", options),
+: TildeNode("mem_monitor", options),
   updater_(this),
   available_size_(declare_parameter<int>("available_size", 1024) * 1024 * 1024)
 {

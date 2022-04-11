@@ -30,7 +30,7 @@
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
-VelodyneMonitor::VelodyneMonitor() : Node("velodyne_monitor"), updater_(this)
+VelodyneMonitor::VelodyneMonitor() : TildeNode("velodyne_monitor"), updater_(this)
 {
   timeout_ = declare_parameter("timeout", 0.5);
   ip_address_ = declare_parameter("ip_address", "192.168.1.201");

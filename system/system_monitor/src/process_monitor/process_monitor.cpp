@@ -29,7 +29,7 @@
 #include <vector>
 
 ProcessMonitor::ProcessMonitor(const rclcpp::NodeOptions & options)
-: Node("process_monitor", options),
+: TildeNode("process_monitor", options),
   updater_(this),
   num_of_procs_(declare_parameter<int>("num_of_procs", 5))
 {

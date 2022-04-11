@@ -22,7 +22,7 @@ namespace raw_vehicle_cmd_converter
 {
 RawVehicleCommandConverterNode::RawVehicleCommandConverterNode(
   const rclcpp::NodeOptions & node_options)
-: Node("raw_vehicle_cmd_converter_node", node_options)
+: TildeNode("raw_vehicle_cmd_converter_node", node_options)
 {
   using std::placeholders::_1;
   /* parameters for accel/brake map */

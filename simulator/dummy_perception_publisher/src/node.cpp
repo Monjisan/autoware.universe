@@ -26,7 +26,7 @@
 #include <vector>
 
 DummyPerceptionPublisherNode::DummyPerceptionPublisherNode()
-: Node("dummy_perception_publisher"), tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_)
+: TildeNode("dummy_perception_publisher"), tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_)
 {
   visible_range_ = this->declare_parameter("visible_range", 100.0);
   detection_successful_rate_ = this->declare_parameter("detection_successful_rate", 0.8);
