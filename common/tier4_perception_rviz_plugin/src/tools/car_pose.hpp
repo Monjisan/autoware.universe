@@ -78,7 +78,7 @@ private Q_SLOTS:
 
 private:
   rclcpp::Clock::SharedPtr clock_;
-  tilde:;TildePublisher<dummy_perception_publisher::msg::Object>::SharedPtr dummy_object_info_pub_;
+  tilde::TildePublisher<dummy_perception_publisher::msg::Object>::SharedPtr dummy_object_info_pub_;
 
   rviz_common::properties::StringProperty * topic_property_;
   rviz_common::properties::FloatProperty * std_dev_x_;

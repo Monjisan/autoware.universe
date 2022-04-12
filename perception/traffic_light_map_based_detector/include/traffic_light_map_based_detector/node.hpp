@@ -89,8 +89,8 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr camera_info_sub_;
   rclcpp::Subscription<autoware_auto_planning_msgs::msg::HADMapRoute>::SharedPtr route_sub_;
 
-  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::TrafficLightRoiArray>::SharedPtr roi_pub_;
-  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr viz_pub_;
+  tilde::TildePublisher<autoware_auto_perception_msgs::msg::TrafficLightRoiArray>::SharedPtr roi_pub_;
+  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr viz_pub_;
 
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
@@ -128,7 +128,7 @@ private:
   void publishVisibleTrafficLights(
     const geometry_msgs::msg::PoseStamped camera_pose_stamped,
     const std::vector<lanelet::ConstLineString3d> & visible_traffic_lights,
-    const tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub);
+    const tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub);
 };
 }  // namespace traffic_light
 #endif  // TRAFFIC_LIGHT_MAP_BASED_DETECTOR__NODE_HPP_

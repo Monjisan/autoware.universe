@@ -38,8 +38,8 @@ private:
   void onPointCloud(const sensor_msgs::msg::PointCloud2::ConstSharedPtr input_msg);
 
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_sub_;
-  tilde:;TildePublisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr cluster_pub_;
-  tilde:;TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr debug_pub_;
+  tilde::TildePublisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr cluster_pub_;
+  tilde::TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr debug_pub_;
 
   std::shared_ptr<VoxelGridBasedEuclideanCluster> cluster_;
 };

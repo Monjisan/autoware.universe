@@ -33,7 +33,7 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
 
-  tilde:;TildePublisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
+  tilde::TildePublisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
 
   double angular_velocity_offset_z_;
 

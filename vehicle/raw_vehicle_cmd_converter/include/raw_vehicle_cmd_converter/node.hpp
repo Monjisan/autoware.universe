@@ -75,7 +75,7 @@ public:
   explicit RawVehicleCommandConverterNode(const rclcpp::NodeOptions & node_options);
 
   //!< @brief topic publisher for low level vehicle command
-  tilde:;TildePublisher<ActuationCommandStamped>::SharedPtr pub_actuation_cmd_;
+  tilde::TildePublisher<ActuationCommandStamped>::SharedPtr pub_actuation_cmd_;
   //!< @brief subscriber for current velocity
   rclcpp::Subscription<Odometry>::SharedPtr sub_velocity_;
   //!< @brief subscriber for vehicle command
@@ -114,7 +114,7 @@ public:
   void onVelocity(const Odometry::ConstSharedPtr msg);
   void publishActuationCmd();
   // for debugging
-  tilde:;TildePublisher<Float32MultiArrayStamped>::SharedPtr debug_pub_steer_pid_;
+  tilde::TildePublisher<Float32MultiArrayStamped>::SharedPtr debug_pub_steer_pid_;
   DebugValues debug_steer_;
 };
 }  // namespace raw_vehicle_cmd_converter

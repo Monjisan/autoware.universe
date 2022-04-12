@@ -46,8 +46,8 @@ private:
     vehicle_twist_with_cov_sub_;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
 
-  tilde:;TildePublisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
-  tilde:;TildePublisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr
+  tilde::TildePublisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
+  tilde::TildePublisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr
     twist_with_covariance_pub_;
 
   tf2_ros::Buffer tf_buffer_;

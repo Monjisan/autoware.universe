@@ -79,9 +79,9 @@ private:
   image_transport::SubscriberFilter image_sub_;
   message_filters::Subscriber<autoware_auto_perception_msgs::msg::TrafficLightRoiArray> roi_sub_;
   std::mutex connect_mutex_;
-  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::TrafficLightRoiArray>::SharedPtr
+  tilde::TildePublisher<autoware_auto_perception_msgs::msg::TrafficLightRoiArray>::SharedPtr
     output_roi_pub_;
-  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr exe_time_pub_;
+  tilde::TildePublisher<tier4_debug_msgs::msg::Float32Stamped>::SharedPtr exe_time_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   typedef message_filters::sync_policies::ExactTime<

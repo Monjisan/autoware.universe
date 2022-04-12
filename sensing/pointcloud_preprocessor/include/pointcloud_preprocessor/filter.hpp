@@ -136,7 +136,7 @@ protected:
   rclcpp::Subscription<PointCloud2>::SharedPtr sub_input_;
 
   /** \brief The output PointCloud2 publisher. */
-  tilde:;TildePublisher<PointCloud2>::SharedPtr pub_output_;
+  tilde::TildePublisher<PointCloud2>::SharedPtr pub_output_;
 
   /** \brief The message filter subscriber for PointCloud2. */
   message_filters::Subscriber<PointCloud2> sub_input_filter_;

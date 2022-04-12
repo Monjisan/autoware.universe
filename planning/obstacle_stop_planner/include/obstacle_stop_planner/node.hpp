@@ -174,10 +174,10 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr current_velocity_sub_;
   rclcpp::Subscription<PredictedObjects>::SharedPtr dynamic_object_sub_;
   rclcpp::Subscription<ExpandStopRange>::SharedPtr expand_stop_range_sub_;
-  tilde:;TildePublisher<Trajectory>::SharedPtr path_pub_;
-  tilde:;TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr stop_reason_diag_pub_;
-  tilde:;TildePublisher<VelocityLimitClearCommand>::SharedPtr pub_clear_velocity_limit_;
-  tilde:;TildePublisher<VelocityLimit>::SharedPtr pub_velocity_limit_;
+  tilde::TildePublisher<Trajectory>::SharedPtr path_pub_;
+  tilde::TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr stop_reason_diag_pub_;
+  tilde::TildePublisher<VelocityLimitClearCommand>::SharedPtr pub_clear_velocity_limit_;
+  tilde::TildePublisher<VelocityLimit>::SharedPtr pub_velocity_limit_;
 
   std::unique_ptr<motion_planning::AdaptiveCruiseController> acc_controller_;
   std::shared_ptr<ObstacleStopPlannerDebugNode> debug_ptr_;

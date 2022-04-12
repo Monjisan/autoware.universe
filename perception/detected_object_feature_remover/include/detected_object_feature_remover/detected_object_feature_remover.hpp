@@ -35,7 +35,7 @@ public:
 
 private:
   rclcpp::Subscription<DetectedObjectsWithFeature>::SharedPtr sub_;
-  tilde:;TildePublisher<DetectedObjects>::SharedPtr pub_;
+  tilde::TildePublisher<DetectedObjects>::SharedPtr pub_;
   void objectCallback(const DetectedObjectsWithFeature::ConstSharedPtr input);
   void convert(const DetectedObjectsWithFeature & objs_with_feature, DetectedObjects & objs);
 };

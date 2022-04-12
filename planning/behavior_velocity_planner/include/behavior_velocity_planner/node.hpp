@@ -90,9 +90,9 @@ private:
   void onOccupancyGrid(const nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg);
 
   // publisher
-  tilde:;TildePublisher<autoware_auto_planning_msgs::msg::Path>::SharedPtr path_pub_;
-  tilde:;TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr stop_reason_diag_pub_;
-  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
+  tilde::TildePublisher<autoware_auto_planning_msgs::msg::Path>::SharedPtr path_pub_;
+  tilde::TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr stop_reason_diag_pub_;
+  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
 
   void publishDebugMarker(const autoware_auto_planning_msgs::msg::Path & path);
 

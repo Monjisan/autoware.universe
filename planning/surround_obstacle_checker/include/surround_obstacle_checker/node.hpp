@@ -101,8 +101,8 @@ private:
   rclcpp::Subscription<autoware_auto_perception_msgs::msg::PredictedObjects>::SharedPtr
     dynamic_object_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr current_velocity_sub_;
-  tilde:;TildePublisher<Trajectory>::SharedPtr path_pub_;
-  tilde:;TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr stop_reason_diag_pub_;
+  tilde::TildePublisher<Trajectory>::SharedPtr path_pub_;
+  tilde::TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr stop_reason_diag_pub_;
   std::shared_ptr<SurroundObstacleCheckerDebugNode> debug_ptr_;
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;

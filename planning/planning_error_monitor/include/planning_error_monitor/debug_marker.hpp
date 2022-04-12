@@ -41,7 +41,7 @@ public:
 private:
   rclcpp::Node * node_;
   visualization_msgs::msg::MarkerArray marker_array_;
-  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
+  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
   std::map<std::string, int> marker_id_;
   bool initialized = false;
 

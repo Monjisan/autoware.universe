@@ -52,25 +52,25 @@ public:
 
 private:
   //!< @brief ekf estimated pose publisher
-  tilde:;TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_pose_;
+  tilde::TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_pose_;
   //!< @brief estimated ekf pose with covariance publisher
-  tilde:;TildePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pub_pose_cov_;
+  tilde::TildePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pub_pose_cov_;
   //!< @brief estimated ekf odometry publisher
-  tilde:;TildePublisher<nav_msgs::msg::Odometry>::SharedPtr pub_odom_;
+  tilde::TildePublisher<nav_msgs::msg::Odometry>::SharedPtr pub_odom_;
   //!< @brief ekf estimated twist publisher
-  tilde:;TildePublisher<geometry_msgs::msg::TwistStamped>::SharedPtr pub_twist_;
+  tilde::TildePublisher<geometry_msgs::msg::TwistStamped>::SharedPtr pub_twist_;
   //!< @brief ekf estimated twist with covariance publisher
-  tilde:;TildePublisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr pub_twist_cov_;
+  tilde::TildePublisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr pub_twist_cov_;
   //!< @brief debug info publisher
-  tilde:;TildePublisher<tier4_debug_msgs::msg::Float64MultiArrayStamped>::SharedPtr pub_debug_;
+  tilde::TildePublisher<tier4_debug_msgs::msg::Float64MultiArrayStamped>::SharedPtr pub_debug_;
   //!< @brief debug measurement pose publisher
-  tilde:;TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_measured_pose_;
+  tilde::TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_measured_pose_;
   //!< @brief ekf estimated yaw bias publisher
-  tilde:;TildePublisher<tier4_debug_msgs::msg::Float64Stamped>::SharedPtr pub_yaw_bias_;
+  tilde::TildePublisher<tier4_debug_msgs::msg::Float64Stamped>::SharedPtr pub_yaw_bias_;
   //!< @brief ekf estimated yaw bias publisher
-  tilde:;TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_pose_no_yawbias_;
+  tilde::TildePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_pose_no_yawbias_;
   //!< @brief ekf estimated yaw bias publisher
-  tilde:;TildePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr
+  tilde::TildePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr
     pub_pose_cov_no_yawbias_;
   //!< @brief initial pose subscriber
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr sub_initialpose_;

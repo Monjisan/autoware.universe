@@ -911,7 +911,7 @@ void MotionVelocitySmootherNode::publishDebugTrajectories(
 
 void MotionVelocitySmootherNode::publishClosestVelocity(
   const TrajectoryPoints & trajectory, const Pose & current_pose,
-  const tilde:;TildePublisher<Float32Stamped>::SharedPtr pub) const
+  const tilde::TildePublisher<Float32Stamped>::SharedPtr pub) const
 {
   const auto closest_point =
     trajectory_utils::calcInterpolatedTrajectoryPoint(trajectory, current_pose);
@@ -925,7 +925,7 @@ void MotionVelocitySmootherNode::publishClosestVelocity(
 void MotionVelocitySmootherNode::publishClosestState(const TrajectoryPoint & closest_point)
 {
   auto publishFloat = [=](
-                        const double data, const tilde:;TildePublisher<Float32Stamped>::SharedPtr pub) {
+                        const double data, const tilde::TildePublisher<Float32Stamped>::SharedPtr pub) {
     Float32Stamped msg{};
     msg.stamp = this->now();
     msg.data = data;

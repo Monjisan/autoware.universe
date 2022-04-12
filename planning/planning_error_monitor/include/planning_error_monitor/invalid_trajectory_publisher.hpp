@@ -39,7 +39,7 @@ public:
 private:
   // ROS
   rclcpp::Subscription<Trajectory>::SharedPtr traj_sub_;
-  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub_;
+  tilde::TildePublisher<Trajectory>::SharedPtr traj_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   Trajectory::ConstSharedPtr current_trajectory_ = nullptr;

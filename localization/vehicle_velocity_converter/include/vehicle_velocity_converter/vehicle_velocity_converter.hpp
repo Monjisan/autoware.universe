@@ -37,7 +37,7 @@ private:
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr
     vehicle_report_sub_;
 
-  tilde:;TildePublisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr
+  tilde::TildePublisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr
     twist_with_covariance_pub_;
 
   std::string frame_id_;

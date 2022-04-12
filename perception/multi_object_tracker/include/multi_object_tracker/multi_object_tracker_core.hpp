@@ -49,7 +49,7 @@ public:
   explicit MultiObjectTracker(const rclcpp::NodeOptions & node_options);
 
 private:
-  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::TrackedObjects>::SharedPtr
+  tilde::TildePublisher<autoware_auto_perception_msgs::msg::TrackedObjects>::SharedPtr
     tracked_objects_pub_;
   rclcpp::Subscription<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr
     detected_object_sub_;

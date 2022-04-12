@@ -41,8 +41,8 @@ public:
   void publish();
 
 private:
-  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
-  tilde:;TildePublisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr stop_reason_pub_;
+  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
+  tilde::TildePublisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr stop_reason_pub_;
   double base_link2front_;
 
   visualization_msgs::msg::MarkerArray makeVisualizationMarker();

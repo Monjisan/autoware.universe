@@ -33,7 +33,7 @@ public:
 
 private:
   rclcpp::Subscription<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr sub_map_bin_;
-  tilde:;TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_marker_;
+  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_marker_;
 
   bool viz_lanelets_centerline_;
 

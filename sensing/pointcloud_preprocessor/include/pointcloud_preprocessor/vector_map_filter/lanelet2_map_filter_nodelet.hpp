@@ -57,7 +57,7 @@ private:
 
   rclcpp::Subscription<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr map_sub_;
   rclcpp::Subscription<PointCloud2>::SharedPtr pointcloud_sub_;
-  tilde:;TildePublisher<PointCloud2>::SharedPtr filtered_pointcloud_pub_;
+  tilde::TildePublisher<PointCloud2>::SharedPtr filtered_pointcloud_pub_;
 
   lanelet::LaneletMapPtr lanelet_map_ptr_;
   lanelet::ConstLanelets road_lanelets_;

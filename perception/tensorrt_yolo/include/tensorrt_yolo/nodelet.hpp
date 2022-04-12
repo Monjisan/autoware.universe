@@ -53,7 +53,7 @@ private:
   std::mutex connect_mutex_;
 
   image_transport::Publisher image_pub_;
-  tilde:;TildePublisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr objects_pub_;
+  tilde::TildePublisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr objects_pub_;
 
   image_transport::Subscriber image_sub_;
 

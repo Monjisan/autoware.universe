@@ -34,7 +34,7 @@ public:
   }
 
 private:
-  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::PredictedObjects>::SharedPtr
+  tilde::TildePublisher<autoware_auto_perception_msgs::msg::PredictedObjects>::SharedPtr
     empty_objects_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 

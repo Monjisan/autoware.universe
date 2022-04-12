@@ -33,7 +33,7 @@ class ShapeEstimationNode : public tilde::TildeNode
 {
 private:
   // ros
-  tilde:;TildePublisher<DetectedObjectsWithFeature>::SharedPtr pub_;
+  tilde::TildePublisher<DetectedObjectsWithFeature>::SharedPtr pub_;
   rclcpp::Subscription<DetectedObjectsWithFeature>::SharedPtr sub_;
 
   void callback(const DetectedObjectsWithFeature::ConstSharedPtr input_msg);

@@ -35,7 +35,7 @@ OcclusionSpotModule::OcclusionSpotModule(
   const int64_t module_id, [[maybe_unused]] std::shared_ptr<const PlannerData> planner_data,
   const PlannerParam & planner_param, const rclcpp::Logger logger,
   const rclcpp::Clock::SharedPtr clock,
-  const tilde:;TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr publisher)
+  const tilde::TildePublisher<nav_msgs::msg::OccupancyGrid>::SharedPtr publisher)
 : SceneModuleInterface(module_id, logger, clock), publisher_(publisher)
 {
   param_ = planner_param;

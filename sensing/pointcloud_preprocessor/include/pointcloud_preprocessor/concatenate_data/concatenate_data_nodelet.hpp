@@ -114,7 +114,7 @@ public:
 
 private:
   /** \brief The output PointCloud publisher. */
-  tilde:;TildePublisher<PointCloud2>::SharedPtr pub_output_;
+  tilde::TildePublisher<PointCloud2>::SharedPtr pub_output_;
 
   /** \brief The maximum number of messages that we can store in the queue. */
   int maximum_queue_size_ = 3;

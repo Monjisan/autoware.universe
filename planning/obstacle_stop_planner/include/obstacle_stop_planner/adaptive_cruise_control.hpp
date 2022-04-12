@@ -51,7 +51,7 @@ public:
     TrajectoryPoints * output_trajectory, const std_msgs::msg::Header trajectory_header);
 
 private:
-  tilde:;TildePublisher<tier4_debug_msgs::msg::Float32MultiArrayStamped>::SharedPtr pub_debug_;
+  tilde::TildePublisher<tier4_debug_msgs::msg::Float32MultiArrayStamped>::SharedPtr pub_debug_;
 
   rclcpp::Node * node_;
   /*

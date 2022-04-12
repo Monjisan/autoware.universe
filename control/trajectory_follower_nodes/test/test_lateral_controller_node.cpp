@@ -70,13 +70,13 @@ TEST_F(FakeNodeFixture, no_input)
   // Node
   std::shared_ptr<LateralController> node = makeLateralNode();
   // Publisher/Subscribers
-  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub =
+  tilde::TildePublisher<Trajectory>::SharedPtr traj_pub =
     this->create_tilde_publisher<Trajectory>(
     "lateral_controller/input/reference_trajectory");
-  tilde:;TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
+  tilde::TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
     this->create_tilde_publisher<VehicleOdometry>(
     "lateral_controller/input/current_odometry");
-  tilde:;TildePublisher<SteeringReport>::SharedPtr steer_pub =
+  tilde::TildePublisher<SteeringReport>::SharedPtr steer_pub =
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
@@ -101,13 +101,13 @@ TEST_F(FakeNodeFixture, empty_trajectory)
   // Node
   std::shared_ptr<LateralController> node = makeLateralNode();
   // Publisher/Subscribers
-  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub =
+  tilde::TildePublisher<Trajectory>::SharedPtr traj_pub =
     this->create_tilde_publisher<Trajectory>(
     "lateral_controller/input/reference_trajectory");
-  tilde:;TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
+  tilde::TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
     this->create_tilde_publisher<VehicleOdometry>(
     "lateral_controller/input/current_odometry");
-  tilde:;TildePublisher<SteeringReport>::SharedPtr steer_pub =
+  tilde::TildePublisher<SteeringReport>::SharedPtr steer_pub =
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
@@ -154,13 +154,13 @@ TEST_F(FakeNodeFixture, straight_trajectory)
   // Node
   std::shared_ptr<LateralController> node = makeLateralNode();
   // Publisher/Subscribers
-  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub =
+  tilde::TildePublisher<Trajectory>::SharedPtr traj_pub =
     this->create_tilde_publisher<Trajectory>(
     "lateral_controller/input/reference_trajectory");
-  tilde:;TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
+  tilde::TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
     this->create_tilde_publisher<VehicleOdometry>(
     "lateral_controller/input/current_odometry");
-  tilde:;TildePublisher<SteeringReport>::SharedPtr steer_pub =
+  tilde::TildePublisher<SteeringReport>::SharedPtr steer_pub =
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
@@ -228,13 +228,13 @@ TEST_F(FakeNodeFixture, right_turn)
   // Node
   std::shared_ptr<LateralController> node = makeLateralNode();
   // Publisher/Subscribers
-  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub =
+  tilde::TildePublisher<Trajectory>::SharedPtr traj_pub =
     this->create_tilde_publisher<Trajectory>(
     "lateral_controller/input/reference_trajectory");
-  tilde:;TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
+  tilde::TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
     this->create_tilde_publisher<VehicleOdometry>(
     "lateral_controller/input/current_odometry");
-  tilde:;TildePublisher<SteeringReport>::SharedPtr steer_pub =
+  tilde::TildePublisher<SteeringReport>::SharedPtr steer_pub =
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
@@ -302,13 +302,13 @@ TEST_F(FakeNodeFixture, left_turn)
   // Node
   std::shared_ptr<LateralController> node = makeLateralNode();
   // Publisher/Subscribers
-  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub =
+  tilde::TildePublisher<Trajectory>::SharedPtr traj_pub =
     this->create_tilde_publisher<Trajectory>(
     "lateral_controller/input/reference_trajectory");
-  tilde:;TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
+  tilde::TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
     this->create_tilde_publisher<VehicleOdometry>(
     "lateral_controller/input/current_odometry");
-  tilde:;TildePublisher<SteeringReport>::SharedPtr steer_pub =
+  tilde::TildePublisher<SteeringReport>::SharedPtr steer_pub =
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =
@@ -376,13 +376,13 @@ TEST_F(FakeNodeFixture, stopped)
   // Node
   std::shared_ptr<LateralController> node = makeLateralNode();
   // Publisher/Subscribers
-  tilde:;TildePublisher<Trajectory>::SharedPtr traj_pub =
+  tilde::TildePublisher<Trajectory>::SharedPtr traj_pub =
     this->create_tilde_publisher<Trajectory>(
     "lateral_controller/input/reference_trajectory");
-  tilde:;TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
+  tilde::TildePublisher<VehicleOdometry>::SharedPtr odom_pub =
     this->create_tilde_publisher<VehicleOdometry>(
     "lateral_controller/input/current_odometry");
-  tilde:;TildePublisher<SteeringReport>::SharedPtr steer_pub =
+  tilde::TildePublisher<SteeringReport>::SharedPtr steer_pub =
     this->create_tilde_publisher<SteeringReport>(
     "lateral_controller/input/current_steering");
   rclcpp::Subscription<LateralCommand>::SharedPtr cmd_sub =

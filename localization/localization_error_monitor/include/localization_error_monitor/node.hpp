@@ -36,7 +36,7 @@ class LocalizationErrorMonitor : public tilde::TildeNode
 {
 private:
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_with_cov_sub_;
-  tilde:;TildePublisher<visualization_msgs::msg::Marker>::SharedPtr ellipse_marker_pub_;
+  tilde::TildePublisher<visualization_msgs::msg::Marker>::SharedPtr ellipse_marker_pub_;
 
   rclcpp::TimerBase::SharedPtr timer_;
   double scale_;

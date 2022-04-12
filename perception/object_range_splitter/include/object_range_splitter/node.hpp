@@ -35,9 +35,9 @@ private:
   void objectCallback(
     const autoware_auto_perception_msgs::msg::DetectedObjects::ConstSharedPtr input_msg);
 
-  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr
+  tilde::TildePublisher<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr
     long_range_object_pub_;
-  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr
+  tilde::TildePublisher<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr
     short_range_object_pub_;
   rclcpp::Subscription<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr sub_;
 

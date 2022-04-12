@@ -128,15 +128,15 @@ public:
 
 private:
   /* ros system */
-  tilde:;TildePublisher<VelocityReport>::SharedPtr pub_velocity_;
-  tilde:;TildePublisher<Odometry>::SharedPtr pub_odom_;
-  tilde:;TildePublisher<SteeringReport>::SharedPtr pub_steer_;
-  tilde:;TildePublisher<ControlModeReport>::SharedPtr pub_control_mode_report_;
-  tilde:;TildePublisher<GearReport>::SharedPtr pub_gear_report_;
-  tilde:;TildePublisher<TurnIndicatorsReport>::SharedPtr pub_turn_indicators_report_;
-  tilde:;TildePublisher<HazardLightsReport>::SharedPtr pub_hazard_lights_report_;
-  tilde:;TildePublisher<tf2_msgs::msg::TFMessage>::SharedPtr pub_tf_;
-  tilde:;TildePublisher<PoseStamped>::SharedPtr pub_current_pose_;
+  tilde::TildePublisher<VelocityReport>::SharedPtr pub_velocity_;
+  tilde::TildePublisher<Odometry>::SharedPtr pub_odom_;
+  tilde::TildePublisher<SteeringReport>::SharedPtr pub_steer_;
+  tilde::TildePublisher<ControlModeReport>::SharedPtr pub_control_mode_report_;
+  tilde::TildePublisher<GearReport>::SharedPtr pub_gear_report_;
+  tilde::TildePublisher<TurnIndicatorsReport>::SharedPtr pub_turn_indicators_report_;
+  tilde::TildePublisher<HazardLightsReport>::SharedPtr pub_hazard_lights_report_;
+  tilde::TildePublisher<tf2_msgs::msg::TFMessage>::SharedPtr pub_tf_;
+  tilde::TildePublisher<PoseStamped>::SharedPtr pub_current_pose_;
 
   rclcpp::Subscription<GearCommand>::SharedPtr sub_gear_cmd_;
   rclcpp::Subscription<TurnIndicatorsCommand>::SharedPtr sub_turn_indicators_cmd_;

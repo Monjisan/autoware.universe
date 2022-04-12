@@ -47,7 +47,7 @@ public:
   explicit PointCloudMapLoaderNode(const rclcpp::NodeOptions & options);
 
 private:
-  tilde:;TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_pointcloud_map_;
+  tilde::TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_pointcloud_map_;
 
   sensor_msgs::msg::PointCloud2 loadPCDFiles(const std::vector<std::string> & pcd_paths);
 };

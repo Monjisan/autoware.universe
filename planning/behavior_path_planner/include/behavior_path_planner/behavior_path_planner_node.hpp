@@ -84,13 +84,13 @@ private:
   rclcpp::Subscription<PredictedObjects>::SharedPtr perception_subscriber_;
   rclcpp::Subscription<ApprovalMsg>::SharedPtr external_approval_subscriber_;
   rclcpp::Subscription<PathChangeModule>::SharedPtr force_approval_subscriber_;
-  tilde:;TildePublisher<PathWithLaneId>::SharedPtr path_publisher_;
-  tilde:;TildePublisher<Path>::SharedPtr path_candidate_publisher_;
-  tilde:;TildePublisher<PathChangeModuleArray>::SharedPtr force_available_publisher_;
-  tilde:;TildePublisher<PathChangeModule>::SharedPtr plan_ready_publisher_;
-  tilde:;TildePublisher<PathChangeModuleArray>::SharedPtr plan_running_publisher_;
-  tilde:;TildePublisher<TurnIndicatorsCommand>::SharedPtr turn_signal_publisher_;
-  tilde:;TildePublisher<HazardLightsCommand>::SharedPtr hazard_signal_publisher_;
+  tilde::TildePublisher<PathWithLaneId>::SharedPtr path_publisher_;
+  tilde::TildePublisher<Path>::SharedPtr path_candidate_publisher_;
+  tilde::TildePublisher<PathChangeModuleArray>::SharedPtr force_available_publisher_;
+  tilde::TildePublisher<PathChangeModule>::SharedPtr plan_ready_publisher_;
+  tilde::TildePublisher<PathChangeModuleArray>::SharedPtr plan_running_publisher_;
+  tilde::TildePublisher<TurnIndicatorsCommand>::SharedPtr turn_signal_publisher_;
+  tilde::TildePublisher<HazardLightsCommand>::SharedPtr hazard_signal_publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   std::shared_ptr<PlannerData> planner_data_;
@@ -158,9 +158,9 @@ private:
   // debug
 
 private:
-  tilde:;TildePublisher<OccupancyGrid>::SharedPtr debug_drivable_area_publisher_;
-  tilde:;TildePublisher<Path>::SharedPtr debug_path_publisher_;
-  tilde:;TildePublisher<MarkerArray>::SharedPtr debug_marker_publisher_;
+  tilde::TildePublisher<OccupancyGrid>::SharedPtr debug_drivable_area_publisher_;
+  tilde::TildePublisher<Path>::SharedPtr debug_path_publisher_;
+  tilde::TildePublisher<MarkerArray>::SharedPtr debug_marker_publisher_;
   void publishDebugMarker(const std::vector<MarkerArray> & debug_markers);
 };
 }  // namespace behavior_path_planner

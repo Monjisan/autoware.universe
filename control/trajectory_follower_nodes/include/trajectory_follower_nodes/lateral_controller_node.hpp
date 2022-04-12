@@ -81,12 +81,12 @@ public:
 
 private:
   //!< @brief topic publisher for control command
-  tilde:;TildePublisher<autoware_auto_control_msgs::msg::AckermannLateralCommand>::SharedPtr
+  tilde::TildePublisher<autoware_auto_control_msgs::msg::AckermannLateralCommand>::SharedPtr
     m_pub_ctrl_cmd;
   //!< @brief topic publisher for predicted trajectory
-  tilde:;TildePublisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr m_pub_predicted_traj;
+  tilde::TildePublisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr m_pub_predicted_traj;
   //!< @brief topic publisher for control diagnostic
-  tilde:;TildePublisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr
+  tilde::TildePublisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr
     m_pub_diagnostic;
   //!< @brief topic subscription for reference waypoints
   rclcpp::Subscription<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr m_sub_ref_path;

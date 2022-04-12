@@ -102,13 +102,13 @@ public:
   /// @return     A publisher pointer;
   ///
   template<typename MsgT>
-  typename tilde:;TildePublisher<MsgT>::SharedPtr create_tilde_publisher(
+  typename tilde::TildePublisher<MsgT>::SharedPtr create_tilde_publisher(
     const std::string & topic,
     const std::chrono::milliseconds & timeout = std::chrono::seconds{10LL},
     const rclcpp::QoS & qos = rclcpp::QoS(rclcpp::KeepLast(10)))
   {
     // Set the QoS profile history depth
-    typename tilde:;TildePublisher<MsgT>::SharedPtr publisher =
+    typename tilde::TildePublisher<MsgT>::SharedPtr publisher =
       m_fake_node->create_tilde_publisher<MsgT>(topic, qos);
 
     std::chrono::milliseconds spent_time{0LL};

@@ -39,7 +39,7 @@ private:
     const sensor_msgs::msg::CompressedImage::ConstSharedPtr input_compressed_image_msg);
 
   rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr compressed_image_sub_;
-  tilde:;TildePublisher<sensor_msgs::msg::Image>::SharedPtr raw_image_pub_;
+  tilde::TildePublisher<sensor_msgs::msg::Image>::SharedPtr raw_image_pub_;
   std::string encoding_;
 };
 

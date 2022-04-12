@@ -51,8 +51,8 @@ public:
 
 private:
   // Publisher
-  tilde:;TildePublisher<AckermannControlCommand>::SharedPtr pub_cmd_;
-  tilde:;TildePublisher<tier4_external_api_msgs::msg::ControlCommandStamped>::SharedPtr
+  tilde::TildePublisher<AckermannControlCommand>::SharedPtr pub_cmd_;
+  tilde::TildePublisher<tier4_external_api_msgs::msg::ControlCommandStamped>::SharedPtr
     pub_current_cmd_;
 
   // Subscriber

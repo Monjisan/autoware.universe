@@ -65,16 +65,16 @@ public:
 
 private:
   // Publisher
-  tilde:;TildePublisher<VehicleEmergencyStamped>::SharedPtr vehicle_cmd_emergency_pub_;
-  tilde:;TildePublisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
+  tilde::TildePublisher<VehicleEmergencyStamped>::SharedPtr vehicle_cmd_emergency_pub_;
+  tilde::TildePublisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
     control_cmd_pub_;
-  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::GearCommand>::SharedPtr gear_cmd_pub_;
-  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>::SharedPtr
+  tilde::TildePublisher<autoware_auto_vehicle_msgs::msg::GearCommand>::SharedPtr gear_cmd_pub_;
+  tilde::TildePublisher<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>::SharedPtr
     turn_indicator_cmd_pub_;
-  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>::SharedPtr
+  tilde::TildePublisher<autoware_auto_vehicle_msgs::msg::HazardLightsCommand>::SharedPtr
     hazard_light_cmd_pub_;
-  tilde:;TildePublisher<tier4_control_msgs::msg::GateMode>::SharedPtr gate_mode_pub_;
-  tilde:;TildePublisher<autoware_auto_vehicle_msgs::msg::Engage>::SharedPtr engage_pub_;
+  tilde::TildePublisher<tier4_control_msgs::msg::GateMode>::SharedPtr gate_mode_pub_;
+  tilde::TildePublisher<autoware_auto_vehicle_msgs::msg::Engage>::SharedPtr engage_pub_;
 
   // Subscription
   rclcpp::Subscription<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr
@@ -166,7 +166,7 @@ private:
   // Service
   rclcpp::Service<tier4_external_api_msgs::srv::Engage>::SharedPtr srv_engage_;
   rclcpp::Service<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr srv_external_emergency_;
-  tilde:;TildePublisher<tier4_external_api_msgs::msg::Emergency>::SharedPtr pub_external_emergency_;
+  tilde::TildePublisher<tier4_external_api_msgs::msg::Emergency>::SharedPtr pub_external_emergency_;
   void onEngageService(
     const tier4_external_api_msgs::srv::Engage::Request::SharedPtr request,
     const tier4_external_api_msgs::srv::Engage::Response::SharedPtr response);
@@ -236,7 +236,7 @@ private:
 
     rclcpp::Node * node_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr request_start_cli_;
-    tilde:;TildePublisher<tier4_debug_msgs::msg::BoolStamped>::SharedPtr request_start_pub_;
+    tilde::TildePublisher<tier4_debug_msgs::msg::BoolStamped>::SharedPtr request_start_pub_;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr current_twist_sub_;
     void onCurrentTwist(nav_msgs::msg::Odometry::ConstSharedPtr msg);
   };

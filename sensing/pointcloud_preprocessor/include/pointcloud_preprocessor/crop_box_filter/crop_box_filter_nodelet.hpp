@@ -86,7 +86,7 @@ private:
     bool negative{false};
   } param_;
 
-  tilde:;TildePublisher<geometry_msgs::msg::PolygonStamped>::SharedPtr crop_box_polygon_pub_;
+  tilde::TildePublisher<geometry_msgs::msg::PolygonStamped>::SharedPtr crop_box_polygon_pub_;
 
   /** \brief Parameter service callback result : needed to be hold */
   OnSetParametersCallbackHandle::SharedPtr set_param_res_;

@@ -51,8 +51,8 @@ private:
   tf2_ros::TransformListener tf_listener_{tf_buffer_};
 
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_sub_;
-  tilde:;TildePublisher<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr objects_pub_;
-  tilde:;TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
+  tilde::TildePublisher<autoware_auto_perception_msgs::msg::DetectedObjects>::SharedPtr objects_pub_;
+  tilde::TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
 
   float score_threshold_{0.0};
   bool use_encoder_trt_{false};

@@ -71,7 +71,7 @@ private:
   tier4_autoware_utils::SelfPoseListener self_pose_listener_{this};  // subscribe to pose listener.
 
   // Publishers
-  tilde:;TildePublisher<ErrorStamped>::SharedPtr pub_error_msg_;  // publish error message
+  tilde::TildePublisher<ErrorStamped>::SharedPtr pub_error_msg_;  // publish error message
 
   // Node Methods
   bool isDataReady() const;  // check if data arrive
