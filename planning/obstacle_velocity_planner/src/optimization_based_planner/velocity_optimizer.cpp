@@ -130,7 +130,7 @@ VelocityOptimizer::OptimizationResult VelocityOptimizer::optimize(const Optimiza
     const double v_coeff = v0 / (2 * std::fabs(a_min)) + t_dangerous;
     A(constr_idx, IDX_S0 + i) = 1.0;  // s_i
     if (s_boundary.at(i).is_object) {
-      A(constr_idx, IDX_V0 + i) = v_coeff;  // // v_i * (t_dangerous + v0/(2*|a_min|))
+      A(constr_idx, IDX_V0 + i) = v_coeff;  // v_i * (t_dangerous + v0/(2*|a_min|))
     }
     A(constr_idx, IDX_OVER_S_SAFETY0 + i) = -1.0;  // over_s_safety_i
     upper_bound.at(constr_idx) = s_boundary.at(i).max_s;

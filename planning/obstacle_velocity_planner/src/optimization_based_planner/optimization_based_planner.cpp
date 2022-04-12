@@ -502,20 +502,6 @@ double OptimizationBasedPlanner::getClosestStopDistance(
     dist_to_obj.data = closest_obj_distance;
     distance_to_closest_obj_pub_->publish(dist_to_obj);
 
-    const auto predicted_path = resampledPredictedPath(
-      closest_obj.get(), closest_obj.get().time_stamp, current_time, resolutions,
-      max_time_horizon_);
-
-    // Get current pose from object's predicted path
-    const auto current_object_pose = obstacle_velocity_utils::getCurrentObjectPoseFromPredictedPath(
-      *predicted_path, closest_obj.get().time_stamp, current_time);
-    const size_t nearest_idx = tier4_autoware_utils::findNearestIndex(
-      ego_traj_data.traj.points, current_object_pose.get().position);
-    [[maybe_unused]] const double ego_yaw =
-      tf2::getYaw(ego_traj_data.traj.points.at(nearest_idx).pose.orientation);
-    [[maybe_unused]] const double obj_yaw = tf2::getYaw(current_object_pose.get().orientation);
-    [[maybe_unused]] const double diff_yaw =
-      tier4_autoware_utils::normalizeRadian(obj_yaw - ego_yaw);
     RCLCPP_DEBUG(
       rclcpp::get_logger("ObstacleVelocityPlanner::OptimizationBasedPlanner"),
       "Closest Object Distance %f", closest_obj_distance);
@@ -666,8 +652,6 @@ bool OptimizationBasedPlanner::checkHasReachedGoal(
     const double closest_stop_dist =
       tier4_autoware_utils::calcSignedArcLength(traj.points, closest_idx, *closest_stop_id);
     if (closest_stop_dist < 0.5 && v0 < 0.6) {
-      RCLCPP_DEBUG(
-        rclcpp::get_logger("ObstacleVelocityPlanner::OptimizationBasedPlanner"), "Goal Reached");
       return true;
     }
   }
@@ -679,6 +663,7 @@ OptimizationBasedPlanner::TrajectoryData OptimizationBasedPlanner::getTrajectory
   const Trajectory & traj, const geometry_msgs::msg::Pose & current_pose)
 {
   TrajectoryData base_traj;
+  /*
   const auto closest_segment_idx =
     tier4_autoware_utils::findNearestSegmentIndex(traj.points, current_pose.position);
   const auto interpolated_point = calcInterpolatedTrajectoryPoint(traj, current_pose);
@@ -686,6 +671,10 @@ OptimizationBasedPlanner::TrajectoryData OptimizationBasedPlanner::getTrajectory
     interpolated_point.pose.position, traj.points.at(closest_segment_idx).pose.position);
   const auto current_point =
     dist > CLOSE_S_DIST_THRESHOLD ? interpolated_point : traj.points.at(closest_segment_idx);
+  */
+  const auto closest_segment_idx =
+    tier4_autoware_utils::findNearestIndex(traj.points, current_pose.position);
+  const auto current_point = traj.points.at(closest_segment_idx);
   base_traj.traj.points.push_back(current_point);
   base_traj.s.push_back(0.0);
 
@@ -728,14 +717,14 @@ OptimizationBasedPlanner::TrajectoryData OptimizationBasedPlanner::resampleTraje
     resampled_s.push_back(s);
   }
 
-  if (resampled_s.empty()) {
-    return TrajectoryData{};
-  }
-
   if (traj_length - resampled_s.back() < CLOSE_S_DIST_THRESHOLD) {
     resampled_s.back() = traj_length;
   } else {
     resampled_s.push_back(traj_length);
+  }
+
+  if (resampled_s.empty()) {
+    return TrajectoryData{};
   }
 
   // Resample trajectory
