@@ -135,7 +135,7 @@ private:
     int point_num;
     int obstacle_id;
 
-    TildeNode()
+    Node()
     {
       center_node = nullptr;
       parent = nullptr;

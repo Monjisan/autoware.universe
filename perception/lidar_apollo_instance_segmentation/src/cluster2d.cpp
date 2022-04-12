@@ -108,7 +108,7 @@ void Cluster2D::cluster(
 
   pc_ptr_ = pc_ptr;
 
-  std::vector<std::vector<Node>> nodes(rows_, std::vector<Node>(cols_, TildeNode()));
+  std::vector<std::vector<Node>> nodes(rows_, std::vector<Node>(cols_, Node()));
 
   valid_indices_in_pc_ = &(valid_indices.indices);
   point2grid_.assign(valid_indices_in_pc_->size(), -1);
