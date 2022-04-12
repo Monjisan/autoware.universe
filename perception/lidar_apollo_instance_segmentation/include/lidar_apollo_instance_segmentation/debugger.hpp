@@ -30,5 +30,5 @@ public:
     const tier4_perception_msgs::msg::DetectedObjectsWithFeature & input);
 
 private:
-  tilde:;TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr instance_pointcloud_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr instance_pointcloud_pub_;
 };
