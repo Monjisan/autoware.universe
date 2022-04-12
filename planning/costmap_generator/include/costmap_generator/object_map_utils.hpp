@@ -55,7 +55,8 @@ namespace object_map
  */
 void PublishGridMap(
   const grid_map::GridMap & in_gridmap,
-  const tilde::TildePublisher<grid_map_msgs::msg::GridMap>::SharedPtr in_publisher);
+//  const tilde::TildePublisher<grid_map_msgs::msg::GridMap>::SharedPtr in_publisher);
+  const rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr in_publisher);
 
 /*!
  * Convert and publishes a GridMap layer to a standard Ros OccupancyGrid
