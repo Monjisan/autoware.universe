@@ -644,13 +644,11 @@ MPCMatrix MPC::generateMPCMatrix(
 
     Q = Eigen::MatrixXd::Zero(DIM_Y, DIM_Y);
     R = Eigen::MatrixXd::Zero(DIM_U, DIM_U);
-    //Q(0, 0) = 10;
-    Q(0, 0) = getWeightLatError(ref_k)*10;
-    //Q(1, 1) = 1;
-    Q(1, 1) = getWeightHeadingError(ref_k)+0.1;
+    Q(0, 0) = getWeightLatError(ref_k);
+    Q(1, 1) = getWeightHeadingError(ref_k);
     R(0, 0) = getWeightSteerInput(ref_k);
     if (HAS_REAR_STEER_CONTROL) {
-      R(1, 1) = getWeightSteerInput(ref_k)*10;
+      R(1, 1) = getWeightSteerInput(ref_k);
     }
 
     Q_adaptive = Q;

@@ -40,17 +40,19 @@ void FwsModel::calculateDiscreteMatrix(
   const float64_t delta_rr = calculateReferenceRearSteer();
 
   float64_t velocity = m_velocity;
-  float64_t sigma_1 = m_wheelbase * std::sqrt(std::pow(tan(delta_rr), 2) + 1);
+  float64_t psid = m_posture;
+  float64_t sigma_1 = velocity*cos(psid+delta_rr);
+  float64_t sigma_2 = sin(psid+delta_rr);
+  float64_t sigma_3 = m_wheelbase * std::sqrt(std::pow(tan(delta_rr), 2) + 1);
   if (std::abs(m_velocity) < 1e-04) {
     velocity = 1e-04 * (m_velocity >= 0 ? 1 : -1);
   }
 
-  const float64_t a_d_1_2 = velocity * sqrt((pow(tan(delta_fr), 2) + 1)) / sigma_1;
+  const float64_t a_d_1_2 = velocity * sqrt((pow(tan(delta_fr), 2) + 1)) / sigma_3;
   const float64_t a_d_1_3 =
-    -(m_steer_tau * velocity * (1 + tan(delta_fr) * tan(delta_rr)) + sigma_1) /
-    (m_steer_tau * sigma_1);
-  a_d << 0.0, velocity, 0.0,                0.0,
-         0.0, 0.0,      a_d_1_2,            a_d_1_3,
+    -velocity * (1 + tan(delta_fr) * tan(delta_rr)-m_curvature*sigma_2*sigma_3) / sigma_3;
+  a_d << 0.0, sigma_1, 0.0,                sigma_1,
+         0.0, m_curvature*velocity*sigma_2,      a_d_1_2,            a_d_1_3,
          0.0, 0.0,      -1.0 / m_steer_tau, 0.0,
          0.0, 0.0,      0.0,               -1.0 / m_steer_tau;
   Eigen::MatrixXd I = Eigen::MatrixXd::Identity(m_dim_x, m_dim_x);
@@ -62,14 +64,15 @@ void FwsModel::calculateDiscreteMatrix(
   b_d *= dt;
 
   c_d << 1.0, 0.0, 0.0, 0.0,
-	       0.0, 1.0, 0.0,-1.0;
+	       0.0, 1.0, 0.0, 0.0;
 
-  const auto w_d_1 = velocity * (tan(delta_fr) - tan(delta_rr)) / sigma_1 - m_curvature * velocity -
-                    delta_fr * velocity * (pow(tan(delta_fr), 2) + 1) / sigma_1 +
-                    delta_rr *
-                      (m_steer_tau * velocity * (1 + tan(delta_fr) * tan(delta_rr)) + sigma_1) /
-                      (m_steer_tau * sigma_1);
-  w_d << 0.0, w_d_1, 0.0, 0.0;
+  float64_t sigma_4=std::sqrt(std::pow(tan(delta_rr), 2) + 1);
+  float64_t theta=psid+delta_rr;
+  
+  const auto w_d_0 = velocity*sin(theta)-velocity*psid*cos(theta)-velocity*delta_rr*cos(theta);
+  const auto w_d_1 = velocity*(tan(delta_fr)-tan(delta_rr)-delta_fr*(std::pow(tan(delta_fr), 2) + 1)+delta_rr*(tan(delta_fr)*tan(delta_rr)-m_wheelbase*m_curvature*sin(theta)*sigma_4+1))/(m_wheelbase*sigma_4)
+  -m_curvature*velocity*(cos(theta)+psid*sin(theta));
+  w_d << w_d_0, w_d_1, 0.0, 0.0;
 
   w_d *= dt;
 }
