@@ -73,6 +73,7 @@ OptimizationBasedPlanner::OptimizationBasedPlanner(
   dense_time_horizon_ =
     node.declare_parameter<double>("optimization_based_planner.dense_time_horizon");
   max_time_horizon_ = node.declare_parameter<double>("optimization_based_planner.max_time_horizon");
+  limit_min_accel_ = node.declare_parameter<double>("optimization_based_planner.limit_min_accel");
 
   delta_yaw_threshold_of_nearest_index_ =
     tier4_autoware_utils::deg2rad(node.declare_parameter<double>(
@@ -143,6 +144,7 @@ OptimizationBasedPlanner::OptimizationBasedPlanner(
 Trajectory OptimizationBasedPlanner::generateTrajectory(
   const ObstacleVelocityPlannerData & planner_data)
 {
+  std::cerr << "v0: " << planner_data.current_vel << std::endl;
   // Create Time Vector defined by resampling time interval
   const std::vector<double> time_vec = createTimeVector();
   if (time_vec.size() < 2) {
@@ -250,6 +252,7 @@ Trajectory OptimizationBasedPlanner::generateTrajectory(
   data.v_max = v_max;
   data.a_max = longitudinal_info_.max_accel;
   data.a_min = longitudinal_info_.min_accel;
+  data.limit_a_min = limit_min_accel_;
   data.j_max = longitudinal_info_.max_jerk;
   data.j_min = longitudinal_info_.min_jerk;
   data.t_dangerous = t_dangerous_;
@@ -663,7 +666,6 @@ OptimizationBasedPlanner::TrajectoryData OptimizationBasedPlanner::getTrajectory
   const Trajectory & traj, const geometry_msgs::msg::Pose & current_pose)
 {
   TrajectoryData base_traj;
-  /*
   const auto closest_segment_idx =
     tier4_autoware_utils::findNearestSegmentIndex(traj.points, current_pose.position);
   const auto interpolated_point = calcInterpolatedTrajectoryPoint(traj, current_pose);
@@ -671,10 +673,6 @@ OptimizationBasedPlanner::TrajectoryData OptimizationBasedPlanner::getTrajectory
     interpolated_point.pose.position, traj.points.at(closest_segment_idx).pose.position);
   const auto current_point =
     dist > CLOSE_S_DIST_THRESHOLD ? interpolated_point : traj.points.at(closest_segment_idx);
-  */
-  const auto closest_segment_idx =
-    tier4_autoware_utils::findNearestIndex(traj.points, current_pose.position);
-  const auto current_point = traj.points.at(closest_segment_idx);
   base_traj.traj.points.push_back(current_point);
   base_traj.s.push_back(0.0);
 
