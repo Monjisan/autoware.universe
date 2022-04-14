@@ -18,8 +18,11 @@
 
 #include <memory>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 SurroundObstacleCheckerDebugNode::SurroundObstacleCheckerDebugNode(
-  const double base_link2front, const rclcpp::Clock::SharedPtr clock, rclcpp::Node & node)
+  const double base_link2front, const rclcpp::Clock::SharedPtr clock, tilde::TildeNode & node)
 : base_link2front_(base_link2front), clock_(clock)
 {
   debug_viz_pub_ = node.create_tilde_publisher<visualization_msgs::msg::MarkerArray>("~/debug/marker", 1);

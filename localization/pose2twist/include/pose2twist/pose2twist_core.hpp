@@ -21,6 +21,9 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <tier4_debug_msgs/msg/float32_stamped.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 class Pose2Twist : public tilde::TildeNode
 {
 public:

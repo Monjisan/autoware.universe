@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-class VehicleVelocityConverter : public tilde::TildeNode
+class VehicleVelocityConverter : public rclcpp::Node
 {
 public:
   VehicleVelocityConverter();
@@ -37,7 +37,7 @@ private:
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr
     vehicle_report_sub_;
 
-  tilde::TildePublisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr
+  rclcpp::Publisher<geometry_msgs::msg::TwistWithCovarianceStamped>::SharedPtr
     twist_with_covariance_pub_;
 
   std::string frame_id_;

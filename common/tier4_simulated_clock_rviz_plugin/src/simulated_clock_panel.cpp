@@ -82,7 +82,7 @@ void SimulatedClockPanel::onInitialize()
 {
   raw_node_ = this->getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
 
-  clock_pub_ = raw_node_->create_tilde_publisher<rosgraph_msgs::msg::Clock>("/clock", rclcpp::QoS(1));
+  clock_pub_ = raw_node_->create_publisher<rosgraph_msgs::msg::Clock>("/clock", rclcpp::QoS(1));
   createWallTimer();
 }
 

@@ -31,6 +31,10 @@
 // Include after diagnostic_updater because it causes errors
 #include <cpprest/http_client.h>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
+
 namespace http = web::http;
 namespace client = web::http::client;
 namespace json = web::json;

@@ -22,6 +22,9 @@
 #include <boost/geometry/geometries/linestring.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 #include <algorithm>
 #include <limits>
 #include <string>
@@ -115,7 +118,7 @@ constexpr double sign(const double value)
 namespace motion_planning
 {
 AdaptiveCruiseController::AdaptiveCruiseController(
-  rclcpp::Node * node, const double vehicle_width, const double vehicle_length,
+  tilde::TildeNode * node, const double vehicle_width, const double vehicle_length,
   const double baselink2front)
 : node_(node),
   vehicle_width_(vehicle_width),

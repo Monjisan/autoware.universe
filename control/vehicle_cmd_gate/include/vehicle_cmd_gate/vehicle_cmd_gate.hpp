@@ -221,7 +221,7 @@ private:
     using ControlCommandStamped = autoware_auto_control_msgs::msg::AckermannControlCommand;
 
   public:
-    StartRequest(rclcpp::Node * node, bool use_start_request);
+    StartRequest(tilde::TildeNode * node, bool use_start_request);
     bool isAccepted();
     void publishStartAccepted();
     void checkStopped(const ControlCommandStamped & control);
@@ -234,7 +234,7 @@ private:
     bool is_start_cancelled_;
     nav_msgs::msg::Odometry current_twist_;
 
-    rclcpp::Node * node_;
+    tilde::TildeNode * node_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr request_start_cli_;
     tilde::TildePublisher<tier4_debug_msgs::msg::BoolStamped>::SharedPtr request_start_pub_;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr current_twist_sub_;

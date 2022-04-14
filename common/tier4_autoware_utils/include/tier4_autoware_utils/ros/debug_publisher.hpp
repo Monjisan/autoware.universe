@@ -25,9 +25,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
 namespace tier4_autoware_utils
 {
 namespace debug_publisher
@@ -48,6 +45,7 @@ T_msg toDebugMsg(const T & data, const rclcpp::Time & stamp)
 class DebugPublisher
 {
 public:
+  //explicit DebugPublisher(rclcpp::Node * node, const char * ns) : node_(node), ns_(ns) {}
   explicit DebugPublisher(rclcpp::Node * node, const char * ns) : node_(node), ns_(ns) {}
 
   template <
@@ -56,10 +54,10 @@ public:
   void publish(const std::string & name, const T & data, const rclcpp::QoS & qos = rclcpp::QoS(1))
   {
     if (pub_map_.count(name) == 0) {
-      pub_map_[name] = node_->create_tilde_publisher<T>(std::string(ns_) + "/" + name, qos);
+    pub_map_[name] = node_->create_publisher<T>(std::string(ns_) + "/" + name, qos);
     }
 
-    std::dynamic_pointer_cast<tilde::TildePublisher<T>>(pub_map_.at(name))->publish(data);
+    std::dynamic_pointer_cast<rclcpp::Publisher<T>>(pub_map_.at(name))->publish(data);
   }
 
   template <
@@ -71,9 +69,10 @@ public:
   }
 
 private:
+  //rclcpp::Node * node_;
   rclcpp::Node * node_;
   const char * ns_;
-  std::unordered_map<std::string, std::shared_ptr<tilde::TildePublisherBase>> pub_map_;
+  std::unordered_map<std::string, std::shared_ptr<rclcpp::PublisherBase>> pub_map_;
 };
 }  // namespace tier4_autoware_utils
 

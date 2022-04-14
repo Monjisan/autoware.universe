@@ -23,9 +23,6 @@
 #include <sstream>
 #include <string>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
 namespace tier4_autoware_utils
 {
 class ProcessingTimePublisher
@@ -36,7 +33,7 @@ public:
     const rclcpp::QoS & qos = rclcpp::QoS(1))
   {
     pub_processing_time_ =
-      node->create_tilde_publisher<diagnostic_msgs::msg::DiagnosticStatus>(name, qos);
+      node->create_publisher<diagnostic_msgs::msg::DiagnosticStatus>(name, qos);
   }
 
   void publish(const std::map<std::string, double> & processing_time_map)
@@ -54,7 +51,7 @@ public:
   }
 
 private:
-  tilde::TildePublisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr pub_processing_time_;
+  rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr pub_processing_time_;
 
   template <class T>
   std::string to_string_with_precision(const T & value, const int precision)

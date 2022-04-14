@@ -29,9 +29,6 @@
 #include <tier4_external_api_msgs/msg/engage_status.hpp>
 #include <tier4_external_api_msgs/srv/engage.hpp>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
 namespace rviz_plugins
 {
 class AutowareStatePanel : public rviz_common::Panel

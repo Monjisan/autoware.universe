@@ -17,6 +17,9 @@
 #include <rclcpp/logging.hpp>
 #include <tier4_api_utils/tier4_api_utils.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -670,7 +673,7 @@ void VehicleCmdGate::checkExternalEmergencyStop(diagnostic_updater::DiagnosticSt
   stat.summary(status.level, status.message);
 }
 
-VehicleCmdGate::StartRequest::StartRequest(rclcpp::Node * node, bool use_start_request)
+VehicleCmdGate::StartRequest::StartRequest(tilde::TildeNode * node, bool use_start_request)
 {
   using std::placeholders::_1;
 

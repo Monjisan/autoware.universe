@@ -11,6 +11,8 @@
   <buildtool_depend>autoware_auto_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>rclcpp_components</depend>
   <depend>autoware_auto_common</depend>
 

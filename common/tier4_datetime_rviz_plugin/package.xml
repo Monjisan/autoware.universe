@@ -13,6 +13,8 @@
   <depend>libqt5-widgets</depend>
   <depend>qtbase5-dev</depend>
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>rviz_common</depend>
 
   <test_depend>ament_lint_auto</test_depend>

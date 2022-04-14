@@ -21,6 +21,9 @@
 #include <memory>
 #include <vector>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 using tier4_autoware_utils::appendMarkerArray;
 using tier4_autoware_utils::calcOffsetPose;
 using tier4_autoware_utils::createDefaultMarker;
@@ -34,7 +37,7 @@ using tier4_autoware_utils::createStopVirtualWallMarker;
 namespace motion_planning
 {
 ObstacleStopPlannerDebugNode::ObstacleStopPlannerDebugNode(
-  rclcpp::Node * node, const double base_link2front)
+  tilde::TildeNode * node, const double base_link2front)
 : node_(node), base_link2front_(base_link2front)
 {
   debug_viz_pub_ =

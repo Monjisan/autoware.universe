@@ -87,11 +87,11 @@ public:
   : clock_(node.get_clock()), logger_(node.get_logger())
   {
     const auto ns = std::string("~/debug/") + module_name;
-    pub_debug_ = node.create_tilde_publisher<visualization_msgs::msg::MarkerArray>(ns, 20);
+    pub_debug_ = node.create_publisher<visualization_msgs::msg::MarkerArray>(ns, 20);
     pub_stop_reason_ =
-      node.create_tilde_publisher<tier4_planning_msgs::msg::StopReasonArray>("~/output/stop_reasons", 20);
+      node.create_publisher<tier4_planning_msgs::msg::StopReasonArray>("~/output/stop_reasons", 20);
     pub_infrastructure_commands_ =
-      node.create_tilde_publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
+      node.create_publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>(
         "~/output/infrastructure_commands", 20);
   }
 
@@ -201,9 +201,9 @@ protected:
   rclcpp::Clock::SharedPtr clock_;
   // Debug
   rclcpp::Logger logger_;
-  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_debug_;
-  tilde::TildePublisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr pub_stop_reason_;
-  tilde::TildePublisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_debug_;
+  rclcpp::Publisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr pub_stop_reason_;
+  rclcpp::Publisher<tier4_v2x_msgs::msg::InfrastructureCommandArray>::SharedPtr
     pub_infrastructure_commands_;
 };
 }  // namespace behavior_velocity_planner

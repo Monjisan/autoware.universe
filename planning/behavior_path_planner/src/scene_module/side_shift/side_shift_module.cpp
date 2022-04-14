@@ -60,7 +60,7 @@ SideShiftModule::SideShiftModule(
 {
   using std::placeholders::_1;
 
-  lateral_offset_subscriber_ = node.create_tilde_subscription<LateralOffset>(
+  lateral_offset_subscriber_ = node.create_subscription<LateralOffset>(
     "~/input/lateral_offset", 1, std::bind(&SideShiftModule::onLateralOffset, this, _1));
 
   // If lateral offset is subscribed, it approves side shift module automatically

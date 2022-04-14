@@ -39,7 +39,7 @@ class AdaptiveCruiseController
 {
 public:
   AdaptiveCruiseController(
-    rclcpp::Node * node, const double vehicle_width, const double vehicle_length,
+    tilde::TildeNode * node, const double vehicle_width, const double vehicle_length,
     const double baselink2front);
 
   void insertAdaptiveCruiseVelocity(
@@ -53,7 +53,7 @@ public:
 private:
   tilde::TildePublisher<tier4_debug_msgs::msg::Float32MultiArrayStamped>::SharedPtr pub_debug_;
 
-  rclcpp::Node * node_;
+  tilde::TildeNode * node_;
   /*
    * Parameter
    */

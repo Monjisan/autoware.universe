@@ -25,9 +25,6 @@
 #include <string>
 #include <vector>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
 class PlanningErrorMonitorDebugNode
 {
 public:
@@ -41,7 +38,7 @@ public:
 private:
   rclcpp::Node * node_;
   visualization_msgs::msg::MarkerArray marker_array_;
-  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_viz_pub_;
   std::map<std::string, int> marker_id_;
   bool initialized = false;
 

@@ -42,6 +42,9 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_sensor_msgs/tf2_sensor_msgs.h>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 #include <array>
 #include <deque>
 #include <map>

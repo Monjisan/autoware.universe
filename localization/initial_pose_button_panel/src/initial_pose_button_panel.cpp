@@ -22,6 +22,9 @@
 #include <pluginlib/class_list_macros.hpp>
 #include <rviz_common/display_context.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 #include <memory>
 #include <string>
 #include <thread>
@@ -64,7 +67,7 @@ void InitialPoseButtonPanel::onInitialize()
   rclcpp::Node::SharedPtr raw_node =
     this->getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
 
-  pose_cov_sub_ = raw_node->create_tilde_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+  pose_cov_sub_ = raw_node->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     topic_edit_->text().toStdString(), 10,
     std::bind(&InitialPoseButtonPanel::callbackPoseCov, this, std::placeholders::_1));
 
@@ -85,7 +88,7 @@ void InitialPoseButtonPanel::editTopic()
   pose_cov_sub_.reset();
   rclcpp::Node::SharedPtr raw_node =
     this->getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
-  pose_cov_sub_ = raw_node->create_tilde_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+  pose_cov_sub_ = raw_node->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
     topic_edit_->text().toStdString(), 10,
     std::bind(&InitialPoseButtonPanel::callbackPoseCov, this, std::placeholders::_1));
   initialize_button_->setText("Wait for subscribe topic");

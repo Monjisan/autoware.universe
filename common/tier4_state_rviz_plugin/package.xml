@@ -15,6 +15,8 @@
   <depend>libqt5-widgets</depend>
   <depend>qtbase5-dev</depend>
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>rviz_common</depend>
   <depend>tier4_control_msgs</depend>
   <depend>tier4_external_api_msgs</depend>

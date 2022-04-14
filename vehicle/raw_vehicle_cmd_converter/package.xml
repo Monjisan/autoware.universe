@@ -16,6 +16,8 @@
   <depend>interpolation</depend>
   <depend>nav_msgs</depend>
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>rclcpp_components</depend>
   <depend>tier4_debug_msgs</depend>
   <depend>tier4_vehicle_msgs</depend>

@@ -32,9 +32,6 @@
 #include <string>
 #include <type_traits>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
 namespace autoware
 {
 namespace tools
@@ -102,14 +99,14 @@ public:
   /// @return     A publisher pointer;
   ///
   template<typename MsgT>
-  typename tilde::TildePublisher<MsgT>::SharedPtr create_tilde_publisher(
+  typename rclcpp::Publisher<MsgT>::SharedPtr create_publisher(
     const std::string & topic,
     const std::chrono::milliseconds & timeout = std::chrono::seconds{10LL},
     const rclcpp::QoS & qos = rclcpp::QoS(rclcpp::KeepLast(10)))
   {
     // Set the QoS profile history depth
-    typename tilde::TildePublisher<MsgT>::SharedPtr publisher =
-      m_fake_node->create_tilde_publisher<MsgT>(topic, qos);
+    typename rclcpp::Publisher<MsgT>::SharedPtr publisher =
+      m_fake_node->create_publisher<MsgT>(topic, qos);
 
     std::chrono::milliseconds spent_time{0LL};
     std::chrono::milliseconds dt{100LL};
@@ -144,14 +141,14 @@ public:
   /// @return     Returns a subscription pointer.
   ///
   template<typename MsgT, typename NodeT>
-  typename rclcpp::Subscription<MsgT>::SharedPtr create_tilde_subscription(
+  typename rclcpp::Subscription<MsgT>::SharedPtr create_subscription(
     const std::string & topic,
     const NodeT & publishing_node,
     std::function<void(const typename MsgT::SharedPtr msg)> callback,
     const std::chrono::milliseconds & timeout = std::chrono::seconds{10LL},
     const rclcpp::QoS & qos = rclcpp::QoS(rclcpp::KeepLast(10)))
   {
-    auto subscription = m_fake_node->create_tilde_subscription<MsgT>(topic, qos, callback);
+    auto subscription = m_fake_node->create_subscription<MsgT>(topic, qos, callback);
     std::chrono::milliseconds spent_time{0LL};
     std::chrono::milliseconds dt{100LL};
     while (publishing_node.count_publishers(topic) < 1) {

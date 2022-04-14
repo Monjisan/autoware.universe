@@ -94,22 +94,22 @@ void AutowareStatePanel::onInitialize()
 {
   raw_node_ = this->getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
 
-  sub_gate_mode_ = raw_node_->create_tilde_subscription<tier4_control_msgs::msg::GateMode>(
+  sub_gate_mode_ = raw_node_->create_subscription<tier4_control_msgs::msg::GateMode>(
     "/control/current_gate_mode", 10, std::bind(&AutowareStatePanel::onGateMode, this, _1));
 
   sub_selector_mode_ =
-    raw_node_->create_tilde_subscription<tier4_control_msgs::msg::ExternalCommandSelectorMode>(
+    raw_node_->create_subscription<tier4_control_msgs::msg::ExternalCommandSelectorMode>(
       "/control/external_cmd_selector/current_selector_mode", 10,
       std::bind(&AutowareStatePanel::onSelectorMode, this, _1));
 
   sub_autoware_state_ =
-    raw_node_->create_tilde_subscription<autoware_auto_system_msgs::msg::AutowareState>(
+    raw_node_->create_subscription<autoware_auto_system_msgs::msg::AutowareState>(
       "/autoware/state", 10, std::bind(&AutowareStatePanel::onAutowareState, this, _1));
 
-  sub_gear_ = raw_node_->create_tilde_subscription<autoware_auto_vehicle_msgs::msg::GearReport>(
+  sub_gear_ = raw_node_->create_subscription<autoware_auto_vehicle_msgs::msg::GearReport>(
     "/vehicle/status/gear_status", 10, std::bind(&AutowareStatePanel::onShift, this, _1));
 
-  sub_engage_ = raw_node_->create_tilde_subscription<tier4_external_api_msgs::msg::EngageStatus>(
+  sub_engage_ = raw_node_->create_subscription<tier4_external_api_msgs::msg::EngageStatus>(
     "/api/external/get/engage", 10, std::bind(&AutowareStatePanel::onEngageStatus, this, _1));
 
   client_engage_ = raw_node_->create_client<tier4_external_api_msgs::srv::Engage>(

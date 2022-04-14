@@ -16,6 +16,8 @@
   <depend>nav_msgs</depend>
   <depend>raw_vehicle_cmd_converter</depend>
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>rclcpp_components</depend>
   <depend>std_msgs</depend>
   <depend>tier4_control_msgs</depend>

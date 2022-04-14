@@ -27,7 +27,8 @@ class HeaderlessHeartbeatChecker
 {
 public:
   HeaderlessHeartbeatChecker(
-    rclcpp::Node & node, const std::string & topic_name, const double timeout)
+    //rclcpp::Node & node, const std::string & topic_name, const double timeout)
+    tilde::TildeNode & node, const std::string & topic_name, const double timeout)
   : clock_(node.get_clock()), timeout_(timeout)
   {
     using std::placeholders::_1;

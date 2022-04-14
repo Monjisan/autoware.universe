@@ -15,6 +15,8 @@
   <depend>geometry_msgs</depend>
   <depend>libboost-dev</depend>
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>tf2</depend>
   <depend>tf2_geometry_msgs</depend>
   <depend>tier4_debug_msgs</depend>

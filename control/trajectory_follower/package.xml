@@ -22,6 +22,8 @@
   <depend>motion_common</depend>
   <depend>osqp_interface</depend>
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>rclcpp_components</depend>
   <depend>std_msgs</depend>
   <depend>tf2</depend>

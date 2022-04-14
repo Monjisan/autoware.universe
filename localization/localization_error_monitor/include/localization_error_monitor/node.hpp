@@ -23,6 +23,9 @@
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
 struct Ellipse
 {
   double long_radius;

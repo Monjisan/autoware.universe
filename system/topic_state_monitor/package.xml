@@ -11,6 +11,8 @@
   <depend>ament_index_cpp</depend>
   <depend>diagnostic_updater</depend>
   <depend>rclcpp</depend>
+  <depend>tilde</depend>
+  <depend>tilde_msg</depend>
   <depend>rclcpp_components</depend>
 
   <test_depend>ament_lint_auto</test_depend>

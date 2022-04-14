@@ -28,7 +28,7 @@ void PlanningErrorMonitorDebugNode::initialize(rclcpp::Node * node)
 {
   node_ = node;
   debug_viz_pub_ =
-    node_->create_tilde_publisher<visualization_msgs::msg::MarkerArray>("~/debug/marker", 1);
+    node_->create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/marker", 1);
   initialized = true;
 }
 
