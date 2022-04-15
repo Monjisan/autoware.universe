@@ -27,6 +27,7 @@
 #include <autoware_auto_perception_msgs/msg/detected_objects.hpp>
 #include <autoware_auto_perception_msgs/msg/tracked_objects.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <boost/variant.hpp>
 
 #include <tf2/LinearMath/Transform.h>
 #include <tf2/convert.h>
@@ -57,6 +58,7 @@ private:
   tf2_ros::TransformListener tf_listener_;
 
   std::map<std::uint8_t, std::string> tracker_map_;
+  std::map<std::string, TrackerEKFParam> param_map_;
 
   void onMeasurement(
     const autoware_auto_perception_msgs::msg::DetectedObjects::ConstSharedPtr input_objects_msg);

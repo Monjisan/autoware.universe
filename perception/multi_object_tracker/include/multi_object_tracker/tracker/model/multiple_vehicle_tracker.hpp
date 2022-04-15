@@ -26,6 +26,11 @@
 #include <kalman_filter/kalman_filter.hpp>
 #include <rclcpp/time.hpp>
 
+struct MultiVehicleTrackerEKFParam {
+  NormalVehicleTrackerEKFParam normal_vehicle_tracker_ekf_param;
+  BigVehicleTrackerEKFParam big_vehicle_tracker_ekf_param;
+};
+
 class MultipleVehicleTracker : public Tracker
 {
 private:

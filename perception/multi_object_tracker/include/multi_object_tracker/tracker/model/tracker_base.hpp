@@ -32,6 +32,11 @@
 
 #include <vector>
 
+struct TrackerEKFParam {
+  char dim_x;
+  bool use_measurement_covariance;
+};
+
 class Tracker
 {
 protected:

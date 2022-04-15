@@ -23,6 +23,22 @@
 
 #include <kalman_filter/kalman_filter.hpp>
 
+struct BicycleTrackerEKFParam : public TrackerEKFParam {
+  float q_stddev_x;    // [m/s]
+  float q_stddev_y;    // [m/s]
+  float q_stddev_yaw;  // [rad/s]
+  float q_stddev_vx;   // [m/(s*s)]
+  float q_stddev_wz;   // [rad/(s*s)]
+  float r_stddev_x;    // [m]
+  float r_stddev_y;    // [m]
+  float r_stddev_yaw;  // [rad]
+  float p0_stddev_x;   // [m/s]
+  float p0_stddev_y;   // [m/s]
+  float p0_stddev_yaw; // [rad/s]
+  float p0_stddev_vx;  // [m/(s*s)]
+  float p0_stddev_wz;  // [rad/(s*s)]
+};
+
 class BicycleTracker : public Tracker
 {
 private:
@@ -39,6 +55,7 @@ private:
     VX = 3,
     WZ = 4,
   };
+
   struct EkfParams
   {
     char dim_x = 5;

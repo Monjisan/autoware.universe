@@ -210,6 +210,17 @@ MultiObjectTracker::MultiObjectTracker(const rclcpp::NodeOptions & node_options)
   tracker_map_.insert(
     std::make_pair(Label::MOTORCYCLE, this->declare_parameter<std::string>("motorcycle_tracker")));
 
+  BicycleTrackerEKFParam bicycle_tracker_ekf_param;
+  BigVehicleTrackerEKFParam big_vehicle_tracker_ekf_param;
+  NormalVehicleTrackerEKFParam normal_vehicle_tracker_ekf_param;
+  PedestrianTrackerEKFParam pedestrian_tracker_ekf_param;
+  UnknownTrackerEKFParam unknown_tracker_ekf_param;
+  param_map_.insert(std::make_pair(("bicycle_tracker"), bicycle_tracker_ekf_param));
+  param_map_.insert(std::make_pair(("big_vehicle_tracker"), big_vehicle_tracker_ekf_param));
+  param_map_.insert(std::make_pair(("multi_vehicle_tracker"), normal_vehicle_tracker_ekf_param));
+  param_map_.insert(std::make_pair(("pedestrian_tracker"), pedestrian_tracker_ekf_param));
+  param_map_.insert(std::make_pair(("unknown_tracker"), unknown_tracker_ekf_param));
+
   data_association_ = std::make_unique<DataAssociation>(
     can_assign_matrix, max_dist_matrix, max_area_matrix, min_area_matrix, max_rad_matrix,
     min_iou_matrix);

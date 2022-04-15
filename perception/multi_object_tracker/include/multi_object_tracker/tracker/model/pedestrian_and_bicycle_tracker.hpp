@@ -25,6 +25,11 @@
 
 #include <kalman_filter/kalman_filter.hpp>
 
+struct PedestrianAndBicycleTrackerEKFParam {
+  BicycleTrackerEKFParam bicycle_tracker_ekf_param;
+  PedestrianTrackerEKFParam pedestrian_ekf_param;
+};
+
 class PedestrianAndBicycleTracker : public Tracker
 {
 private:

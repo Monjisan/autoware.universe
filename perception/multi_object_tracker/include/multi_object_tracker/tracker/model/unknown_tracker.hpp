@@ -23,6 +23,19 @@
 
 #include <kalman_filter/kalman_filter.hpp>
 
+struct UnknownTrackerEKFParam : public TrackerEKFParam{
+  float q_stddev_x;    // [m/s]
+  float q_stddev_y;    // [m/s]
+  float q_stddev_vx;   // [m/(s*s)]
+  float q_stddev_vy;   // [m/(s*s)]
+  float r_stddev_x;    // [m]
+  float r_stddev_y;    // [m]
+  float p0_stddev_x;   // [m/s]
+  float p0_stddev_y;   // [m/s]
+  float p0_stddev_vx;  // [m/(s*s)]
+  float p0_stddev_vy;  // [m/(s*s)]
+};
+
 class UnknownTracker : public Tracker
 {
 private:

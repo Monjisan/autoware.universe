@@ -6,3 +6,78 @@
     pedestrian_tracker: "pedestrian_and_bicycle_tracker"
     bicycle_tracker: "pedestrian_and_bicycle_tracker"
     motorcycle_tracker: "pedestrian_and_bicycle_tracker"
+
+    bicycle_tracker:
+      q_stddev_x: 0.0     #[m/s]
+      q_stddev_y: 0.0     #[m/s]
+      q_stddev_yaw: 10    #[rad/s]
+      q_stddev_vx: 10     #[km/h]
+      q_stddev_wz: 25     #[rad/(s*s)]
+      r_stddev_x: 0.6     #[m]
+      r_stddev_y: 0.4     #[m]
+      r_stddev_yaw: 30    #[rad]
+      p0_stddev_x: 0.8    #[m/s]
+      p0_stddev_y: 0.5    #[m/s]
+      p0_stddev_yaw: 1000 #[rad/s]
+      p0_stddev_vx: 1000  #[km/h]
+      p0_stddev_wz: 10    #[rad]
+
+    big_vehicle_tracker:
+      q_stddev_x: 0.0    # object coordinate [m/s]
+      q_stddev_y: 0.0    # object coordinate [m/s]
+      q_stddev_yaw: 20   # map coordinate[rad/s]
+      q_stddev_vx: 10    # object coordinate [m/(s*s)]
+      q_stddev_wz: 20    # object coordinate [rad/(s*s)]
+      r_stddev_x: 1.5    # object coordinate [m]
+      r_stddev_y: 0.5    # object coordinate [m]
+      r_stddev_yaw: 30   # map coordinate [rad]
+      r_stddev_vx: 1.0   # object coordinate [m/s]
+      p0_stddev_x: 1.5   # object coordinate [m/s]
+      p0_stddev_y: 0.5   # object coordinate [m/s]
+      p0_stddev_yaw: 30  # map coordinate [rad]
+      p0_stddev_vx: 1000 # object coordinate [m/s]
+      p0_stddev_wz: 10   # object coordinate [rad/s]
+
+    normal_vehicle_tracker:
+      q_stddev_x: 0.0    # object coordinate [m/s]
+      q_stddev_y: 0.0    # object coordinate [m/s]
+      q_stddev_yaw: 20   # map coordinate[rad/s]
+      q_stddev_vx: 10    # object coordinate [m/(s*s)]
+      q_stddev_wz: 20    # object coordinate [rad/(s*s)]
+      r_stddev_x: 1.0    # object coordinate [m]
+      r_stddev_y: 0.3    # object coordinate [m]
+      r_stddev_yaw: 30   # map coordinate [rad]
+      r_stddev_vx: 1.0   # object coordinate [m/s]
+      p0_stddev_x: 1.0   # object coordinate [m/s]
+      p0_stddev_y: 0.3   # object coordinate [m/s]
+      p0_stddev_yaw: 30  # map coordinate [rad]
+      p0_stddev_vx: 1000 # object coordinate [m/s]
+      p0_stddev_wz: 10   # object coordinate [rad/s]
+
+    pedestrian_tracker:
+      q_stddev_x: 0.0     # [m/s]
+      q_stddev_y: 0.0     # [m/s]
+      q_stddev_yaw: 20    # [rad/s]
+      q_stddev_vx: 5      # [m/(s*s)]
+      q_stddev_wz: 20     # [rad/(s*s)]
+      r_stddev_x: 0.4     # [m]
+      r_stddev_y: 0.4     # [m]
+      r_stddev_yaw: 30    # [rad]
+      p0_stddev_x: 1.0    # [m/s]
+      p0_stddev_y: 1.0    # [m/s]
+      p0_stddev_yaw: 1000 # [rad/s]
+      p0_stddev_vx: 5     # [m/(s*s)]
+      p0_stddev_wz: 10    # [rad/(s*s)]
+
+    unknown_tracker:
+      q_stddev_x: 0.0     # [m/s]
+      q_stddev_y: 0.0     # [m/s]
+      q_stddev_vx: 0.1    # [m/(s*s)]
+      q_stddev_vy: 0.1    # [m/(s*s)]
+      r_stddev_x: 0.4     # [m]
+      r_stddev_y: 0.4     # [m]
+      p0_stddev_x: 1.0    # [m/s]
+      p0_stddev_y: 1.0    # [m/s]
+      p0_stddev_vx: 0.1   # [m/(s*s)]
+      p0_stddev_vy: 0.1   # [m/(s*s)]
+

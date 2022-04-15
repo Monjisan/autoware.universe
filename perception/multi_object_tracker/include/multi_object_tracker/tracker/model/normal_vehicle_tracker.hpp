@@ -23,6 +23,23 @@
 
 #include <kalman_filter/kalman_filter.hpp>
 
+struct NormalVehicleTrackerEKFParam : public TrackerEKFParam {
+  float q_stddev_x;    // object coordinate [m/s]
+  float q_stddev_y;    // object coordinate [m/s]
+  float q_stddev_yaw;  // map coordinate[rad/s]
+  float q_stddev_vx;   // object coordinate [m/(s*s)]
+  float q_stddev_wz;   // object coordinate [rad/(s*s)]
+  float r_stddev_x;    // object coordinate [m]
+  float r_stddev_y;    // object coordinate [m]
+  float r_stddev_yaw;  // map coordinate [rad]
+  float r_stddev_vx;   // object coordinate [m/s]
+  float p0_stddev_x;   // object coordinate [m/s]
+  float p0_stddev_y;   // object coordinate [m/s]
+  float p0_stddev_yaw; // map coordinate [rad]
+  float p0_stddev_vx;  // object coordinate [m/s]
+  float p0_stddev_wz;  // object coordinate [rad/s]
+};
+
 class NormalVehicleTracker : public Tracker
 {
 private:
