@@ -629,6 +629,7 @@ void BehaviorPathPlannerNode::onExternalApproval(const ApprovalMsg::ConstSharedP
 {
   planner_data_->approval.is_approved.data = msg->approval;
   // TODO(wep21): Replace msg stamp after {stamp: now} is implemented in ros2 topic pub
+  RCLCPP_ERROR_STREAM(this->get_logger(), "onExternalApproval");
   planner_data_->approval.is_approved.stamp = this->now();
 }
 void BehaviorPathPlannerNode::onForceApproval(const PathChangeModule::ConstSharedPtr msg)
