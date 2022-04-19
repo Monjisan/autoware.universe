@@ -1,8 +1,8 @@
 /**:
   ros__parameters:
     common:
-      planning_method: "rule_base"
-      # planning_method: "optimization_base"
+      # planning_method: "rule_base"
+      planning_method: "optimization_base"
 
       # parameters to calculate RSS distance
       max_accel:  1.0
@@ -57,7 +57,7 @@
       dense_time_horizon: 5.0
       max_time_horizon: 15.0
       max_trajectory_length: 200.0
-      initial_velocity_margin: 0.3 #[m/s]
+      velocity_margin: 0.1 #[m/s]
 
       # Parameters for safe distance
       safe_distance_margin: 5.0

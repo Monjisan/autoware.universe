@@ -92,8 +92,7 @@ OptimizationBasedPlanner::OptimizationBasedPlanner(
   safe_distance_margin_ =
     node.declare_parameter<double>("optimization_based_planner.safe_distance_margin");
   t_dangerous_ = node.declare_parameter<double>("optimization_based_planner.t_dangerous");
-  initial_velocity_margin_ =
-    node.declare_parameter<double>("optimization_based_planner.initial_velocity_margin");
+  velocity_margin_ = node.declare_parameter<double>("optimization_based_planner.velocity_margin");
   enable_adaptive_cruise_ =
     node.declare_parameter<bool>("optimization_based_planner.enable_adaptive_cruise");
   use_object_acceleration_ =
@@ -144,7 +143,6 @@ OptimizationBasedPlanner::OptimizationBasedPlanner(
 Trajectory OptimizationBasedPlanner::generateTrajectory(
   const ObstacleVelocityPlannerData & planner_data, boost::optional<VelocityLimit> & vel_limit)
 {
-  std::cerr << "v0: " << planner_data.current_vel << std::endl;
   // Create Time Vector defined by resampling time interval
   const std::vector<double> time_vec = createTimeVector();
   if (time_vec.size() < 2) {
@@ -190,7 +188,6 @@ Trajectory OptimizationBasedPlanner::generateTrajectory(
   double a0;
   std::tie(v0, a0) = calcInitialMotion(
     planner_data.current_vel, planner_data.traj, *closest_idx, prev_output_, closest_stop_dist);
-  v0 = std::min(v0 + initial_velocity_margin_, v_max);
   a0 = std::min(longitudinal_info_.max_accel, std::max(a0, longitudinal_info_.min_accel));
 
   // If closest distance is too close, return zero velocity
@@ -257,6 +254,7 @@ Trajectory OptimizationBasedPlanner::generateTrajectory(
   data.j_min = longitudinal_info_.min_jerk;
   data.t_dangerous = t_dangerous_;
   data.idling_time = longitudinal_info_.idling_time;
+  data.v_margin = velocity_margin_;
   data.s_boundary = *s_boundaries;
   data.v0 = v0;
   RCLCPP_DEBUG(

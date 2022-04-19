@@ -194,7 +194,7 @@ private:
   double collision_time_threshold_;
   double safe_distance_margin_;
   double t_dangerous_;
-  double initial_velocity_margin_;
+  double velocity_margin_;
   bool enable_adaptive_cruise_;
   bool use_object_acceleration_;
   bool use_hd_map_;
