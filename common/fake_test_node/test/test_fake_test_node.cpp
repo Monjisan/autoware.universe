@@ -38,13 +38,13 @@ using std_msgs::msg::Int32;
 namespace
 {
 
-class NodeUnderTest : public tilde::TildeNode
+class NodeUnderTest : public rclcpp::Node
 {
 public:
   NodeUnderTest()
   : rclcpp::Node{"is_positive_node"},
-    m_pub{this->create_tilde_publisher<Bool>("/output_topic", 10)},
-    m_sub{this->create_tilde_subscription<Int32>(
+    m_pub{this->create_publisher<Bool>("/output_topic", 10)},
+    m_sub{this->create_subscription<Int32>(
         "/input_topic", 10,
         [&](const Int32::SharedPtr msg) {
           Bool output;
@@ -55,7 +55,7 @@ public:
   }
 
 private:
-  tilde::TildePublisher<Bool>::SharedPtr m_pub{};
+  rclcpp::Publisher<Bool>::SharedPtr m_pub{};
   rclcpp::Subscription<Int32>::SharedPtr m_sub{};
 };
 
@@ -67,8 +67,8 @@ void run_test(int32_t value_in_message, FixtureT * fixture)
   const auto node = std::make_shared<NodeUnderTest>();
 
   Bool::SharedPtr last_received_msg{};
-  auto fake_odom_publisher = fixture->template create_tilde_publisher<Int32>("/input_topic");
-  auto result_odom_subscription = fixture->template create_tilde_subscription<Bool>(
+  auto fake_odom_publisher = fixture->template create_publisher<Int32>("/input_topic");
+  auto result_odom_subscription = fixture->template create_subscription<Bool>(
     "/output_topic", *node,
     [&last_received_msg](const Bool::SharedPtr msg) {last_received_msg = msg;});
 
