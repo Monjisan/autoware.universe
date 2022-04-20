@@ -48,8 +48,10 @@ void applySafeVelocityConsideringPossibleCollision(
       (l_obs < 0 && v0 <= v_safe)
         ? v_safe
         : planning_utils::calcDecelerationVelocityFromDistanceToTarget(j_min, a_min, a0, v0, l_obs);
+    if (original_vel < v_safe) continue;
     // compare safe velocity consider EBS, minimum allowed velocity and original velocity
     const double safe_velocity = calculateInsertVelocity(v_slow_down, v_safe, v_min, original_vel);
+    if(original_vel < safe_velocity) continue;
     possible_collision.obstacle_info.safe_motion.safe_velocity = safe_velocity;
     const auto & pose = possible_collision.collision_with_margin.pose;
     insertSafeVelocityToPath(pose, safe_velocity, param, inout_path);
