@@ -33,6 +33,10 @@
 #include "rclcpp/time.hpp"
 #include "trajectory_follower_test_utils.hpp"
 
+#include "tilde/tilde_publisher.hpp"
+#include "tilde/tilde_node.hpp"
+
+
 
 using LateralController = autoware::motion::control::trajectory_follower_nodes::LateralController;
 using LateralCommand = autoware_auto_control_msgs::msg::AckermannLateralCommand;

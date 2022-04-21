@@ -25,14 +25,11 @@
 #include <string>
 #include <vector>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
 namespace fault_injection
 {
 using tier4_simulation_msgs::msg::SimulationEvents;
 
-class FaultInjectionNode : public tilde::TildeNode
+class FaultInjectionNode : public rclcpp::Node
 {
 public:
   explicit FaultInjectionNode(rclcpp::NodeOptions node_options);

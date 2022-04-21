@@ -57,12 +57,12 @@ bool isPcdFile(const std::string & p)
 }  // namespace
 
 PointCloudMapLoaderNode::PointCloudMapLoaderNode(const rclcpp::NodeOptions & options)
-: TildeNode("pointcloud_map_loader", options)
+: Node("pointcloud_map_loader", options)
 {
   rclcpp::QoS durable_qos{1};
   durable_qos.transient_local();
   pub_pointcloud_map_ =
-    this->create_tilde_publisher<sensor_msgs::msg::PointCloud2>("output/pointcloud_map", durable_qos);
+    this->create_publisher<sensor_msgs::msg::PointCloud2>("output/pointcloud_map", durable_qos);
 
   const auto pcd_paths_or_directory =
     declare_parameter("pcd_paths_or_directory", std::vector<std::string>({}));

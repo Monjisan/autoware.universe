@@ -36,14 +36,11 @@
 #include <random>
 #include <vector>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
-class DummyPerceptionPublisherNode : public tilde::TildeNode
+class DummyPerceptionPublisherNode : public rclcpp::Node
 {
 private:
-  tilde::TildePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
-  tilde::TildePublisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
+  rclcpp::Publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>::SharedPtr
     detected_object_with_feature_pub_;
   rclcpp::Subscription<dummy_perception_publisher::msg::Object>::SharedPtr object_sub_;
   rclcpp::TimerBase::SharedPtr timer_;

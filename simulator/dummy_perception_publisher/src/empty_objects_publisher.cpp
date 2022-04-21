@@ -19,16 +19,13 @@
 #include <memory>
 #include <utility>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
-class EmptyObjectsPublisher : public tilde::TildeNode
+class EmptyObjectsPublisher : public rclcpp::Node
 {
 public:
-  EmptyObjectsPublisher() : TildeNode("empty_objects_publisher")
+  EmptyObjectsPublisher() : Node("empty_objects_publisher")
   {
     empty_objects_pub_ =
-      this->create_tilde_publisher<autoware_auto_perception_msgs::msg::PredictedObjects>(
+      this->create_publisher<autoware_auto_perception_msgs::msg::PredictedObjects>(
         "~/output/objects", 1);
 
     using std::chrono_literals::operator""ms;
@@ -37,7 +34,7 @@ public:
   }
 
 private:
-  tilde::TildePublisher<autoware_auto_perception_msgs::msg::PredictedObjects>::SharedPtr
+  rclcpp::Publisher<autoware_auto_perception_msgs::msg::PredictedObjects>::SharedPtr
     empty_objects_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 

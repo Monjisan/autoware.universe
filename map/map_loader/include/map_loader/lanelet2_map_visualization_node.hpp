@@ -23,17 +23,14 @@
 #include <string>
 #include <vector>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
-class Lanelet2MapVisualizationNode : public tilde::TildeNode
+class Lanelet2MapVisualizationNode : public rclcpp::Node
 {
 public:
   explicit Lanelet2MapVisualizationNode(const rclcpp::NodeOptions & options);
 
 private:
   rclcpp::Subscription<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr sub_map_bin_;
-  tilde::TildePublisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_marker_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pub_marker_;
 
   bool viz_lanelets_centerline_;
 

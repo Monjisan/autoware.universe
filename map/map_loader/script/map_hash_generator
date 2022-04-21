@@ -40,7 +40,7 @@ class MapHashGenerator(Node):
         msg = MapHash()
         msg.lanelet = self.lanelet_hash
         msg.pcd = self.pcd_map_hash
-        self.pub = self.create_tilde_publisher(MapHash, "/api/autoware/get/map/info/hash", qos_profile)
+        self.pub = self.create_publisher(MapHash, "/api/autoware/get/map/info/hash", qos_profile)
         self.pub.publish(msg)
 
         self.srv = self.create_service(

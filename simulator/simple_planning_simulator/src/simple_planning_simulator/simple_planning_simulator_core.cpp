@@ -74,7 +74,7 @@ namespace simple_planning_simulator
 {
 
 SimplePlanningSimulator::SimplePlanningSimulator(const rclcpp::NodeOptions & options)
-: TildeNode("simple_planning_simulator", options),
+: Node("simple_planning_simulator", options),
   tf_buffer_(get_clock()),
   tf_listener_(tf_buffer_, std::shared_ptr<rclcpp::Node>(this, [](auto) {}), false)
 {
@@ -87,36 +87,36 @@ SimplePlanningSimulator::SimplePlanningSimulator(const rclcpp::NodeOptions & opt
   using std::placeholders::_1;
   using std::placeholders::_2;
 
-  sub_init_pose_ = create_tilde_subscription<PoseWithCovarianceStamped>(
+  sub_init_pose_ = create_subscription<PoseWithCovarianceStamped>(
     "/initialpose", QoS{1}, std::bind(&SimplePlanningSimulator::on_initialpose, this, _1));
-  sub_ackermann_cmd_ = create_tilde_subscription<AckermannControlCommand>(
+  sub_ackermann_cmd_ = create_subscription<AckermannControlCommand>(
     "input/ackermann_control_command", QoS{1},
     std::bind(&SimplePlanningSimulator::on_ackermann_cmd, this, _1));
-  sub_gear_cmd_ = create_tilde_subscription<GearCommand>(
+  sub_gear_cmd_ = create_subscription<GearCommand>(
     "input/gear_command", QoS{1}, std::bind(&SimplePlanningSimulator::on_gear_cmd, this, _1));
-  sub_turn_indicators_cmd_ = create_tilde_subscription<TurnIndicatorsCommand>(
+  sub_turn_indicators_cmd_ = create_subscription<TurnIndicatorsCommand>(
     "input/turn_indicators_command", QoS{1},
     std::bind(&SimplePlanningSimulator::on_turn_indicators_cmd, this, _1));
-  sub_hazard_lights_cmd_ = create_tilde_subscription<HazardLightsCommand>(
+  sub_hazard_lights_cmd_ = create_subscription<HazardLightsCommand>(
     "input/hazard_lights_command", QoS{1},
     std::bind(&SimplePlanningSimulator::on_hazard_lights_cmd, this, _1));
-  sub_trajectory_ = create_tilde_subscription<Trajectory>(
+  sub_trajectory_ = create_subscription<Trajectory>(
     "input/trajectory", QoS{1}, std::bind(&SimplePlanningSimulator::on_trajectory, this, _1));
-  sub_engage_ = create_tilde_subscription<Engage>(
+  sub_engage_ = create_subscription<Engage>(
     "input/engage", rclcpp::QoS{1}, std::bind(&SimplePlanningSimulator::on_engage, this, _1));
 
   pub_control_mode_report_ =
-    create_tilde_publisher<ControlModeReport>("output/control_mode_report", QoS{1});
-  pub_gear_report_ = create_tilde_publisher<GearReport>("output/gear_report", QoS{1});
+    create_publisher<ControlModeReport>("output/control_mode_report", QoS{1});
+  pub_gear_report_ = create_publisher<GearReport>("output/gear_report", QoS{1});
   pub_turn_indicators_report_ =
-    create_tilde_publisher<TurnIndicatorsReport>("output/turn_indicators_report", QoS{1});
+    create_publisher<TurnIndicatorsReport>("output/turn_indicators_report", QoS{1});
   pub_hazard_lights_report_ =
-    create_tilde_publisher<HazardLightsReport>("output/hazard_lights_report", QoS{1});
-  pub_current_pose_ = create_tilde_publisher<PoseStamped>("/current_pose", QoS{1});
-  pub_velocity_ = create_tilde_publisher<VelocityReport>("output/twist", QoS{1});
-  pub_odom_ = create_tilde_publisher<Odometry>("output/odometry", QoS{1});
-  pub_steer_ = create_tilde_publisher<SteeringReport>("output/steering", QoS{1});
-  pub_tf_ = create_tilde_publisher<tf2_msgs::msg::TFMessage>("/tf", QoS{1});
+    create_publisher<HazardLightsReport>("output/hazard_lights_report", QoS{1});
+  pub_current_pose_ = create_publisher<PoseStamped>("/current_pose", QoS{1});
+  pub_velocity_ = create_publisher<VelocityReport>("output/twist", QoS{1});
+  pub_odom_ = create_publisher<Odometry>("output/odometry", QoS{1});
+  pub_steer_ = create_publisher<SteeringReport>("output/steering", QoS{1});
+  pub_tf_ = create_publisher<tf2_msgs::msg::TFMessage>("/tf", QoS{1});
 
   /* set param callback */
   set_param_res_ = this->add_on_set_parameters_callback(

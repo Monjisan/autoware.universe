@@ -23,8 +23,6 @@
   <depend>lanelet2_validation</depend>
   <depend>pugixml-dev</depend>
   <depend>rclcpp</depend>
-  <depend>tilde</depend>
-  <depend>tilde_msg</depend>
   <depend>tf2</depend>
   <depend>tier4_autoware_utils</depend>
   <depend>visualization_msgs</depend>

@@ -67,17 +67,17 @@ void setColor(std_msgs::msg::ColorRGBA * cl, double r, double g, double b, doubl
 }  // namespace
 
 Lanelet2MapVisualizationNode::Lanelet2MapVisualizationNode(const rclcpp::NodeOptions & options)
-: TildeNode("lanelet2_map_visualization", options)
+: Node("lanelet2_map_visualization", options)
 {
   using std::placeholders::_1;
 
   viz_lanelets_centerline_ = this->declare_parameter("viz_lanelets_centerline", true);
 
-  sub_map_bin_ = this->create_tilde_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
+  sub_map_bin_ = this->create_subscription<autoware_auto_mapping_msgs::msg::HADMapBin>(
     "input/lanelet2_map", rclcpp::QoS{1}.transient_local(),
     std::bind(&Lanelet2MapVisualizationNode::onMapBin, this, _1));
 
-  pub_marker_ = this->create_tilde_publisher<visualization_msgs::msg::MarkerArray>(
+  pub_marker_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(
     "output/lanelet2_map_marker", rclcpp::QoS{1}.transient_local());
 }
 

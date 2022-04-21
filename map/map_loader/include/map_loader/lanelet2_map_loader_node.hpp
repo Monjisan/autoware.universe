@@ -21,16 +21,13 @@
 
 #include <memory>
 
-#include "tilde/tilde_publisher.hpp"
-#include "tilde/tilde_node.hpp"
-
-class Lanelet2MapLoaderNode : public tilde::TildeNode
+class Lanelet2MapLoaderNode : public rclcpp::Node
 {
 public:
   explicit Lanelet2MapLoaderNode(const rclcpp::NodeOptions & options);
 
 private:
-  tilde::TildePublisher<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr pub_map_bin_;
+  rclcpp::Publisher<autoware_auto_mapping_msgs::msg::HADMapBin>::SharedPtr pub_map_bin_;
 };
 
 #endif  // MAP_LOADER__LANELET2_MAP_LOADER_NODE_HPP_

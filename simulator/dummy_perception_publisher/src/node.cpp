@@ -26,7 +26,7 @@
 #include <vector>
 
 DummyPerceptionPublisherNode::DummyPerceptionPublisherNode()
-: TildeNode("dummy_perception_publisher"), tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_)
+: Node("dummy_perception_publisher"), tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_)
 {
   visible_range_ = this->declare_parameter("visible_range", 100.0);
   detection_successful_rate_ = this->declare_parameter("detection_successful_rate", 0.8);
@@ -39,10 +39,10 @@ DummyPerceptionPublisherNode::DummyPerceptionPublisherNode()
   rclcpp::QoS qos{1};
   qos.transient_local();
   detected_object_with_feature_pub_ =
-    this->create_tilde_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
+    this->create_publisher<tier4_perception_msgs::msg::DetectedObjectsWithFeature>(
       "output/dynamic_object", qos);
-  pointcloud_pub_ = this->create_tilde_publisher<sensor_msgs::msg::PointCloud2>("output/points_raw", qos);
-  object_sub_ = this->create_tilde_subscription<dummy_perception_publisher::msg::Object>(
+  pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("output/points_raw", qos);
+  object_sub_ = this->create_subscription<dummy_perception_publisher::msg::Object>(
     "input/object", 100,
     std::bind(&DummyPerceptionPublisherNode::objectCallback, this, std::placeholders::_1));
 
