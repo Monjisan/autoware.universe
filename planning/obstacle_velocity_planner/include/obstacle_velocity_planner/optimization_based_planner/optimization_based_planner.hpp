@@ -45,7 +45,8 @@ class OptimizationBasedPlanner : public PlannerInterface
 {
 public:
   OptimizationBasedPlanner(
-    rclcpp::Node & node, const LongitudinalInfo & longitudinal_info,
+    rclcpp::Node & node, const LongitudinalParam & longitudinal_param,
+    const RSSParam & rss_param_,
     const vehicle_info_util::VehicleInfo & vehicle_info);
 
   Trajectory generateTrajectory(
@@ -192,7 +193,6 @@ private:
   double object_low_velocity_threshold_;
   double external_velocity_limit_;
   double collision_time_threshold_;
-  double safe_distance_margin_;
   double t_dangerous_;
   double velocity_margin_;
   bool enable_adaptive_cruise_;

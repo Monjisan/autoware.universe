@@ -36,7 +36,8 @@ class RuleBasedPlanner : public PlannerInterface
 {
 public:
   RuleBasedPlanner(
-    rclcpp::Node & node, const LongitudinalInfo & longitudinal_info,
+    rclcpp::Node & node, const LongitudinalParam & longitudinal_param,
+    const RSSParam & rss_param_,
     const vehicle_info_util::VehicleInfo & vehicle_info);
 
   Trajectory generateTrajectory(
@@ -46,28 +47,40 @@ public:
   void updateParam(const std::vector<rclcpp::Parameter> & parameters) override;
 
 private:
-  struct SlowDownInfo
+  struct SlowDownObstacleInfo
   {
-    SlowDownInfo(
-      const double dist_to_slow_down_arg, const double normalized_dist_to_slow_down_arg,
-      const TargetObstacle & obstacle_arg)
-    : dist_to_slow_down(dist_to_slow_down_arg),
-      normalized_dist_to_slow_down(normalized_dist_to_slow_down_arg),
-      obstacle(obstacle_arg)
+    SlowDownObstacleInfo(
+      const TargetObstacle & obstacle_arg,
+      const double dist_to_slow_down_arg, const double normalized_dist_to_slow_down_arg)
+      : obstacle(obstacle_arg),
+        dist_to_slow_down(dist_to_slow_down_arg),
+        normalized_dist_to_slow_down(normalized_dist_to_slow_down_arg)
     {
     }
+    TargetObstacle obstacle;
     double dist_to_slow_down;
     double normalized_dist_to_slow_down;
+  };
+
+  struct StopObstacleInfo
+  {
+    StopObstacleInfo(
+      const TargetObstacle & obstacle_arg,
+      const double dist_to_stop_arg)
+      : obstacle(obstacle_arg),
+        dist_to_stop(dist_to_stop_arg)
+    {
+    }
     TargetObstacle obstacle;
+    double dist_to_stop;
   };
 
   // ROS param
   double vel_to_acc_weight_;
-  double min_slow_down_target_vel_;
+  double min_cruise_target_vel_;
+  double additional_safe_distance_margin_;
   double max_vehicle_obj_velocity_to_stop_;
   double max_non_vehicle_obj_velocity_to_stop_;
-  double safe_distance_margin_;
-  double min_strong_stop_accel_;
 
   // pid controller
   std::unique_ptr<PIDController> pid_controller_;
@@ -76,15 +89,17 @@ private:
   // Publisher
   rclcpp::Publisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr stop_reasons_pub_;
   rclcpp::Publisher<StopSpeedExceeded>::SharedPtr stop_speed_exceeded_pub_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_wall_marker_pub_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_rss_wall_marker_pub_;
   rclcpp::Publisher<Float32MultiArrayStamped>::SharedPtr debug_values_pub_;
 
   boost::optional<double> prev_target_vel_;
 
-  size_t doStop(const ObstacleVelocityPlannerData & planner_data, const double dist_to_stop) const;
-  VelocityLimit doSlowDown(
-    const ObstacleVelocityPlannerData & planner_data, const SlowDownInfo & slow_down_info);
+size_t doStop(
+  const ObstacleVelocityPlannerData & planner_data, const StopObstacleInfo & stop_obstacle_info,
+  std::vector<TargetObstacle> & debug_obstacles_to_top, visualization_msgs::msg::MarkerArray & debug_walls_marker);
+
+VelocityLimit doSlowDown(
+  const ObstacleVelocityPlannerData & planner_data, const SlowDownObstacleInfo & slow_down_obstacle_info,
+  std::vector<TargetObstacle> & debug_obstacles_to_slow_down, visualization_msgs::msg::MarkerArray & debug_walls_marker);
 
   DebugValues debug_values_;
 };

@@ -57,9 +57,10 @@ inline tf2::Vector3 getTransVector3(
 }  // namespace
 
 OptimizationBasedPlanner::OptimizationBasedPlanner(
-  rclcpp::Node & node, const LongitudinalInfo & longitudinal_info,
+  rclcpp::Node & node, const LongitudinalParam & longitudinal_param,
+  const RSSParam & rss_param,
   const vehicle_info_util::VehicleInfo & vehicle_info)
-: PlannerInterface(longitudinal_info, vehicle_info)
+: PlannerInterface(node, longitudinal_param, rss_param, vehicle_info)
 {
   // parameter
   resampling_s_interval_ =
@@ -89,8 +90,6 @@ OptimizationBasedPlanner::OptimizationBasedPlanner(
     node.declare_parameter<double>("optimization_based_planner.external_velocity_limit");
   collision_time_threshold_ =
     node.declare_parameter<double>("optimization_based_planner.collision_time_threshold");
-  safe_distance_margin_ =
-    node.declare_parameter<double>("optimization_based_planner.safe_distance_margin");
   t_dangerous_ = node.declare_parameter<double>("optimization_based_planner.t_dangerous");
   velocity_margin_ = node.declare_parameter<double>("optimization_based_planner.velocity_margin");
   enable_adaptive_cruise_ =
@@ -188,7 +187,7 @@ Trajectory OptimizationBasedPlanner::generateTrajectory(
   double a0;
   std::tie(v0, a0) = calcInitialMotion(
     planner_data.current_vel, planner_data.traj, *closest_idx, prev_output_, closest_stop_dist);
-  a0 = std::min(longitudinal_info_.max_accel, std::max(a0, longitudinal_info_.min_accel));
+  a0 = std::min(longitudinal_param_.max_accel, std::max(a0, longitudinal_param_.min_accel));
 
   // If closest distance is too close, return zero velocity
   if (closest_stop_dist < 0.01) {
@@ -247,13 +246,13 @@ Trajectory OptimizationBasedPlanner::generateTrajectory(
   data.s0 = resampled_traj_data.s.front();
   data.a0 = a0;
   data.v_max = v_max;
-  data.a_max = longitudinal_info_.max_accel;
-  data.a_min = longitudinal_info_.min_accel;
+  data.a_max = longitudinal_param_.max_accel;
+  data.a_min = longitudinal_param_.min_accel;
   data.limit_a_min = limit_min_accel_;
-  data.j_max = longitudinal_info_.max_jerk;
-  data.j_min = longitudinal_info_.min_jerk;
+  data.j_max = longitudinal_param_.max_jerk;
+  data.j_min = longitudinal_param_.min_jerk;
   data.t_dangerous = t_dangerous_;
-  data.idling_time = longitudinal_info_.idling_time;
+  data.idling_time = rss_param_.idling_time;
   data.v_margin = velocity_margin_;
   data.s_boundary = *s_boundaries;
   data.v0 = v0;
@@ -477,7 +476,7 @@ double OptimizationBasedPlanner::getClosestStopDistance(
     // Calculate Safety Distance
     const double ego_vehicle_offset = vehicle_info_.wheel_base_m + vehicle_info_.front_overhang_m;
     const double object_offset = obj_data.length / 2.0;
-    const double safety_distance = ego_vehicle_offset + object_offset + safe_distance_margin_;
+    const double safety_distance = ego_vehicle_offset + object_offset + longitudinal_param_.safe_distance_margin;
 
     // If the object is on the current ego trajectory,
     // we assume the object travels along ego trajectory
@@ -490,7 +489,7 @@ double OptimizationBasedPlanner::getClosestStopDistance(
     // Update Distance to the closest object on the ego trajectory
     if (dist_to_collision_point) {
       const double current_obj_distance = std::max(
-        *dist_to_collision_point - safety_distance + safe_distance_margin_, -safety_distance);
+        *dist_to_collision_point - safety_distance + longitudinal_param_.safe_distance_margin, -safety_distance);
       closest_obj_distance = std::min(closest_obj_distance, current_obj_distance);
       closest_obj = obj;
     }
@@ -847,7 +846,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
       ego_traj_data.traj.points, planner_data.current_pose.position,
       current_object_pose.get().position);
     const double slow_down_point_length =
-      ego_obj_length - (rss_dist + object_offset + safe_distance_margin_);
+      ego_obj_length - (rss_dist + object_offset + longitudinal_param_.safe_distance_margin);
 
     if (slow_down_point_length < min_slow_down_point_length) {
       min_slow_down_point_length = slow_down_point_length;
@@ -929,7 +928,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
   // Calculate Safety Distance
   const double ego_vehicle_offset = vehicle_info_.wheel_base_m + vehicle_info_.front_overhang_m;
   const double object_offset = obj_data.length / 2.0;
-  const double safety_distance = ego_vehicle_offset + object_offset + safe_distance_margin_;
+  const double safety_distance = ego_vehicle_offset + object_offset + longitudinal_param_.safe_distance_margin;
 
   // If the object is on the current ego trajectory,
   // we assume the object travels along ego trajectory
@@ -959,7 +958,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
   const TrajectoryData & ego_traj_data, const std::vector<double> & time_vec,
   const double safety_distance, const TargetObstacle & object, const double dist_to_collision_point)
 {
-  const double & min_object_accel = longitudinal_info_.min_object_accel;
+  const double & min_obstacle_accel = rss_param_.min_obstacle_accel;
 
   SBoundaries s_boundaries(time_vec.size());
   for (size_t i = 0; i < s_boundaries.size(); ++i) {
@@ -973,7 +972,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
   double current_s_obj = std::max(dist_to_collision_point - safety_distance, 0.0);
   const double initial_s_obj = current_s_obj;
   const double initial_s_upper_bound =
-    current_s_obj + (current_v_obj * current_v_obj) / (2 * std::fabs(min_object_accel));
+    current_s_obj + (current_v_obj * current_v_obj) / (2 * std::fabs(min_obstacle_accel));
   s_boundaries.front().max_s = std::clamp(initial_s_upper_bound, 0.0, s_boundaries.front().max_s);
   s_boundaries.front().is_object = true;
   for (size_t i = 1; i < time_vec.size(); ++i) {
@@ -987,7 +986,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
     }
 
     const double s_upper_bound =
-      current_s_obj + (current_v_obj * current_v_obj) / (2 * std::fabs(min_object_accel));
+      current_s_obj + (current_v_obj * current_v_obj) / (2 * std::fabs(min_obstacle_accel));
     s_boundaries.at(i).max_s = std::clamp(s_upper_bound, 0.0, s_boundaries.at(i).max_s);
     s_boundaries.at(i).is_object = true;
   }
@@ -1000,7 +999,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
   const std::vector<double> & time_vec, const double safety_distance, const TargetObstacle & object,
   const rclcpp::Time & obj_base_time, const PredictedPath & predicted_path)
 {
-  const double & min_object_accel = longitudinal_info_.min_object_accel;
+  const double & min_obstacle_accel = rss_param_.min_obstacle_accel;
 
   const double abs_obj_vel = std::abs(object.velocity);
   const double v_obj = abs_obj_vel < object_zero_velocity_threshold_ ? 0.0 : abs_obj_vel;
@@ -1033,7 +1032,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
 
     const double current_s_obj = std::max(*dist_to_collision_point - safety_distance, 0.0);
     const double s_upper_bound =
-      current_s_obj + (v_obj * v_obj) / (2 * std::fabs(min_object_accel));
+      current_s_obj + (v_obj * v_obj) / (2 * std::fabs(min_obstacle_accel));
     for (size_t i = 0; i < predicted_path_id; ++i) {
       if (s_upper_bound < s_boundaries.at(i).max_s) {
         s_boundaries.at(i).max_s = std::max(0.0, s_upper_bound);

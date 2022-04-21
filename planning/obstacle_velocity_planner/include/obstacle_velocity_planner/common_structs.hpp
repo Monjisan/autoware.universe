@@ -78,43 +78,44 @@ struct ObstacleVelocityPlannerData
   std::vector<TargetObstacle> target_obstacles;
 };
 
-struct LongitudinalInfo
+struct LongitudinalParam
 {
-  LongitudinalInfo(
-    const double arg_max_accel, const double arg_min_accel, const double arg_max_jerk,
-    const double arg_min_jerk, const double arg_min_object_accel, const double arg_idling_time)
+  LongitudinalParam(
+    const double arg_max_accel, const double arg_min_accel, const double arg_max_jerk, const double arg_min_jerk,
+    const double arg_min_limit_accel, const double arg_min_stop_accel,
+    const double arg_safe_distance_margin)
   : max_accel(arg_max_accel),
     min_accel(arg_min_accel),
     max_jerk(arg_max_jerk),
     min_jerk(arg_min_jerk),
-    min_object_accel(arg_min_object_accel),
-    idling_time(arg_idling_time)
+    min_limit_accel(arg_min_limit_accel),
+    min_stop_accel(arg_min_stop_accel),
+    safe_distance_margin(arg_safe_distance_margin)
   {
   }
+
   double max_accel;
   double min_accel;
   double max_jerk;
   double min_jerk;
-  double min_object_accel;
-  double idling_time;
+  double min_limit_accel;
+  double min_stop_accel;
+  double safe_distance_margin;
 };
 
-struct LongitudinalMotion
+struct RSSParam
 {
-  void reset()
-  {
-    vel = {};
-    max_acc = {};
-    min_acc = {};
-    max_jerk = {};
-    min_jerk = {};
-  }
+  RSSParam(const double arg_min_ego_accel,
+           const double arg_min_obstacle_accel,
+           const double arg_idling_time)
+    : min_ego_accel(arg_min_ego_accel),
+      min_obstacle_accel(arg_min_obstacle_accel),
+      idling_time(arg_idling_time)
+  {}
 
-  boost::optional<double> vel;
-  boost::optional<double> max_acc;
-  boost::optional<double> min_acc;
-  boost::optional<double> max_jerk;
-  boost::optional<double> min_jerk;
+  double min_ego_accel;
+  double min_obstacle_accel;
+  double idling_time;
 };
 
 #endif  // OBSTACLE_VELOCITY_PLANNER__COMMON_STRUCTS_HPP_

@@ -18,9 +18,11 @@
 #include "obstacle_velocity_planner/common_structs.hpp"
 #include "tier4_autoware_utils/tier4_autoware_utils.hpp"
 #include "vehicle_info_util/vehicle_info_util.hpp"
+#include "obstacle_velocity_planner/utils.hpp"
 
 #include "autoware_auto_planning_msgs/msg/trajectory.hpp"
 #include "tier4_planning_msgs/msg/velocity_limit.hpp"
+#include "visualization_msgs/msg/marker_array.hpp"
 
 #include <boost/optional.hpp>
 
@@ -41,26 +43,15 @@ class PlannerInterface
 {
 public:
   PlannerInterface(
-    const LongitudinalInfo & longitudinal_info, const vehicle_info_util::VehicleInfo & vehicle_info)
-  : longitudinal_info_(longitudinal_info), vehicle_info_(vehicle_info)
+                   rclcpp::Node & node,
+    const LongitudinalParam & longitudinal_param, const RSSParam & rss_param, const vehicle_info_util::VehicleInfo & vehicle_info)
+  : longitudinal_param_(longitudinal_param), rss_param_(rss_param), vehicle_info_(vehicle_info)
   {
+    debug_obstacles_marker_pub_ = node.create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/obstacles_marker", 1);
+    debug_walls_marker_pub_ = node.create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/walls_marker", 1);
   }
 
   PlannerInterface() = default;
-
-  /*
-  // two kinds of velocity planning is supported.
-  // 1. getZeroVelocityIndexWithVelocityLimit
-  //   returns zero velocity index and velocity limit
-  // 2. generateTrajectory
-  //   returns trajectory with planned velocity
-  virtual boost::optional<size_t> getZeroVelocityIndexWithVelocityLimit(
-    [[maybe_unused]] const ObstacleVelocityPlannerData & planner_data,
-    [[maybe_unused]] boost::optional<VelocityLimit> & vel_limit)
-  {
-    return {};
-  };
-  */
 
   virtual Trajectory generateTrajectory(
     const ObstacleVelocityPlannerData & planner_data,
@@ -68,15 +59,19 @@ public:
 
   void updateCommonParam(const std::vector<rclcpp::Parameter> & parameters)
   {
-    auto & i = longitudinal_info_;
+    auto & li = longitudinal_param_;
 
-    tier4_autoware_utils::updateParam<double>(parameters, "common.max_accel", i.max_accel);
-    tier4_autoware_utils::updateParam<double>(parameters, "common.min_accel", i.min_accel);
-    tier4_autoware_utils::updateParam<double>(parameters, "common.max_jerk", i.max_jerk);
-    tier4_autoware_utils::updateParam<double>(parameters, "common.min_jerk", i.min_jerk);
+    /*
+    tier4_autoware_utils::updateParam<double>(parameters, "common.max_accel", li.max_accel);
+    tier4_autoware_utils::updateParam<double>(parameters, "common.min_accel", li.min_accel);
+    tier4_autoware_utils::updateParam<double>(parameters, "common.max_jerk", li.max_jerk);
+    tier4_autoware_utils::updateParam<double>(parameters, "common.min_jerk", li.min_jerk);
     tier4_autoware_utils::updateParam<double>(
-      parameters, "common.min_object_accel", i.min_object_accel);
-    tier4_autoware_utils::updateParam<double>(parameters, "common.idling_time", i.idling_time);
+      parameters, "common.min_obstacle_accel", li.min_obstacle_accel);
+    tier4_autoware_utils::updateParam<double>(parameters, "common.idling_time", li.idling_time);
+    */
+
+    auto & ri = rss_param_;
   }
 
   virtual void updateParam([[maybe_unused]] const std::vector<rclcpp::Parameter> & parameters) {}
@@ -97,7 +92,8 @@ public:
 
 protected:
   // Parameters
-  LongitudinalInfo longitudinal_info_;
+  LongitudinalParam longitudinal_param_;
+  RSSParam rss_param_;
 
   // Vehicle Parameters
   vehicle_info_util::VehicleInfo vehicle_info_;
@@ -112,16 +108,42 @@ protected:
   double calcRSSDistance(
     const double ego_vel, const double obj_vel, const double margin = 0.0) const
   {
-    const auto & i = longitudinal_info_;
-    // const double rss_dist_with_margin =
-    //   ego_vel * i.idling_time + 0.5 * i.max_accel * std::pow(i.idling_time, 2) +
-    //   std::pow(ego_vel + i.max_accel * i.idling_time, 2) * 0.5 / std::abs(i.min_accel) -
-    //   std::pow(obj_vel, 2) * 0.5 / std::abs(i.min_object_accel) + margin;
+    const auto & i = rss_param_;
     const double rss_dist_with_margin =
-      ego_vel * i.idling_time + std::pow(ego_vel, 2) * 0.5 / std::abs(i.min_accel) -
-      std::pow(obj_vel, 2) * 0.5 / std::abs(i.min_object_accel) + margin;
+      ego_vel * i.idling_time + std::pow(ego_vel, 2) * 0.5 / std::abs(i.min_ego_accel) -
+      std::pow(obj_vel, 2) * 0.5 / std::abs(i.min_obstacle_accel) + margin;
     return rss_dist_with_margin;
   }
+
+  void publishTargetObstacles(const std::vector<TargetObstacle> & obstacles_to_stop,
+                             const std::vector<TargetObstacle> & obstacles_to_slow_down) {
+    // TODO(murooka) change shape of markers based on its shape
+    visualization_msgs::msg::MarkerArray obstacles_marker;
+
+    // obstacles to slow down
+    for (size_t i = 0; i < obstacles_to_slow_down.size(); ++i) {
+      const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
+                                                                        obstacles_to_slow_down.at(i).pose, i, "obstacles_to_slow_down", 0.7, 0.7, 0.0);
+      tier4_autoware_utils::appendMarkerArray(marker, &obstacles_marker);
+    }
+
+    // obstacles to stop
+    for (size_t i = 0; i < obstacles_to_stop.size(); ++i) {
+      const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
+                                                                        obstacles_to_stop.at(i).pose, i, "obstacles_to_stop", 1.0, 0.0, 0.0);
+      tier4_autoware_utils::appendMarkerArray(marker, &obstacles_marker);
+    }
+
+    debug_obstacles_marker_pub_->publish(obstacles_marker);
+  }
+
+  void publishWalls(const visualization_msgs::msg::MarkerArray & debug_walls_marker) {
+    debug_walls_marker_pub_->publish(debug_walls_marker);
+  }
+
+private:
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_obstacles_marker_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_walls_marker_pub_;
 };
 
 #endif  // OBSTACLE_VELOCITY_PLANNER__PLANNER_INTERFACE_HPP_

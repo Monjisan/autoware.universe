@@ -238,7 +238,6 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
   vel_limit_pub_ = create_publisher<VelocityLimit>("~/output/velocity_limit", 1);
   clear_vel_limit_pub_ =
     create_publisher<VelocityLimitClearCommand>("~/output/clear_velocity_limit", 1);
-  debug_marker_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/marker", 1);
   debug_calculation_time_pub_ = create_publisher<Float32Stamped>("~/debug/calculation_time", 1);
 
   // Obstacle
@@ -248,14 +247,21 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
   vehicle_info_ = vehicle_info_util::VehicleInfoUtil(*this).getVehicleInfo();
 
   // longitudinal_info
-  const double max_accel = declare_parameter<double>("common.max_accel");
-  const double min_accel = declare_parameter<double>("common.min_accel");
-  const double max_jerk = declare_parameter<double>("common.max_jerk");
-  const double min_jerk = declare_parameter<double>("common.min_jerk");
-  const double min_object_accel = declare_parameter<double>("common.min_object_accel");
-  const double idling_time = declare_parameter<double>("common.idling_time");
-  const auto longitudinal_info =
-    LongitudinalInfo(max_accel, min_accel, max_jerk, min_jerk, min_object_accel, idling_time);
+  const double max_accel = declare_parameter<double>("common.normal.max_accel");
+  const double min_accel = declare_parameter<double>("common.normal.min_accel");
+  const double max_jerk = declare_parameter<double>("common.normal.max_jerk");
+  const double min_jerk = declare_parameter<double>("common.normal.min_jerk");
+  const double min_limit_accel = declare_parameter<double>("common.limit.min_accel");
+  const double min_stop_accel = declare_parameter<double>("common.min_stop_accel");
+  const double safe_distance_margin = declare_parameter<double>("common.rss.safe_distance_margin");
+  const auto longitudinal_param =
+    LongitudinalParam(max_accel, min_accel, max_jerk, min_jerk, min_limit_accel, min_stop_accel, safe_distance_margin);
+
+  const double min_ego_accel = declare_parameter<double>("common.rss.min_ego_accel");
+  const double min_obstacle_accel = declare_parameter<double>("common.rss.min_obstacle_accel");
+  const double idling_time = declare_parameter<double>("common.rss.idling_time");
+  const auto rss_param =
+    RSSParam(min_ego_accel,min_obstacle_accel, idling_time);
 
   // Obstacle filtering parameters
   obstacle_filtering_param_.rough_detection_area_expand_width =
@@ -285,9 +291,9 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
 
   if (planning_method_ == PlanningMethod::OPTIMIZATION_BASE) {
     planner_ptr_ =
-      std::make_unique<OptimizationBasedPlanner>(*this, longitudinal_info, vehicle_info_);
+      std::make_unique<OptimizationBasedPlanner>(*this, longitudinal_param, rss_param, vehicle_info_);
   } else if (planning_method_ == PlanningMethod::RULE_BASE) {
-    planner_ptr_ = std::make_unique<RuleBasedPlanner>(*this, longitudinal_info, vehicle_info_);
+    planner_ptr_ = std::make_unique<RuleBasedPlanner>(*this, longitudinal_param, rss_param, vehicle_info_);
   } else {
     std::logic_error("Designated method is not supported.");
   }
@@ -567,16 +573,6 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
 
     target_obstacles.push_back(obstacle);
   }
-
-  // TODO(murooka) change shape of markers based on its shape
-  // publish filtered obstacles
-  visualization_msgs::msg::MarkerArray object_msg;
-  for (size_t i = 0; i < target_obstacles.size(); ++i) {
-    const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
-      target_obstacles.at(i).pose, i, "target_objects", 0.7, 0.7, 0.0);
-    tier4_autoware_utils::appendMarkerArray(marker, &object_msg);
-  }
-  debug_marker_pub_->publish(object_msg);
 
   return target_obstacles;
 }
