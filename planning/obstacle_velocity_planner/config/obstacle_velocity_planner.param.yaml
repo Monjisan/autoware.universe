@@ -11,8 +11,8 @@
         max_jerk:  1.0
         min_jerk: -0.5
       limit:
-        min_accel: -3.0 # min_strong_accel is required when the ego requires the sudden stop.
-      min_stop_accel: -3.0
+        min_accel: -3.0 # min_strong_accel is required when the ego requires the sudden deceleration.
+      min_stop_accel: -3.0 # min acceleration for stopping
 
       # RSS distance
       rss:
