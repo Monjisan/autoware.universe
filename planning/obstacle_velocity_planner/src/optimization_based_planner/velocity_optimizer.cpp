@@ -68,7 +68,8 @@ VelocityOptimizer::OptimizationResult VelocityOptimizer::optimize(const Optimiza
   const int IDX_OVER_A0 = 7 * N;
   const int IDX_OVER_J0 = 8 * N;
   const int l_variables = 9 * N;
-  const int l_constraints = 6 * N + 3 * (N - 1) + 3;
+  //const int l_constraints = 6 * N + 3 * (N - 1) + 3;
+  const int l_constraints = 5 * N + 3 * (N - 1) + 3;
 
   // the matrix size depends on constraint numbers.
   Eigen::MatrixXd A = Eigen::MatrixXd::Zero(l_constraints, l_variables);
@@ -169,11 +170,13 @@ VelocityOptimizer::OptimizationResult VelocityOptimizer::optimize(const Optimiza
   }
 
   // Hard Acceleration Constraint: limit_a_min < a_i < a_max
+  /*
   for (size_t i = 0; i < N; ++i, ++constr_idx) {
     A(constr_idx, IDX_A0 + i) = 1.0;  // a_i
     upper_bound.at(constr_idx) = a_max;
     lower_bound.at(constr_idx) = limit_a_min;
   }
+  */
 
   // Soft Jerk Constraint: j_min < j_i - over_j_i < j_max
   for (size_t i = 0; i < N; ++i, ++constr_idx) {
