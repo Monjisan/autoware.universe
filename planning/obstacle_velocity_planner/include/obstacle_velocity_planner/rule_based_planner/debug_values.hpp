@@ -21,17 +21,17 @@ class DebugValues
 {
 public:
   enum class TYPE {
-                   // current
+    // current
     CURRENT_VELOCITY = 0,
     CURRENT_ACCELERATION,
-    CURRENT_JERK, // ignored
+    CURRENT_JERK,  // ignored
     // stop
     STOP_CURRENT_OBJECT_DISTANCE = 3,
     STOP_CURRENT_OBJECT_VELOCITY,
     STOP_TARGET_OBJECT_DISTANCE,
-    STOP_TARGET_VELOCITY, // ignored
+    STOP_TARGET_VELOCITY,  // ignored
     STOP_TARGET_ACCELERATION,
-    STOP_TARGET_JERK, // ignored
+    STOP_TARGET_JERK,  // ignored
     STOP_ERROR_OBJECT_DISTANCE,
     // slow down
     SLOW_DOWN_CURRENT_OBJECT_DISTANCE = 10,

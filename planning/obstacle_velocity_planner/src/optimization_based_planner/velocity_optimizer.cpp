@@ -68,7 +68,7 @@ VelocityOptimizer::OptimizationResult VelocityOptimizer::optimize(const Optimiza
   const int IDX_OVER_A0 = 7 * N;
   const int IDX_OVER_J0 = 8 * N;
   const int l_variables = 9 * N;
-  //const int l_constraints = 6 * N + 3 * (N - 1) + 3;
+  // const int l_constraints = 6 * N + 3 * (N - 1) + 3;
   const int l_constraints = 5 * N + 3 * (N - 1) + 3;
 
   // the matrix size depends on constraint numbers.
