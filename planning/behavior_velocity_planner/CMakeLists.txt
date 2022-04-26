@@ -36,6 +36,7 @@ set(BEHAVIOR_VELOCITY_PLANNER_DEPENDENCIES
   PCL
   pcl_conversions
   rclcpp
+  rtc_interface
   sensor_msgs
   interpolation
   tf2
