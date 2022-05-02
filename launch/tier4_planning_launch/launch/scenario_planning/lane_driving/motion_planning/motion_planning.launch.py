@@ -25,6 +25,7 @@ from launch.conditions import UnlessCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.actions import LoadComposableNodes
+from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode
 from launch_ros.substitutions import FindPackageShare
 import yaml
@@ -185,13 +186,50 @@ def launch_setup(context, *args, **kwargs):
         extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
     )
 
+    sampler_node_param_path = os.path.join(
+        get_package_share_directory("sampler_node"),
+        "config",
+        "sampler_node.param.yaml",
+    )
+    with open(sampler_node_param_path, "r") as f:
+        sampler_node_param = yaml.safe_load(f)["/**"]["ros__parameters"]
+
+    sampler_node = Node(
+        package="sampler_node",
+        # plugin='sampler_node::PathSamplerNode',
+        executable="path_sampler_node_exe",
+        name="path_sampler_node",
+        namespace="",
+        remappings=[
+            ("~/output/trajectory", "/planning/scenario_planning/lane_driving/trajectory"),
+            ("~/input/objects", "/perception/object_recognition/objects"),
+            ("~/input/steer", "/vehicle/status/steering_status"),
+            ("~/input/path", LaunchConfiguration("input_path_topic")),
+            ("~/input/vector_map", LaunchConfiguration("input_map_topic")),
+            ("~/input/route", LaunchConfiguration("input_route_topic")),
+        ],
+        parameters=[
+            common_param,
+            sampler_node_param,
+        ],
+        prefix=["konsole -e gdb -ex run --args"],  # for debugging
+        # prefix=['valgrind --tool=callgrind'],  # for profiling
+        # prefix=['valgrind --leak-check=full \
+        #  --show-leak-kinds=all \
+        #  --track-origins=yes \
+        #  --verbose \
+        #  --log-file=valgrind-out.txt'],
+        # extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
+    )
+
     container = ComposableNodeContainer(
         name="motion_planning_container",
         namespace="",
         package="rclcpp_components",
         executable=LaunchConfiguration("container_executable"),
         composable_node_descriptions=[
-            obstacle_avoidance_planner_component,
+            # sampler_node,
+            # obstacle_avoidance_planner_component,
             obstacle_stop_planner_component,
         ],
     )
@@ -208,7 +246,7 @@ def launch_setup(context, *args, **kwargs):
         condition=UnlessCondition(LaunchConfiguration("use_surround_obstacle_check")),
     )
 
-    group = GroupAction([container, surround_obstacle_checker_loader, relay_loader])
+    group = GroupAction([sampler_node, container, surround_obstacle_checker_loader, relay_loader])
 
     return [group]
 
@@ -243,6 +281,8 @@ def generate_launch_description():
 
     add_launch_arg("use_intra_process", "false", "use ROS2 component container communication")
     add_launch_arg("use_multithread", "false", "use multithread")
+    add_launch_arg("input_map_topic", "/map/vector_map", "vector map topic"),
+    add_launch_arg("input_route_topic", "/planning/mission_planning/route", "route topic"),
 
     set_container_executable = SetLaunchConfiguration(
         "container_executable",
