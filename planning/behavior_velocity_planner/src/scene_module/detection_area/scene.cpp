@@ -356,8 +356,9 @@ bool DetectionAreaModule::isOverLine(
   const autoware_auto_planning_msgs::msg::PathWithLaneId & path,
   const geometry_msgs::msg::Pose & self_pose, const geometry_msgs::msg::Pose & line_pose) const
 {
+  const size_t line_nearest_idx = tier4_autoware_utils::findNearestIndex(path.points, line_pose.position);
   return tier4_autoware_utils::calcSignedArcLength(
-           path.points, self_pose.position, line_pose.position) < 0;
+           path.points, self_pose, line_pose.position, line_nearest_idx) < 0;
 }
 
 bool DetectionAreaModule::hasEnoughBrakingDistance(

@@ -82,9 +82,11 @@ bool WalkwayModule::modifyPathVelocity(
     planning_utils::appendStopReason(stop_factor, stop_reason);
 
     // use arc length to identify if ego vehicle is in front of walkway stop or not.
-    const double signed_arc_dist_to_stop_point = tier4_autoware_utils::calcSignedArcLength(
-      path->points, planner_data_->current_pose.pose.position,
-      debug_data_.first_stop_pose.position);
+    const size_t first_stop_nearest_idx = tier4_autoware_utils::findNearestIndex(path->points, debug_data_.first_stop_pose.position);
+    const double signed_arc_dist_to_stop_point =
+      tier4_autoware_utils::calcSignedArcLength(
+      path->points, planner_data_->current_pose.pose,
+      debug_data_.first_stop_pose.position, first_stop_nearest_idx);
     const double distance_threshold = 1.0;
     debug_data_.stop_judge_range = distance_threshold;
     if (

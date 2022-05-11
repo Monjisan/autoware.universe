@@ -931,8 +931,8 @@ bool setGoal(
       const size_t closest_seg_idx =
         tier4_autoware_utils::findNearestSegmentIndex(input.points, goal.position);
       const double closest_to_goal_dist = tier4_autoware_utils::calcSignedArcLength(
-        input.points, input.points.at(closest_seg_idx).point.pose.position,
-        goal.position);  // TODO(murooka) implement calcSignedArcLength(points, idx, point)
+        input.points, input.points.at(closest_seg_idx).point.pose,
+        goal);  // TODO(murooka) implement calcSignedArcLength(points, idx, point)
       const double seg_dist = tier4_autoware_utils::calcSignedArcLength(
         input.points, closest_seg_idx, closest_seg_idx + 1);
       const double closest_z = input.points.at(closest_seg_idx).point.pose.position.z;
@@ -966,8 +966,8 @@ bool setGoal(
       const size_t closest_seg_idx = tier4_autoware_utils::findNearestSegmentIndex(
         input.points, pre_refined_goal.point.pose.position);
       const double closest_to_pre_goal_dist = tier4_autoware_utils::calcSignedArcLength(
-        input.points, input.points.at(closest_seg_idx).point.pose.position,
-        pre_refined_goal.point.pose.position);
+        input.points, input.points.at(closest_seg_idx).point.pose,
+        pre_refined_goal.point.pose);
       const double seg_dist = tier4_autoware_utils::calcSignedArcLength(
         input.points, closest_seg_idx,
         closest_seg_idx + 1);  // TODO(murooka) implement calcSignedArcLength(points, idx, point)

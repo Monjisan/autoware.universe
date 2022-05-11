@@ -207,7 +207,7 @@ bool SideShiftModule::addShiftPoint()
 
   const auto calcLongitudinal = [this](const auto & sp) {
     return tier4_autoware_utils::calcSignedArcLength(
-      reference_path_->points, getEgoPose().pose.position, sp.start.position);
+      reference_path_->points, getEgoPose().pose, sp.start);
   };
 
   // remove shift points on a far position.

@@ -75,7 +75,7 @@ bool createDetectionAreaPolygons(
 
   // use ego point as start point if same point as ego is not in the path
   const auto dist_to_nearest =
-    std::fabs(tier4_autoware_utils::calcSignedArcLength(path.points, pose.position, nearest_idx));
+    std::fabs(tier4_autoware_utils::calcSignedArcLength(path.points, pose.position, nearest_idx, nearest_idx));
   if (dist_to_nearest > eps) {
     const auto nearest_seg_idx =
       tier4_autoware_utils::findNearestSegmentIndex(path.points, pose.position);
@@ -85,7 +85,7 @@ bool createDetectionAreaPolygons(
     const double ds =
       tier4_autoware_utils::calcDistance2d(pp.at(nearest_seg_idx), pp.at(nearest_seg_idx + 1));
     const double dist_to_nearest_seg =
-      tier4_autoware_utils::calcSignedArcLength(path.points, nearest_seg_idx, pose.position);
+      tier4_autoware_utils::calcSignedArcLength(path.points, nearest_seg_idx, pose.position, nearest_idx);
     const double ratio = dist_to_nearest_seg / ds;
     p0 = getLerpPathPointWithLaneId(
       pp.at(nearest_seg_idx).point, pp.at(nearest_seg_idx + 1).point, ratio);

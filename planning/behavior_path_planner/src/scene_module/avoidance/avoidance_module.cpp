@@ -146,7 +146,7 @@ AvoidancePlanningData AvoidanceModule::calcAvoidancePlanningData(DebugData & deb
   // arclength from ego pose (used in many functions)
   data.arclength_from_ego = util::calcPathArcLengthArray(
     data.reference_path, 0, data.reference_path.points.size(),
-    calcSignedArcLength(data.reference_path.points, getEgoPosition(), 0));
+    calcSignedArcLength(data.reference_path.points, getEgoPose().pose, 0));
 
   // lanelet info
   data.current_lanelets = calcLaneAroundPose(
@@ -169,7 +169,7 @@ ObjectDataArray AvoidanceModule::calcAvoidanceTargetObjects(
   using lanelet::utils::to2D;
 
   const auto & path_points = reference_path.points;
-  const auto & ego_pos = getEgoPosition();
+  const auto & ego_pose = getEgoPose().pose;
 
   // velocity filter: only for stopped vehicle
   const auto objects_candidate = util::filterObjectsByVelocity(
@@ -192,7 +192,7 @@ ObjectDataArray AvoidanceModule::calcAvoidanceTargetObjects(
   const auto & rh = planner_data_->route_handler;
   const auto dist_to_goal =
     rh->isInGoalRouteSection(expanded_lanelets.back())
-      ? calcSignedArcLength(path_points, ego_pos, rh->getGoalPose().position)
+      ? calcSignedArcLength(path_points, ego_pose, rh->getGoalPose())
       : std::numeric_limits<double>::max();
 
   lanelet::ConstLineStrings3d debug_linestring;
@@ -220,7 +220,7 @@ ObjectDataArray AvoidanceModule::calcAvoidanceTargetObjects(
     object_data.object = object;
     avoidance_debug_msg.object_id = getUuidStr(object_data);
     // calc longitudinal distance from ego to closest target object footprint point.
-    object_data.longitudinal = calcDistanceToClosestFootprintPoint(reference_path, object, ego_pos);
+    object_data.longitudinal = calcDistanceToClosestFootprintPoint(reference_path, object, ego_pose);
     avoidance_debug_msg.longitudinal_distance = object_data.longitudinal;
 
     // object is behind ego or too far.
@@ -2046,7 +2046,7 @@ boost::optional<AvoidPoint> AvoidanceModule::calcIntersectionShiftPoint(
     }
 
     const double ego_to_intersection_dist = calcSignedArcLength(
-      data.reference_path.points, getEgoPosition(), intersection_point->point.pose.position);
+      data.reference_path.points, getEgoPose().pose, intersection_point->point.pose);
 
     if (ego_to_intersection_dist <= 5.0) {
       RCLCPP_INFO(getLogger(), "No enough margin to intersection.");

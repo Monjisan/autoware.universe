@@ -255,7 +255,7 @@ cv::Mat CostmapGenerator::drawObstaclesOnImage(
     if (isAvoidingObject(
           polygon_points, object, clearance_map, map_info, path_points_inside_area, traj_param)) {
       const double lon_dist_to_path = tier4_autoware_utils::calcSignedArcLength(
-        path_points, 0, object.kinematics.initial_pose_with_covariance.pose.position);
+        path_points, 0, object.kinematics.initial_pose_with_covariance.pose);
       const double lat_dist_to_path = tier4_autoware_utils::calcLateralOffset(
         path_points, object.kinematics.initial_pose_with_covariance.pose.position);
       obj_cog_info.push_back({lon_dist_to_path, lat_dist_to_path});

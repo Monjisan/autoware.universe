@@ -235,8 +235,9 @@ bool TrafficLightModule::modifyPathVelocity(
   geometry_msgs::msg::Point stop_line_point_msg;
   stop_line_point_msg.x = stop_line_point.x();
   stop_line_point_msg.y = stop_line_point.y();
+  const size_t stop_line_nearest_idx = tier4_autoware_utils::findNearestIndex(input_path.points, stop_line_point_msg);
   const double signed_arc_length_to_stop_point = tier4_autoware_utils::calcSignedArcLength(
-    input_path.points, self_pose.pose.position, stop_line_point_msg);
+    input_path.points, self_pose.pose, stop_line_point_msg, stop_line_nearest_idx);
 
   // Check state
   if (state_ == State::APPROACH) {

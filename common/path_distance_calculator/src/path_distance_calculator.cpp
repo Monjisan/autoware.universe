@@ -47,8 +47,9 @@ PathDistanceCalculator::PathDistanceCalculator(const rclcpp::NodeOptions & optio
       RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000, "path empty");
     }
 
+    const size_t nearest_idx = tier4_autoware_utils::findNearestIndex(path->points, pose->pose.position);
     const double distance = tier4_autoware_utils::calcSignedArcLength(
-      path->points, pose->pose.position, path->points.size() - 1);
+      path->points, pose->pose.position, nearest_idx, path->points.size() - 1);
 
     tier4_debug_msgs::msg::Float64Stamped msg;
     msg.stamp = pose->header.stamp;

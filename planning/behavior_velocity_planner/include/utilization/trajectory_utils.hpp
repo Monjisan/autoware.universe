@@ -145,7 +145,7 @@ inline bool smoothPath(
   auto nearest_idx =
     tier4_autoware_utils::findNearestIndex(*traj_lateral_acc_filtered, current_pose.position);
   const auto dist_to_nearest = tier4_autoware_utils::calcSignedArcLength(
-    *traj_lateral_acc_filtered, current_pose.position, nearest_idx);
+    *traj_lateral_acc_filtered, current_pose, nearest_idx);
 
   // if trajectory has the almost same point as ego, don't insert the ego point
   constexpr double epsilon = 1e-2;

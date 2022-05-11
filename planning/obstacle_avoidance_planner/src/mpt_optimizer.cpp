@@ -451,7 +451,10 @@ std::vector<ReferencePoint> MPTOptimizer::getFixedReferencePoints(
     const auto & prev_ref_point = prev_ref_points.at(i);
 
     if (!points_reaching_prev_points_flag) {
-      if (tier4_autoware_utils::calcSignedArcLength(points, 0, prev_ref_point.p) < 0) {
+      geometry_msgs::msg::Pose prev_ref_pose;
+      prev_ref_pose.position = prev_ref_point.p;
+      prev_ref_pose.orientation = tier4_autoware_utils::createQuaternionFromYaw(prev_ref_point.yaw);
+      if (tier4_autoware_utils::calcSignedArcLength(points, 0, prev_ref_pose) < 0) {
         continue;
       }
       points_reaching_prev_points_flag = true;

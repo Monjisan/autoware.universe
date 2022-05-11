@@ -44,7 +44,7 @@ double lerpShiftLengthOnArc(double arc, const AvoidPoint & ap);
 void clipByMinStartIdx(const AvoidPointArray & shift_points, PathWithLaneId & path);
 
 double calcDistanceToClosestFootprintPoint(
-  const PathWithLaneId & path, const PredictedObject & object, const Point & ego_pos);
+  const PathWithLaneId & path, const PredictedObject & object, const Pose & ego_pose);
 
 double calcOverhangDistance(
   const ObjectData & object_data, const Pose & base_pose, Point & overhang_pose);

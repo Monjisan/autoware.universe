@@ -121,7 +121,7 @@ bool MergeFromPrivateRoadModule::modifyPathVelocity(
     }
 
     const double signed_arc_dist_to_stop_point = tier4_autoware_utils::calcSignedArcLength(
-      path->points, current_pose.pose.position, path->points.at(stop_line_idx).point.pose.position);
+      path->points, current_pose.pose, path->points.at(stop_line_idx).point.pose);
 
     constexpr double distance_threshold = 2.0;
     if (

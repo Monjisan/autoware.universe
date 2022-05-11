@@ -1387,16 +1387,16 @@ ObstacleAvoidancePlanner::alignVelocity(
   for (size_t i = 0; i < fine_traj_points_with_vel.size(); ++i) {
     const auto truncated_points = points_utils::clipForwardPoints(path_points, prev_begin_idx, 5.0);
 
-    const auto & target_pos = fine_traj_points_with_vel[i].pose.position;
+    const auto & target_pose = fine_traj_points_with_vel[i].pose;
     const size_t closest_seg_idx =
-      tier4_autoware_utils::findNearestSegmentIndex(truncated_points, target_pos);
+      tier4_autoware_utils::findNearestSegmentIndex(truncated_points, target_pose.position);
 
     // lerp z
     fine_traj_points_with_vel[i].pose.position.z =
-      lerpPoseZ(truncated_points, target_pos, closest_seg_idx);
+      lerpPoseZ(truncated_points, target_pose, closest_seg_idx);
 
     // lerp vx
-    const double target_vel = lerpTwistX(truncated_points, target_pos, closest_seg_idx);
+    const double target_vel = lerpTwistX(truncated_points, target_pose, closest_seg_idx);
     if (i >= zero_vel_fine_traj_idx) {
       fine_traj_points_with_vel[i].longitudinal_velocity_mps = 0.0;
     } else if (target_vel < 1e-6) {  // NOTE: velocity may be negative due to linear interpolation

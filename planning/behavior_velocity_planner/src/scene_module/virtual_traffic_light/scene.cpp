@@ -23,16 +23,6 @@
 #include <string>
 #include <vector>
 
-namespace tier4_autoware_utils
-{
-template <>
-inline geometry_msgs::msg::Pose getPose(
-  const autoware_auto_planning_msgs::msg::PathPointWithLaneId & p)
-{
-  return p.point.pose;
-}
-}  // namespace tier4_autoware_utils
-
 namespace behavior_velocity_planner
 {
 namespace
@@ -471,11 +461,18 @@ bool VirtualTrafficLightModule::isBeforeStartLine()
   }
 
   const double max_dist = std::numeric_limits<double>::max();
-  const auto signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
-    module_data_.path.points, module_data_.head_pose, collision->point, max_dist,
+  const auto head_pose_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, module_data_.head_pose,
+    max_dist,
     planner_param_.max_yaw_deviation_rad);
 
-  return *signed_arc_length > 0;
+  if (head_pose_nearest_idx) {
+    const size_t collision_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, collision->point);
+    const double signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
+    module_data_.path.points, module_data_.head_pose.position, head_pose_nearest_idx.get(), collision->point, collision_nearest_idx);
+    return signed_arc_length > 0;
+  }
+
+  return false;
 }
 
 bool VirtualTrafficLightModule::isBeforeStopLine()
@@ -489,11 +486,18 @@ bool VirtualTrafficLightModule::isBeforeStopLine()
   }
 
   const double max_dist = std::numeric_limits<double>::max();
-  const auto signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
-    module_data_.path.points, module_data_.head_pose, collision->point, max_dist,
+  const auto head_pose_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, module_data_.head_pose,
+    max_dist,
     planner_param_.max_yaw_deviation_rad);
 
-  return *signed_arc_length > -planner_param_.dead_line_margin;
+  if (head_pose_nearest_idx) {
+    const size_t collision_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, collision->point);
+    const double signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
+    module_data_.path.points, module_data_.head_pose.position, head_pose_nearest_idx.get(), collision->point, collision_nearest_idx);
+    return signed_arc_length > 0;
+  }
+
+  return false;
 }
 
 bool VirtualTrafficLightModule::isAfterAnyEndLine()
@@ -512,11 +516,18 @@ bool VirtualTrafficLightModule::isAfterAnyEndLine()
   }
 
   const double max_dist = std::numeric_limits<double>::max();
-  const auto signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
-    module_data_.path.points, module_data_.head_pose, collision->point, max_dist,
+  const auto head_pose_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, module_data_.head_pose,
+    max_dist,
     planner_param_.max_yaw_deviation_rad);
 
-  return *signed_arc_length < -planner_param_.dead_line_margin;
+  if (head_pose_nearest_idx) {
+    const size_t collision_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, collision->point);
+    const double signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
+    module_data_.path.points, module_data_.head_pose.position, head_pose_nearest_idx.get(), collision->point, collision_nearest_idx);
+    return signed_arc_length < -planner_param_.dead_line_margin;
+  }
+
+  return false;
 }
 
 bool VirtualTrafficLightModule::isNearAnyEndLine()
@@ -528,11 +539,19 @@ bool VirtualTrafficLightModule::isNearAnyEndLine()
   }
 
   const double max_dist = std::numeric_limits<double>::max();
-  const auto signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
-    module_data_.path.points, module_data_.head_pose, collision->point, max_dist,
+  const auto head_pose_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, module_data_.head_pose,
+    max_dist,
     planner_param_.max_yaw_deviation_rad);
 
-  return std::abs(*signed_arc_length) < planner_param_.near_line_distance;
+  if (head_pose_nearest_idx) {
+    const size_t collision_nearest_idx = tier4_autoware_utils::findNearestIndex(module_data_.path.points, collision->point);
+    const double signed_arc_length = tier4_autoware_utils::calcSignedArcLength(
+    module_data_.path.points, module_data_.head_pose.position, head_pose_nearest_idx.get(), collision->point, collision_nearest_idx);
+    return std::abs(signed_arc_length) < -planner_param_.dead_line_margin;
+  }
+
+  return false;
+
 }
 
 boost::optional<tier4_v2x_msgs::msg::VirtualTrafficLightState>

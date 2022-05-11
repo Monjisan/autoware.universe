@@ -468,6 +468,7 @@ TEST(trajectory, calcSignedArcLengthFromIndexToIndex)
   EXPECT_NEAR(calcSignedArcLength(traj.points, 9, 5), -4, epsilon);
 }
 
+/*
 TEST(trajectory, calcSignedArcLengthFromPointToIndex)
 {
   using tier4_autoware_utils::calcSignedArcLength;
@@ -588,6 +589,7 @@ TEST(trajectory, calcSignedArcLengthFromPointToPoint)
     EXPECT_NEAR(calcSignedArcLength(traj.points, p1, p2), -2.3, epsilon);
   }
 }
+*/
 
 TEST(trajectory, calcArcLength)
 {

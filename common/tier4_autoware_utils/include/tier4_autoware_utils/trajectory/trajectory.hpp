@@ -110,6 +110,43 @@ boost::optional<size_t> findNearestIndex(
   return is_nearest_found ? boost::optional<size_t>(min_idx) : boost::none;
 }
 
+template <class T>
+size_t findFirstNearestIndex(const T & points, const geometry_msgs::msg::Pose & pose,
+  const double max_dist = 3.0, const double max_yaw = 1.046)
+{
+  validateNonEmpty(points);
+
+  const double max_squared_dist = max_dist * max_dist;
+
+  double min_squared_dist = std::numeric_limits<double>::max();
+  bool is_nearest_found = false;
+  size_t min_idx = 0;
+
+  for (size_t i = 0; i < points.size(); ++i) {
+    const auto squared_dist = calcSquaredDistance2d(points.at(i), pose);
+    const auto yaw = calcYawDeviation(getPose(points.at(i)), pose);
+    if (squared_dist > max_squared_dist || std::fabs(yaw) > max_yaw) {
+      if (is_nearest_found) {
+        return min_idx;
+      }
+      continue;
+    }
+
+    if (squared_dist >= min_squared_dist) {
+      continue;
+    }
+
+    min_squared_dist = squared_dist;
+    min_idx = i;
+    is_nearest_found = true;
+  }
+
+  if (is_nearest_found) {
+    return min_idx;
+  }
+  return findNearestIndex(points, pose.position);
+}
+
 /**
  * @brief calculate longitudinal offset (length along trajectory from seg_idx point to nearest point
  * to p_target on trajectory) If seg_idx point is after that nearest point, length is negative
@@ -143,13 +180,12 @@ double calcLongitudinalOffsetToSegment(
  *        When point is on a trajectory point whose index is nearest_idx, return nearest_idx - 1
  * @param points points of trajectory
  * @param point point to which to find nearest segment index
- * @return nearest index
+ * @param nearest point index
+ * @return nearest segment index
  */
 template <class T>
-size_t findNearestSegmentIndex(const T & points, const geometry_msgs::msg::Point & point)
+size_t findNearestSegmentIndex(const T & points, const geometry_msgs::msg::Point & point, const size_t nearest_idx)
 {
-  const size_t nearest_idx = findNearestIndex(points, point);
-
   if (nearest_idx == 0) {
     return 0;
   }
@@ -164,6 +200,21 @@ size_t findNearestSegmentIndex(const T & points, const geometry_msgs::msg::Point
   }
 
   return nearest_idx;
+}
+
+/**
+ * @brief find nearest segment index to point
+ *        segment is straight path between two continuous points of trajectory
+ *        When point is on a trajectory point whose index is nearest_idx, return nearest_idx - 1
+ * @param points points of trajectory
+ * @param point point to which to find nearest segment index
+ * @return nearest segment index
+ */
+template <class T>
+size_t findNearestSegmentIndex(const T & points, const geometry_msgs::msg::Point & point)
+{
+  const size_t nearest_idx = findNearestIndex(points, point);
+  return findNearestSegmentIndex(points, point, nearest_idx);
 }
 
 /**
@@ -252,15 +303,108 @@ double calcSignedArcLength(const T & points, const size_t src_idx, const size_t 
 }
 
 /**
- * @brief calcSignedArcLength from point to index
+ * @brief calcSignedArcLength from point with index to point with index
  */
 template <class T>
 double calcSignedArcLength(
-  const T & points, const geometry_msgs::msg::Point & src_point, const size_t & dst_idx)
+  const T & points, const geometry_msgs::msg::Point & src_point, const size_t src_idx,
+  const geometry_msgs::msg::Point & dst_point, const size_t dst_idx)
 {
   validateNonEmpty(points);
 
-  const size_t src_seg_idx = findNearestSegmentIndex(points, src_point);
+  const size_t src_seg_idx = findNearestSegmentIndex(points, src_point, src_idx);
+  const size_t dst_seg_idx = findNearestSegmentIndex(points, dst_point, dst_idx);
+
+  const double signed_length_on_traj = calcSignedArcLength(points, src_seg_idx, dst_seg_idx);
+  const double signed_length_src_offset =
+    calcLongitudinalOffsetToSegment(points, src_seg_idx, src_point);
+  const double signed_length_dst_offset =
+    calcLongitudinalOffsetToSegment(points, dst_seg_idx, dst_point);
+
+  return signed_length_on_traj - signed_length_src_offset + signed_length_dst_offset;
+}
+
+/**
+ * @brief calcSignedArcLength from pose to pose
+ */
+template <class T>
+double calcSignedArcLength(
+  const T & points, const geometry_msgs::msg::Pose & src_pose, const geometry_msgs::msg::Pose & dst_pose)
+{
+  validateNonEmpty(points);
+
+  const size_t src_idx = findFirstNearestIndex(points, src_pose);
+  const size_t dst_idx = findFirstNearestIndex(points, dst_pose);
+
+  return calcSignedArcLength(points, src_pose.position, src_idx, dst_pose.position, dst_idx);
+}
+
+/**
+ * @brief calcSignedArcLength from pose to point with index
+ */
+template <class T>
+double calcSignedArcLength(
+  const T & points, const geometry_msgs::msg::Pose & src_pose, const geometry_msgs::msg::Point & dst_point, const size_t dst_idx)
+{
+  validateNonEmpty(points);
+
+  const size_t src_idx = findFirstNearestIndex(points, src_pose);
+  const size_t src_seg_idx = findNearestSegmentIndex(points, src_pose.position, src_idx);
+
+  const size_t dst_seg_idx = findNearestSegmentIndex(points, dst_point, dst_idx);
+
+  const double signed_length_on_traj = calcSignedArcLength(points, src_seg_idx, dst_seg_idx);
+  const double signed_length_src_offset =
+    calcLongitudinalOffsetToSegment(points, src_seg_idx, src_pose.position);
+  const double signed_length_dst_offset =
+    calcLongitudinalOffsetToSegment(points, dst_seg_idx, dst_point);
+
+  return signed_length_on_traj - signed_length_src_offset + signed_length_dst_offset;
+}
+
+template <class T>
+double calcSignedArcLength(
+  const T & points, const geometry_msgs::msg::Point & src_point, const size_t src_idx, const geometry_msgs::msg::Pose & dst_pose)
+{
+  return -calcSignedArcLength(points, dst_pose, src_point, src_idx);
+}
+
+/**
+ * @brief calcSignedArcLength from pose to index
+ */
+template <class T>
+double calcSignedArcLength(
+  const T & points, const geometry_msgs::msg::Pose & src_pose, const size_t dst_idx)
+{
+  validateNonEmpty(points);
+
+  const size_t src_idx = findFirstNearestIndex(points, src_pose);
+  const size_t src_seg_idx = findNearestSegmentIndex(points, src_pose.position, src_idx);
+
+  const double signed_length_on_traj = calcSignedArcLength(points, src_seg_idx, dst_idx);
+  const double signed_length_src_offset =
+    calcLongitudinalOffsetToSegment(points, src_seg_idx, src_pose.position);
+
+  return signed_length_on_traj - signed_length_src_offset;
+}
+
+template <class T>
+double calcSignedArcLength(
+  const T & points, const size_t src_idx, const geometry_msgs::msg::Pose & dst_pose)
+{
+  return -calcSignedArcLength(points, dst_pose, src_idx);
+}
+
+/**
+ * @brief calcSignedArcLength from point with index to index
+ */
+template <class T>
+double calcSignedArcLength(
+  const T & points, const geometry_msgs::msg::Point & src_point, const size_t src_idx, const size_t dst_idx)
+{
+  validateNonEmpty(points);
+
+  const size_t src_seg_idx = findNearestSegmentIndex(points, src_point, src_idx);
 
   const double signed_length_on_traj = calcSignedArcLength(points, src_seg_idx, dst_idx);
   const double signed_length_src_offset =
@@ -269,21 +413,18 @@ double calcSignedArcLength(
   return signed_length_on_traj - signed_length_src_offset;
 }
 
-/**
- * @brief calcSignedArcLength from index to point
- */
 template <class T>
 double calcSignedArcLength(
-  const T & points, const size_t src_idx, const geometry_msgs::msg::Point & dst_point)
+  const T & points, const size_t src_idx, const geometry_msgs::msg::Point & dst_point, const size_t dst_idx)
 {
-  validateNonEmpty(points);
-
-  return -calcSignedArcLength(points, dst_point, src_idx);
+  return -calcSignedArcLength(points, dst_point, dst_idx, src_idx);
 }
+
 
 /**
  * @brief calcSignedArcLength from point to point
  */
+/*
 template <class T>
 double calcSignedArcLength(
   const T & points, const geometry_msgs::msg::Point & src_point,
@@ -302,10 +443,12 @@ double calcSignedArcLength(
 
   return signed_length_on_traj - signed_length_src_offset + signed_length_dst_offset;
 }
+*/
 
 /**
  * @brief calcSignedArcLength from pose to point
  */
+/*
 template <class T>
 boost::optional<double> calcSignedArcLength(
   const T & points, const geometry_msgs::msg::Pose & src_pose,
@@ -330,6 +473,7 @@ boost::optional<double> calcSignedArcLength(
 
   return signed_length_on_traj - signed_length_src_offset + signed_length_dst_offset;
 }
+*/
 
 /**
  * @brief calcArcLength for the whole length

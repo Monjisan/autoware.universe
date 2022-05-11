@@ -126,17 +126,18 @@ void clipByMinStartIdx(const AvoidPointArray & shift_points, PathWithLaneId & pa
 }
 
 double calcDistanceToClosestFootprintPoint(
-  const PathWithLaneId & path, const PredictedObject & object, const Point & ego_pos)
+  const PathWithLaneId & path, const PredictedObject & object, const Pose & ego_pose)
 {
   tier4_autoware_utils::Polygon2d object_poly{};
   util::calcObjectPolygon(object, &object_poly);
 
   double distance = tier4_autoware_utils::calcSignedArcLength(
-    path.points, ego_pos, object.kinematics.initial_pose_with_covariance.pose.position);
+    path.points, ego_pose, object.kinematics.initial_pose_with_covariance.pose);
   for (const auto & p : object_poly.outer()) {
-    const auto point = tier4_autoware_utils::createPoint(p.x(), p.y(), 0.0);
+    const auto obj_point = tier4_autoware_utils::createPoint(p.x(), p.y(), 0.0);
+    const size_t obj_point_nearest_idx = tier4_autoware_utils::findNearestIndex(path.points, obj_point);
     distance =
-      std::min(distance, tier4_autoware_utils::calcSignedArcLength(path.points, ego_pos, point));
+      std::min(distance, tier4_autoware_utils::calcSignedArcLength(path.points, ego_pose, obj_point, obj_point_nearest_idx));
   }
   return distance;
 }
