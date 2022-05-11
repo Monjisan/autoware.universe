@@ -147,9 +147,6 @@ private:
     const TrajectoryData & ego_traj, const Box2d & obj_box, const size_t start_idx,
     const size_t end_idx);
 
-  double getObjectLongitudinalPosition(
-    const TrajectoryData & traj_data, const geometry_msgs::msg::Pose & obj_pose);
-
   geometry_msgs::msg::Pose transformBaseLink2Center(
     const geometry_msgs::msg::Pose & pose_base_link);
 

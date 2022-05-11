@@ -1105,20 +1105,12 @@ boost::optional<double> OptimizationBasedPlanner::getDistanceToCollisionPoint(
 
   if (collision_idx) {
     // TODO(shimizu) Consider the time difference between ego vehicle and objects
-    return getObjectLongitudinalPosition(ego_traj_data, obj_pose);
+    return tier4_autoware_utils::calcSignedArcLength(
+      ego_traj_data.traj.points, ego_traj_data.traj.points.front().pose.position,
+      obj_pose.position);
   }
 
   return boost::none;
-}
-
-double OptimizationBasedPlanner::getObjectLongitudinalPosition(
-  const TrajectoryData & traj_data, const geometry_msgs::msg::Pose & obj_pose)
-{
-  const auto closest_segment_idx =
-    tier4_autoware_utils::findNearestSegmentIndex(traj_data.traj.points, obj_pose.position);
-  const double s_segment = tier4_autoware_utils::calcLongitudinalOffsetToSegment(
-    traj_data.traj.points, closest_segment_idx, obj_pose.position);
-  return traj_data.s.at(closest_segment_idx) + s_segment;
 }
 
 boost::optional<size_t> OptimizationBasedPlanner::getCollisionIdx(
