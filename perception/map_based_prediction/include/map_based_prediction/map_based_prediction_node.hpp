@@ -46,6 +46,7 @@
 
 namespace map_based_prediction
 {
+
 struct ObjectData
 {
   std_msgs::msg::Header header;
