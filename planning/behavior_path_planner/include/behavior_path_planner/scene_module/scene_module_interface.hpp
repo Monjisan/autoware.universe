@@ -16,7 +16,6 @@
 #define BEHAVIOR_PATH_PLANNER__SCENE_MODULE__SCENE_MODULE_INTERFACE_HPP_
 
 #include "behavior_path_planner/data_manager.hpp"
-#include "behavior_path_planner/scene_module/approval_handler.hpp"
 #include "behavior_path_planner/utilities.hpp"
 
 #include <rclcpp/rclcpp.hpp>
@@ -25,6 +24,7 @@
 #include <autoware_auto_planning_msgs/msg/path_with_lane_id.hpp>
 #include <autoware_auto_vehicle_msgs/msg/hazard_lights_command.hpp>
 #include <autoware_auto_vehicle_msgs/msg/turn_indicators_command.hpp>
+#include <unique_identifier_msgs/msg/uuid.hpp>
 
 #include <boost/optional.hpp>
 
@@ -33,34 +33,8 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <random>
 #include <utility>
-
-namespace
-{
-  std::string toLowercase(const std::string & name)
-  {
-    if (name == "Avoidance")
-    {
-      return "avoidance";
-    }
-    else if (name == "LaneChange")
-    {
-      return "lane_change";
-    }
-    else if (name == "PullOver")
-    {
-      return "pull_over";
-    }
-    else if (name == "PullOver")
-    {
-      return "pull_out";
-    }
-    else
-    {
-      return "";
-    }
-  }
-}
 
 namespace behavior_path_planner
 {
@@ -70,6 +44,7 @@ using autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand;
 using route_handler::LaneChangeDirection;
 using route_handler::PullOutDirection;
 using route_handler::PullOverDirection;
+using unique_identifier_msgs::msg::UUID;
 using visualization_msgs::msg::MarkerArray;
 using PlanResult = PathWithLaneId::SharedPtr;
 
@@ -110,7 +85,7 @@ public:
   : name_{name},
     logger_{node.get_logger().get_child(name)},
     clock_{node.get_clock()},
-    approval_handler_(node, toLowercase(name)),
+    is_waiting_approval_{false},
     current_state_{BT::NodeStatus::IDLE}
   {
   }
@@ -173,14 +148,13 @@ public:
 
     updateData();
 
-    if (!approval_handler_.isWaitingApproval()) {
+    if (!isWaitingApproval()) {
       return plan();
     }
 
     // module is waiting approval. Check it.
-    if (approval_handler_.isApproved()) {
+    if (isActivated()) {
       RCLCPP_DEBUG(logger_, "Was waiting approval, and now approved. Do plan().");
-      approval_handler_.clearWaitApproval();
       return plan();
     } else {
       RCLCPP_DEBUG(logger_, "keep waiting approval... Do planCandidate().");
@@ -211,6 +185,12 @@ public:
 
   MarkerArray getDebugMarker() { return debug_marker_; }
 
+  bool isWaitingApproval() const { return is_waiting_approval_; }
+
+  virtual void publishRTCStatus() { return; }
+
+  virtual bool isActivated() const { return true; }
+
 private:
   std::string name_;
   rclcpp::Logger logger_;
@@ -218,9 +198,22 @@ private:
 protected:
   MarkerArray debug_marker_;
   rclcpp::Clock::SharedPtr clock_;
+  bool is_waiting_approval_;
+
+  void clearWaitingApproval() { is_waiting_approval_ = false; }
+
+  UUID generateUUID()
+  {
+    // Generate random number
+    UUID uuid;
+    std::mt19937 gen(std::random_device{}());
+    std::independent_bits_engine<std::mt19937, 8, uint8_t> bit_eng(gen);
+    std::generate(uuid.uuid.begin(), uuid.uuid.end(), bit_eng);
+
+    return uuid;
+  }
 
 public:
-  ApprovalHandler approval_handler_;
   BT::NodeStatus current_state_;
 };
 

@@ -25,6 +25,7 @@
 #include <autoware_auto_planning_msgs/msg/path.hpp>
 #include <autoware_auto_planning_msgs/msg/path_with_lane_id.hpp>
 #include <autoware_auto_vehicle_msgs/msg/turn_indicators_command.hpp>
+#include <rtc_interface/rtc_interface.hpp>
 
 #include <memory>
 #include <string>
@@ -34,6 +35,7 @@
 
 namespace behavior_path_planner
 {
+using rtc_interface::RTCInterface;
 class AvoidanceModule : public SceneModuleInterface
 {
 public:
@@ -52,12 +54,44 @@ public:
 
   void setParameters(const AvoidanceParameters & parameters);
 
+  void publishRTCStatus() override
+  {
+    rtc_interface_left_.publishCooperateStatus(clock_->now());
+    rtc_interface_right_.publishCooperateStatus(clock_->now());
+  }
+
+  bool isActivated() const override { return rtc_interface_left_.isActivated(uuid_left_) || rtc_interface_right_.isActivated(uuid_right_); }
+
 private:
   AvoidanceParameters parameters_;
 
   AvoidancePlanningData avoidance_data_;
 
   PathShifter path_shifter_;
+
+  // for RTC
+  RTCInterface rtc_interface_left_;
+  RTCInterface rtc_interface_right_;
+  UUID uuid_left_;
+  UUID uuid_right_;
+
+  void waitApprovalLeft(const bool safe, const double distance)
+  {
+    rtc_interface_left_.updateCooperateStatus(uuid_left_, safe, distance, clock_->now());
+    is_waiting_approval_ = true;
+  }
+
+  void waitApprovalRight(const bool safe, const double distance)
+  {
+    rtc_interface_right_.updateCooperateStatus(uuid_right_, safe, distance, clock_->now());
+    is_waiting_approval_ = true;
+  }
+
+  void removeRTCStatus()
+  {
+    rtc_interface_left_.removeCooperateStatus(uuid_left_);
+    rtc_interface_right_.removeCooperateStatus(uuid_right_);
+  }
 
   // data used in previous planning
   ShiftedPath prev_output_;
