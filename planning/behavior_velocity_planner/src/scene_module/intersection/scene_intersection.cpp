@@ -107,6 +107,8 @@ bool IntersectionModule::modifyPathVelocity(
 
   if (detection_areas.empty()) {
     RCLCPP_DEBUG(logger_, "no detection area. skip computation.");
+    setSafe(true);
+    setDistance(std::numeric_limits<double>::lowest());
     return true;
   }
   debug_data_.detection_area = detection_areas;
@@ -213,6 +215,8 @@ bool IntersectionModule::modifyPathVelocity(
   }
 
   RCLCPP_DEBUG(logger_, "===== plan end =====");
+  setSafe(true);
+  setDistance(std::numeric_limits<double>::lowest());
   return true;
 }
 
