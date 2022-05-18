@@ -178,6 +178,14 @@ bool RTCInterface::isActivated(const UUID & uuid) const
   return false;
 }
 
+bool RTCInterface::isRegistered(const UUID & uuid) const
+{
+  const auto itr = std::find_if(
+    registered_status_.statuses.begin(), registered_status_.statuses.end(),
+    [uuid](auto & s) { return s.uuid == uuid; });
+  return itr != registered_status_.statuses.end();
+}
+
 rclcpp::Logger RTCInterface::getLogger() const { return logger_; }
 
 }  // namespace rtc_interface
