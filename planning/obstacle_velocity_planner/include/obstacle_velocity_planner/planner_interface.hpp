@@ -25,13 +25,6 @@
 
 #include <boost/optional.hpp>
 
-#include <lanelet2_core/LaneletMap.h>
-#include <lanelet2_core/geometry/BoundingBox.h>
-#include <lanelet2_core/geometry/Lanelet.h>
-#include <lanelet2_core/geometry/Point.h>
-#include <lanelet2_routing/RoutingGraph.h>
-#include <lanelet2_traffic_rules/TrafficRulesFactory.h>
-
 #include <memory>
 #include <vector>
 
@@ -138,17 +131,6 @@ public:
   virtual void updateParam([[maybe_unused]] const std::vector<rclcpp::Parameter> & parameters) {}
 
   // TODO(shimizu) remove this function
-  void setMaps(
-    const std::shared_ptr<lanelet::LaneletMap> lanelet_map_ptr,
-    const std::shared_ptr<lanelet::traffic_rules::TrafficRules> traffic_rules_ptr,
-    const std::shared_ptr<lanelet::routing::RoutingGraph> routing_graph_ptr)
-  {
-    lanelet_map_ptr_ = lanelet_map_ptr;
-    traffic_rules_ptr_ = traffic_rules_ptr;
-    routing_graph_ptr_ = routing_graph_ptr;
-  }
-
-  // TODO(shimizu) remove this function
   void setSmoothedTrajectory(const Trajectory::SharedPtr traj) { smoothed_trajectory_ptr_ = traj; }
 
   bool isSlowDownObstacle(const uint8_t label)
@@ -171,10 +153,6 @@ protected:
   vehicle_info_util::VehicleInfo vehicle_info_;
 
   // TODO(shimizu) remove these parameters
-  // Lanelet Map Pointers
-  std::shared_ptr<lanelet::LaneletMap> lanelet_map_ptr_;
-  std::shared_ptr<lanelet::routing::RoutingGraph> routing_graph_ptr_;
-  std::shared_ptr<lanelet::traffic_rules::TrafficRules> traffic_rules_ptr_;
   Trajectory::SharedPtr smoothed_trajectory_ptr_;
 
   double calcRSSDistance(

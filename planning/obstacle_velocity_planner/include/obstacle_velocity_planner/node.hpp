@@ -23,7 +23,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <tier4_autoware_utils/ros/self_pose_listener.hpp>
 
-#include <autoware_auto_mapping_msgs/msg/had_map_bin.hpp>
 #include <autoware_auto_perception_msgs/msg/predicted_object.hpp>
 #include <autoware_auto_perception_msgs/msg/predicted_objects.hpp>
 #include <autoware_auto_planning_msgs/msg/trajectory.hpp>
@@ -37,16 +36,11 @@
 
 #include <boost/optional.hpp>
 
-#include <lanelet2_core/LaneletMap.h>
-#include <lanelet2_routing/RoutingGraph.h>
-#include <lanelet2_traffic_rules/TrafficRulesFactory.h>
-
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
 
-using autoware_auto_mapping_msgs::msg::HADMapBin;
 using autoware_auto_perception_msgs::msg::ObjectClassification;
 using autoware_auto_perception_msgs::msg::PredictedObject;
 using autoware_auto_perception_msgs::msg::PredictedObjects;
@@ -75,8 +69,6 @@ private:
   rcl_interfaces::msg::SetParametersResult paramCallback(
     const std::vector<rclcpp::Parameter> & parameters);
 
-  void mapCallback(const HADMapBin::ConstSharedPtr msg);
-
   void objectsCallback(const PredictedObjects::SharedPtr msg);
 
   void odomCallback(const Odometry::SharedPtr);
@@ -95,61 +87,7 @@ private:
 
   void publishVelocityLimit(const boost::optional<VelocityLimit> & vel_limit);
 
-  void publishDebugData(const DebugData & debug_data)
-  {
-    visualization_msgs::msg::MarkerArray debug_marker;
-    rclcpp::Time current_time = now();
-
-    // obstacles to slow down
-    for (size_t i = 0; i < debug_data.obstacles_to_slow_down.size(); ++i) {
-      const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
-        debug_data.obstacles_to_slow_down.at(i).pose, i, "obstacles_to_slow_down", 0.7, 0.7, 0.0);
-      tier4_autoware_utils::appendMarkerArray(marker, &debug_marker);
-    }
-
-    // obstacles to stop
-    for (size_t i = 0; i < debug_data.obstacles_to_stop.size(); ++i) {
-      const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
-        debug_data.obstacles_to_stop.at(i).pose, i, "obstacles_to_stop", 1.0, 0.0, 0.0);
-      tier4_autoware_utils::appendMarkerArray(marker, &debug_marker);
-    }
-
-    {  // footprint polygons
-      auto marker = tier4_autoware_utils::createDefaultMarker(
-        "map", current_time, "detection_polygons", 0, visualization_msgs::msg::Marker::LINE_LIST,
-        tier4_autoware_utils::createMarkerScale(0.01, 0.0, 0.0),
-        tier4_autoware_utils::createMarkerColor(0.0, 0.1, 0.0, 0.999));
-
-      for (const auto & detection_polygon : debug_data.detection_polygons) {
-        for (size_t dp_idx = 0; dp_idx < detection_polygon.outer().size(); ++dp_idx) {
-          const auto & current_point = detection_polygon.outer().at(dp_idx);
-          const auto & next_point =
-            detection_polygon.outer().at((dp_idx + 1) % detection_polygon.outer().size());
-
-          marker.points.push_back(
-            tier4_autoware_utils::createPoint(current_point.x(), current_point.y(), 0.0));
-          marker.points.push_back(
-            tier4_autoware_utils::createPoint(next_point.x(), next_point.y(), 0.0));
-        }
-      }
-      debug_marker.markers.push_back(marker);
-    }
-
-    {  // collision point
-      auto marker = tier4_autoware_utils::createDefaultMarker(
-        "map", current_time, "collision_point", 0, visualization_msgs::msg::Marker::SPHERE,
-        tier4_autoware_utils::createMarkerScale(0.25, 0.25, 0.25),
-        tier4_autoware_utils::createMarkerColor(1.0, 0.0, 0.0, 0.999));
-      marker.pose.position = debug_data.collision_point;
-      debug_marker.markers.push_back(marker);
-    }
-
-    debug_marker_pub_->publish(debug_marker);
-
-    // slow down/stop wall
-    debug_slow_down_wall_marker_pub_->publish(debug_data.slow_down_wall_marker);
-    debug_stop_wall_marker_pub_->publish(debug_data.stop_wall_marker);
-  }
+  void publishDebugData(const DebugData & debug_data);
 
   std::shared_ptr<LowpassFilter1d> lpf_acc_{nullptr};
 
@@ -159,7 +97,6 @@ private:
   rclcpp::Subscription<Trajectory>::SharedPtr smoothed_trajectory_sub_;
   rclcpp::Subscription<PredictedObjects>::SharedPtr objects_sub_;
   rclcpp::Subscription<Odometry>::SharedPtr odom_sub_;
-  rclcpp::Subscription<HADMapBin>::SharedPtr sub_map_;
 
   // Publisher
   rclcpp::Publisher<Trajectory>::SharedPtr trajectory_pub_;
@@ -206,19 +143,6 @@ private:
   std::unique_ptr<PlannerInterface> planner_ptr_;
 
   bool need_to_clear_vel_limit_{false};
-
-  // Map
-  // Lanelet Map Pointers
-  std::shared_ptr<lanelet::LaneletMap> lanelet_map_ptr_;
-  std::shared_ptr<lanelet::routing::RoutingGraph> routing_graph_ptr_;
-  std::shared_ptr<lanelet::traffic_rules::TrafficRules> traffic_rules_ptr_;
-
-  bool checkOnMapObject(
-    const geometry_msgs::msg::Pose & obstacle_pose, const lanelet::ConstLanelets & valid_lanelets);
-  lanelet::ConstLanelets getSurroundingLanelets(const geometry_msgs::msg::Pose & current_pose);
-  void addValidLanelet(
-    const lanelet::routing::LaneletPaths & candidate_paths,
-    lanelet::ConstLanelets & valid_lanelets);
 };
 }  // namespace motion_planning
 

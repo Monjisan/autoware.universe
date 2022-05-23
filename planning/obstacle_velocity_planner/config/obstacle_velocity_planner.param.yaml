@@ -95,7 +95,6 @@
       # Switch for each functions
       enable_adaptive_cruise: true
       use_object_acceleration: false
-      use_hd_map: true
 
       # For initial Motion
       replan_vel_deviation: 5.0         # velocity deviation to replan initial velocity [m/s]

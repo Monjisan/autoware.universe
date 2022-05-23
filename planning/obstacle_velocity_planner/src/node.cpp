@@ -229,9 +229,6 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
   odom_sub_ = create_subscription<Odometry>(
     "~/input/odometry", rclcpp::QoS{1},
     std::bind(&ObstacleVelocityPlannerNode::odomCallback, this, std::placeholders::_1));
-  sub_map_ = this->create_subscription<HADMapBin>(
-    "~/input/map", rclcpp::QoS{1}.transient_local(),
-    std::bind(&ObstacleVelocityPlannerNode::mapCallback, this, std::placeholders::_1));
 
   // Publisher
   trajectory_pub_ = create_publisher<Trajectory>("~/output/trajectory", 1);
@@ -354,27 +351,6 @@ rcl_interfaces::msg::SetParametersResult ObstacleVelocityPlannerNode::paramCallb
   return result;
 }
 
-void ObstacleVelocityPlannerNode::mapCallback(const HADMapBin::ConstSharedPtr msg)
-{
-  RCLCPP_INFO(get_logger(), "[Obstacle Velocity Planner]: Start loading lanelet");
-  lanelet_map_ptr_ = std::make_shared<lanelet::LaneletMap>();
-  lanelet::utils::conversion::fromBinMsg(
-    *msg, lanelet_map_ptr_, &traffic_rules_ptr_, &routing_graph_ptr_);
-
-  auto lanelet_map_ptr = std::make_shared<lanelet::LaneletMap>();
-  std::shared_ptr<lanelet::traffic_rules::TrafficRules> traffic_rules_ptr;
-  std::shared_ptr<lanelet::routing::RoutingGraph> routing_graph_ptr;
-
-  RCLCPP_INFO(get_logger(), "[Obstacle Velocity Planner]: Start loading lanelet");
-  lanelet::utils::conversion::fromBinMsg(
-    *msg, lanelet_map_ptr, &traffic_rules_ptr, &routing_graph_ptr);
-
-  if (planner_ptr_) {
-    planner_ptr_->setMaps(lanelet_map_ptr, traffic_rules_ptr, routing_graph_ptr);
-    RCLCPP_INFO(get_logger(), "[Obstacle Velocity Planner]: Map is loaded");
-  }
-}
-
 void ObstacleVelocityPlannerNode::objectsCallback(const PredictedObjects::SharedPtr msg)
 {
   in_objects_ptr_ = msg;
@@ -492,15 +468,10 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
     polygon_utils::createOneStepPolygons(decimated_traj, vehicle_info_);
   debug_data.detection_polygons = decimated_traj_polygons;
 
-  const auto surrounding_lanelets = getSurroundingLanelets(current_pose);
-
   std::vector<TargetObstacle> target_obstacles;
   for (const auto & obstacle : obstacles) {
     const auto predicted_path_with_highest_confidence =
       getHighestConfidencePredictedPath(obstacle.predicted_paths);
-    if (!checkOnMapObject(obstacle.pose, surrounding_lanelets)) {
-      continue;
-    }
 
     // rough area filtering
     const double dist_from_obstacle_to_traj = [&]() {
@@ -609,127 +580,60 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
   return target_obstacles;
 }
 
-// following code is map-based obstacle filtering
-bool ObstacleVelocityPlannerNode::checkOnMapObject(
-  const geometry_msgs::msg::Pose & obstacle_pose, const lanelet::ConstLanelets & valid_lanelets)
+void ObstacleVelocityPlannerNode::publishDebugData(const DebugData & debug_data)
 {
-  // If we do not have a map, return true
-  if (!lanelet_map_ptr_) {
-    return true;
+  visualization_msgs::msg::MarkerArray debug_marker;
+  rclcpp::Time current_time = now();
+
+  // obstacles to slow down
+  for (size_t i = 0; i < debug_data.obstacles_to_slow_down.size(); ++i) {
+    const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
+      debug_data.obstacles_to_slow_down.at(i).pose, i, "obstacles_to_slow_down", 0.7, 0.7, 0.0);
+    tier4_autoware_utils::appendMarkerArray(marker, &debug_marker);
   }
 
-  // obstacle point
-  lanelet::BasicPoint2d search_point(obstacle_pose.position.x, obstacle_pose.position.y);
-
-  // nearest lanelet
-  std::vector<std::pair<double, lanelet::Lanelet>> surrounding_lanelets =
-    lanelet::geometry::findNearest(lanelet_map_ptr_->laneletLayer, search_point, 10);
-
-  // No Closest Lanelets
-  if (surrounding_lanelets.empty()) {
-    return false;
+  // obstacles to stop
+  for (size_t i = 0; i < debug_data.obstacles_to_stop.size(); ++i) {
+    const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
+      debug_data.obstacles_to_stop.at(i).pose, i, "obstacles_to_stop", 1.0, 0.0, 0.0);
+    tier4_autoware_utils::appendMarkerArray(marker, &debug_marker);
   }
 
-  // Check if the vehicle is inside the lanelet
-  bool has_find_close_lanelet = false;
-  for (const auto & lanelet : surrounding_lanelets) {
-    if (lanelet::geometry::inside(lanelet.second, search_point)) {
-      has_find_close_lanelet = true;
-      // return true;
-      break;
-    }
-  }
+  {  // footprint polygons
+    auto marker = tier4_autoware_utils::createDefaultMarker(
+      "map", current_time, "detection_polygons", 0, visualization_msgs::msg::Marker::LINE_LIST,
+      tier4_autoware_utils::createMarkerScale(0.01, 0.0, 0.0),
+      tier4_autoware_utils::createMarkerColor(0.0, 1.0, 0.0, 0.999));
 
-  if (!has_find_close_lanelet) {
-    // This object is out of the any lanelets in this map
-    return false;
-  }
+    for (const auto & detection_polygon : debug_data.detection_polygons) {
+      for (size_t dp_idx = 0; dp_idx < detection_polygon.outer().size(); ++dp_idx) {
+        const auto & current_point = detection_polygon.outer().at(dp_idx);
+        const auto & next_point =
+          detection_polygon.outer().at((dp_idx + 1) % detection_polygon.outer().size());
 
-  for (const auto & valid_lanelet : valid_lanelets) {
-    if (lanelet::geometry::inside(valid_lanelet, search_point)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-lanelet::ConstLanelets ObstacleVelocityPlannerNode::getSurroundingLanelets(
-  const geometry_msgs::msg::Pose & current_pose)
-{
-  // If we do not have a map, return true
-  if (!lanelet_map_ptr_) {
-    return {};
-  }
-
-  const lanelet::BasicPoint2d search_point(current_pose.position.x, current_pose.position.y);
-
-  // nearest lanelet
-  const std::vector<std::pair<double, lanelet::Lanelet>> nearest_lanelets =
-    lanelet::geometry::findNearest(lanelet_map_ptr_->laneletLayer, search_point, 10);
-
-  // Get Current Lanelets
-  lanelet::Lanelets current_lanelets;
-  for (const auto & lanelet : nearest_lanelets) {
-    if (lanelet::geometry::inside(lanelet.second, search_point)) {
-      current_lanelets.push_back(lanelet.second);
-    }
-  }
-
-  lanelet::ConstLanelets surrounding_lanelets;
-
-  const double initial_search_dist = 200.0;
-  const double delta_search_dist = 50.0;
-  for (const auto & current_lanelet : current_lanelets) {
-    // Step1.1 Get the left lanelet
-    lanelet::routing::LaneletPaths left_paths;
-    auto opt_left = routing_graph_ptr_->left(current_lanelet);
-    if (!!opt_left) {
-      for (double search_dist = initial_search_dist; search_dist > 0;
-           search_dist -= delta_search_dist) {
-        const auto tmp_paths = routing_graph_ptr_->possiblePaths(*opt_left, search_dist, 0, false);
-        addValidLanelet(tmp_paths, surrounding_lanelets);
+        marker.points.push_back(
+          tier4_autoware_utils::createPoint(current_point.x(), current_point.y(), 0.0));
+        marker.points.push_back(
+          tier4_autoware_utils::createPoint(next_point.x(), next_point.y(), 0.0));
       }
     }
-
-    // Step1.2 Get the right lanelet
-    lanelet::routing::LaneletPaths right_paths;
-    auto opt_right = routing_graph_ptr_->right(current_lanelet);
-    if (!!opt_right) {
-      for (double search_dist = initial_search_dist; search_dist > 0;
-           search_dist -= delta_search_dist) {
-        const auto tmp_paths = routing_graph_ptr_->possiblePaths(*opt_right, search_dist, 0, false);
-        addValidLanelet(tmp_paths, surrounding_lanelets);
-      }
-    }
-
-    // Step1.3 Get the centerline
-    lanelet::routing::LaneletPaths center_paths;
-    for (double search_dist = initial_search_dist; search_dist > 0;
-         search_dist -= delta_search_dist) {
-      const auto tmp_paths =
-        routing_graph_ptr_->possiblePaths(current_lanelet, search_dist, 0, false);
-      addValidLanelet(tmp_paths, surrounding_lanelets);
-    }
+    debug_marker.markers.push_back(marker);
   }
 
-  return surrounding_lanelets;
-}
-
-void ObstacleVelocityPlannerNode::addValidLanelet(
-  const lanelet::routing::LaneletPaths & candidate_paths, lanelet::ConstLanelets & valid_lanelets)
-{
-  // Check if candidate paths are already in the valid paths
-  for (const auto & candidate_path : candidate_paths) {
-    for (const auto & candidate_lanelet : candidate_path) {
-      const bool is_new_lanelet =
-        std::find(valid_lanelets.begin(), valid_lanelets.end(), candidate_lanelet) ==
-        valid_lanelets.end();
-      if (is_new_lanelet) {
-        valid_lanelets.push_back(candidate_lanelet);
-      }
-    }
+  {  // collision point
+    auto marker = tier4_autoware_utils::createDefaultMarker(
+      "map", current_time, "collision_point", 0, visualization_msgs::msg::Marker::SPHERE,
+      tier4_autoware_utils::createMarkerScale(0.25, 0.25, 0.25),
+      tier4_autoware_utils::createMarkerColor(1.0, 0.0, 0.0, 0.999));
+    marker.pose.position = debug_data.collision_point;
+    debug_marker.markers.push_back(marker);
   }
+
+  debug_marker_pub_->publish(debug_marker);
+
+  // slow down/stop wall
+  debug_slow_down_wall_marker_pub_->publish(debug_data.slow_down_wall_marker);
+  debug_stop_wall_marker_pub_->publish(debug_data.stop_wall_marker);
 }
 }  // namespace motion_planning
 #include <rclcpp_components/register_node_macro.hpp>

@@ -116,15 +116,6 @@ private:
     const TargetObstacle & object, const rclcpp::Time & obj_base_time,
     const PredictedPath & predicted_path);
 
-  bool checkOnMapObject(
-    const TargetObstacle & object, const lanelet::ConstLanelets & valid_lanelets);
-
-  lanelet::ConstLanelets getSurroundingLanelets(const geometry_msgs::msg::Pose & current_pose);
-
-  void addValidLanelet(
-    const lanelet::routing::LaneletPaths & candidate_paths,
-    lanelet::ConstLanelets & valid_lanelets);
-
   bool checkIsFrontObject(const TargetObstacle & object, const Trajectory & traj);
 
   boost::optional<PredictedPath> resampledPredictedPath(
@@ -194,7 +185,6 @@ private:
   double velocity_margin_;
   bool enable_adaptive_cruise_;
   bool use_object_acceleration_;
-  bool use_hd_map_;
 
   double replan_vel_deviation_;
   double engage_velocity_;

@@ -97,7 +97,6 @@ OptimizationBasedPlanner::OptimizationBasedPlanner(
     node.declare_parameter<bool>("optimization_based_planner.enable_adaptive_cruise");
   use_object_acceleration_ =
     node.declare_parameter<bool>("optimization_based_planner.use_object_acceleration");
-  use_hd_map_ = node.declare_parameter<bool>("optimization_based_planner.use_hd_map");
 
   replan_vel_deviation_ =
     node.declare_parameter<double>("optimization_based_planner.replan_vel_deviation");
@@ -1128,128 +1127,6 @@ boost::optional<size_t> OptimizationBasedPlanner::getCollisionIdx(
   }
 
   return boost::none;
-}
-
-bool OptimizationBasedPlanner::checkOnMapObject(
-  const TargetObstacle & object, const lanelet::ConstLanelets & valid_lanelets)
-{
-  // If we do not have a map, return true
-  if (!lanelet_map_ptr_) {
-    return true;
-  }
-
-  // obstacle point
-  lanelet::BasicPoint2d search_point(object.pose.position.x, object.pose.position.y);
-
-  // nearest lanelet
-  std::vector<std::pair<double, lanelet::Lanelet>> surrounding_lanelets =
-    lanelet::geometry::findNearest(lanelet_map_ptr_->laneletLayer, search_point, 10);
-
-  // No Closest Lanelets
-  if (surrounding_lanelets.empty()) {
-    return false;
-  }
-
-  // Check if the vehicle is inside the lanelet
-  bool has_find_close_lanelet = false;
-  for (const auto & lanelet : surrounding_lanelets) {
-    if (lanelet::geometry::inside(lanelet.second, search_point)) {
-      has_find_close_lanelet = true;
-      // return true;
-      break;
-    }
-  }
-
-  if (!has_find_close_lanelet) {
-    // This object is out of the any lanelets in this map
-    return false;
-  }
-
-  for (const auto & valid_lanelet : valid_lanelets) {
-    if (lanelet::geometry::inside(valid_lanelet, search_point)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-lanelet::ConstLanelets OptimizationBasedPlanner::getSurroundingLanelets(
-  const geometry_msgs::msg::Pose & current_pose)
-{
-  // If we do not have a map, return true
-  if (!lanelet_map_ptr_) {
-    return {};
-  }
-
-  const lanelet::BasicPoint2d search_point(current_pose.position.x, current_pose.position.y);
-
-  // nearest lanelet
-  const std::vector<std::pair<double, lanelet::Lanelet>> nearest_lanelets =
-    lanelet::geometry::findNearest(lanelet_map_ptr_->laneletLayer, search_point, 10);
-
-  // Get Current Lanelets
-  lanelet::Lanelets current_lanelets;
-  for (const auto & lanelet : nearest_lanelets) {
-    if (lanelet::geometry::inside(lanelet.second, search_point)) {
-      current_lanelets.push_back(lanelet.second);
-    }
-  }
-
-  lanelet::ConstLanelets surrounding_lanelets;
-
-  const double initial_search_dist = 200.0;
-  const double delta_search_dist = 50.0;
-  for (const auto & current_lanelet : current_lanelets) {
-    // Step1.1 Get the left lanelet
-    lanelet::routing::LaneletPaths left_paths;
-    auto opt_left = routing_graph_ptr_->left(current_lanelet);
-    if (!!opt_left) {
-      for (double search_dist = initial_search_dist; search_dist > 0;
-           search_dist -= delta_search_dist) {
-        const auto tmp_paths = routing_graph_ptr_->possiblePaths(*opt_left, search_dist, 0, false);
-        addValidLanelet(tmp_paths, surrounding_lanelets);
-      }
-    }
-
-    // Step1.2 Get the right lanelet
-    lanelet::routing::LaneletPaths right_paths;
-    auto opt_right = routing_graph_ptr_->right(current_lanelet);
-    if (!!opt_right) {
-      for (double search_dist = initial_search_dist; search_dist > 0;
-           search_dist -= delta_search_dist) {
-        const auto tmp_paths = routing_graph_ptr_->possiblePaths(*opt_right, search_dist, 0, false);
-        addValidLanelet(tmp_paths, surrounding_lanelets);
-      }
-    }
-
-    // Step1.3 Get the centerline
-    lanelet::routing::LaneletPaths center_paths;
-    for (double search_dist = initial_search_dist; search_dist > 0;
-         search_dist -= delta_search_dist) {
-      const auto tmp_paths =
-        routing_graph_ptr_->possiblePaths(current_lanelet, search_dist, 0, false);
-      addValidLanelet(tmp_paths, surrounding_lanelets);
-    }
-  }
-
-  return surrounding_lanelets;
-}
-
-void OptimizationBasedPlanner::addValidLanelet(
-  const lanelet::routing::LaneletPaths & candidate_paths, lanelet::ConstLanelets & valid_lanelets)
-{
-  // Check if candidate paths are already in the valid paths
-  for (const auto & candidate_path : candidate_paths) {
-    for (const auto & candidate_lanelet : candidate_path) {
-      const bool is_new_lanelet =
-        std::find(valid_lanelets.begin(), valid_lanelets.end(), candidate_lanelet) ==
-        valid_lanelets.end();
-      if (is_new_lanelet) {
-        valid_lanelets.push_back(candidate_lanelet);
-      }
-    }
-  }
 }
 
 bool OptimizationBasedPlanner::checkIsFrontObject(
