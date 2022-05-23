@@ -38,8 +38,8 @@ Polygon2d convertObstacleToPolygon(
   const geometry_msgs::msg::Pose & pose, const autoware_auto_perception_msgs::msg::Shape & shape);
 
 boost::optional<size_t> getFirstCollisionIndex(
-  const std::vector<Polygon2d> & base_polygons, const Polygon2d & target_polygon,
-  const double margin = 0.0);
+  const std::vector<Polygon2d> & traj_polygons, const Polygon2d & obj_polygon, const double margin,
+  std::vector<geometry_msgs::msg::Point> & collision_points);
 
 boost::optional<size_t> getFirstNonCollisionIndex(
   const std::vector<Polygon2d> & base_polygons,

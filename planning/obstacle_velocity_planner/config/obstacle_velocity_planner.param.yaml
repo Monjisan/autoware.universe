@@ -66,7 +66,7 @@
 
       min_slow_down_target_vel: 3.0 # minimum target velocity during slow down
 
-      max_slow_down_obstacle_velocity_to_stop : 2.0
+      max_slow_down_obstacle_velocity_to_stop : 3.0
       safe_distance_margin : 7.0
 
     optimization_based_planner:

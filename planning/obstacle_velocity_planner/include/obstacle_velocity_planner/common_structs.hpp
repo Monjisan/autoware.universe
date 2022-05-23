@@ -16,6 +16,7 @@
 #define OBSTACLE_VELOCITY_PLANNER__COMMON_STRUCTS_HPP_
 
 #include <rclcpp/rclcpp.hpp>
+#include <tier4_autoware_utils/tier4_autoware_utils.hpp>
 
 #include "autoware_auto_perception_msgs/msg/predicted_objects.hpp"
 #include "autoware_auto_planning_msgs/msg/trajectory.hpp"
@@ -125,6 +126,8 @@ struct DebugData
   std::vector<TargetObstacle> obstacles_to_slow_down;
   visualization_msgs::msg::MarkerArray stop_wall_marker;
   visualization_msgs::msg::MarkerArray slow_down_wall_marker;
+  std::vector<tier4_autoware_utils::Polygon2d> detection_polygons;
+  geometry_msgs::msg::Point collision_point;
 };
 
 #endif  // OBSTACLE_VELOCITY_PLANNER__COMMON_STRUCTS_HPP_

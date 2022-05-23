@@ -88,7 +88,8 @@ private:
   // Member Functions
   std::vector<TargetObstacle> filterObstacles(
     const std::vector<TargetObstacle> & obstacles, const Trajectory & traj,
-    const geometry_msgs::msg::Pose & current_pose, const double current_vel);
+    const geometry_msgs::msg::Pose & current_pose, const double current_vel,
+    DebugData & debug_data);
 
   double calcCurrentAccel() const;
 
@@ -96,22 +97,54 @@ private:
 
   void publishDebugData(const DebugData & debug_data)
   {
-    visualization_msgs::msg::MarkerArray obstacles_marker;
+    visualization_msgs::msg::MarkerArray debug_marker;
+    rclcpp::Time current_time = now();
 
     // obstacles to slow down
     for (size_t i = 0; i < debug_data.obstacles_to_slow_down.size(); ++i) {
       const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
         debug_data.obstacles_to_slow_down.at(i).pose, i, "obstacles_to_slow_down", 0.7, 0.7, 0.0);
-      tier4_autoware_utils::appendMarkerArray(marker, &obstacles_marker);
+      tier4_autoware_utils::appendMarkerArray(marker, &debug_marker);
     }
 
     // obstacles to stop
     for (size_t i = 0; i < debug_data.obstacles_to_stop.size(); ++i) {
       const auto marker = obstacle_velocity_utils::getObjectMarkerArray(
         debug_data.obstacles_to_stop.at(i).pose, i, "obstacles_to_stop", 1.0, 0.0, 0.0);
-      tier4_autoware_utils::appendMarkerArray(marker, &obstacles_marker);
+      tier4_autoware_utils::appendMarkerArray(marker, &debug_marker);
     }
-    debug_obstacles_marker_pub_->publish(obstacles_marker);
+
+    {  // footprint polygons
+      auto marker = tier4_autoware_utils::createDefaultMarker(
+        "map", current_time, "detection_polygons", 0, visualization_msgs::msg::Marker::LINE_LIST,
+        tier4_autoware_utils::createMarkerScale(0.01, 0.0, 0.0),
+        tier4_autoware_utils::createMarkerColor(0.0, 0.1, 0.0, 0.999));
+
+      for (const auto & detection_polygon : debug_data.detection_polygons) {
+        for (size_t dp_idx = 0; dp_idx < detection_polygon.outer().size(); ++dp_idx) {
+          const auto & current_point = detection_polygon.outer().at(dp_idx);
+          const auto & next_point =
+            detection_polygon.outer().at((dp_idx + 1) % detection_polygon.outer().size());
+
+          marker.points.push_back(
+            tier4_autoware_utils::createPoint(current_point.x(), current_point.y(), 0.0));
+          marker.points.push_back(
+            tier4_autoware_utils::createPoint(next_point.x(), next_point.y(), 0.0));
+        }
+      }
+      debug_marker.markers.push_back(marker);
+    }
+
+    {  // collision point
+      auto marker = tier4_autoware_utils::createDefaultMarker(
+        "map", current_time, "collision_point", 0, visualization_msgs::msg::Marker::SPHERE,
+        tier4_autoware_utils::createMarkerScale(0.25, 0.25, 0.25),
+        tier4_autoware_utils::createMarkerColor(1.0, 0.0, 0.0, 0.999));
+      marker.pose.position = debug_data.collision_point;
+      debug_marker.markers.push_back(marker);
+    }
+
+    debug_marker_pub_->publish(debug_marker);
 
     // slow down/stop wall
     debug_slow_down_wall_marker_pub_->publish(debug_data.slow_down_wall_marker);
@@ -133,7 +166,7 @@ private:
   rclcpp::Publisher<VelocityLimit>::SharedPtr vel_limit_pub_;
   rclcpp::Publisher<VelocityLimitClearCommand>::SharedPtr clear_vel_limit_pub_;
   // rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_marker_pub_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_obstacles_marker_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_marker_pub_;
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
     debug_slow_down_wall_marker_pub_;
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_stop_wall_marker_pub_;

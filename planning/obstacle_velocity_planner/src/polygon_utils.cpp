@@ -131,6 +131,7 @@ Polygon2d convertObstacleToPolygon(
   return isClockWise(polygon) ? polygon : inverseClockWise(polygon);
 }
 
+/*
 boost::optional<size_t> getFirstCollisionIndex(
   const std::vector<Polygon2d> & traj_polygons, const Polygon2d & obj_polygon, const double margin)
 {
@@ -140,6 +141,39 @@ boost::optional<size_t> getFirstCollisionIndex(
     const double dist = bg::distance(traj_polygons.at(i), obj_polygon);
 
     if (dist < std::max(margin, epsilon)) {
+      return i;
+    }
+  }
+
+  return {};
+}
+*/
+
+boost::optional<size_t> getFirstCollisionIndex(
+  const std::vector<Polygon2d> & traj_polygons, const Polygon2d & obj_polygon, const double margin,
+  std::vector<geometry_msgs::msg::Point> & collision_geom_points)
+{
+  constexpr double epsilon = 0.1;
+
+  for (size_t i = 0; i < traj_polygons.size(); ++i) {
+    std::deque<Polygon2d> collision_polygons;
+    boost::geometry::intersection(traj_polygons.at(i), obj_polygon, collision_polygons);
+
+    bool has_collision = false;
+    for (const auto & collision_polygon : collision_polygons) {
+      if (boost::geometry::area(collision_polygon) > 0.0) {
+        has_collision = true;
+
+        for (const auto & collision_point : collision_polygon.outer()) {
+          geometry_msgs::msg::Point collision_geom_point;
+          collision_geom_point.x = collision_point.x();
+          collision_geom_point.y = collision_point.y();
+          collision_geom_points.push_back(collision_geom_point);
+        }
+      }
+    }
+
+    if (has_collision) {
       return i;
     }
   }

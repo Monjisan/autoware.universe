@@ -241,12 +241,11 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
   // debug_marker_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/marker",
   // 1);
   debug_calculation_time_pub_ = create_publisher<Float32Stamped>("~/debug/calculation_time", 1);
-  debug_obstacles_marker_pub_ =
-    create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/obstacles_marker", 1);
   debug_slow_down_wall_marker_pub_ =
     create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/slow_down_wall_marker", 1);
   debug_stop_wall_marker_pub_ =
     create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/stop_wall_marker", 1);
+  debug_marker_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>("~/debug/marker", 1);
 
   // Obstacle
   in_objects_ptr_ = std::make_unique<PredictedObjects>();
@@ -411,6 +410,8 @@ void ObstacleVelocityPlannerNode::trajectoryCallback(const Trajectory::SharedPtr
     return;
   }
 
+  DebugData debug_data;
+
   // convert obstacle type
   const auto obstacles = TargetObstacle::convertToTargetObstacles(*in_objects_ptr_);
 
@@ -422,9 +423,7 @@ void ObstacleVelocityPlannerNode::trajectoryCallback(const Trajectory::SharedPtr
   planner_data.current_vel = current_twist_ptr_->twist.linear.x;
   planner_data.current_acc = calcCurrentAccel();
   planner_data.target_obstacles = filterObstacles(
-    obstacles, planner_data.traj, planner_data.current_pose, planner_data.current_vel);
-
-  DebugData debug_data;
+    obstacles, planner_data.traj, planner_data.current_pose, planner_data.current_vel, debug_data);
 
   // generate Trajectory
   boost::optional<VelocityLimit> vel_limit;
@@ -480,7 +479,7 @@ double ObstacleVelocityPlannerNode::calcCurrentAccel() const
 
 std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
   const std::vector<TargetObstacle> & obstacles, const Trajectory & traj,
-  const geometry_msgs::msg::Pose & current_pose, const double current_vel)
+  const geometry_msgs::msg::Pose & current_pose, const double current_vel, DebugData & debug_data)
 {
   const auto trimmed_traj = trimTrajectoryFrom(traj, current_pose.position);
   const auto decimated_traj =
@@ -491,6 +490,7 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
 
   const auto decimated_traj_polygons =
     polygon_utils::createOneStepPolygons(decimated_traj, vehicle_info_);
+  debug_data.detection_polygons = decimated_traj_polygons;
 
   const auto surrounding_lanelets = getSurroundingLanelets(current_pose);
 
@@ -514,10 +514,13 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
     }
 
     // precise area filtering
+    const auto obstacle_polygon =
+      polygon_utils::convertObstacleToPolygon(obstacle.pose, obstacle.shape);
+
+    std::vector<geometry_msgs::msg::Point> collision_points;
     const auto first_within_idx = polygon_utils::getFirstCollisionIndex(
-      decimated_traj_polygons,
-      polygon_utils::convertObstacleToPolygon(obstacle.pose, obstacle.shape),
-      obstacle_filtering_param_.detection_area_expand_width);
+      decimated_traj_polygons, obstacle_polygon,
+      obstacle_filtering_param_.detection_area_expand_width, collision_points);
 
     if (first_within_idx) {  // obsacles inside the trajectory
       const bool is_target_obstacle =
@@ -528,12 +531,32 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
         obstacle_filtering_param_.crossing_obstacle_traj_angle_threshold);
       const double has_high_speed =
         std::abs(obstacle.velocity) > obstacle_filtering_param_.min_obstacle_crossing_velocity;
+
+      const auto & nearest_collision_point = [&]() {
+        const size_t seg_idx = first_within_idx.get();
+
+        size_t min_idx = 0;
+        double min_dist = std::numeric_limits<double>::max();
+        for (size_t cp_idx = 0; cp_idx < collision_points.size(); ++cp_idx) {
+          const auto & collision_point = collision_points.at(cp_idx);
+          const double dist = tier4_autoware_utils::calcLongitudinalOffsetToSegment(
+            decimated_traj.points, seg_idx, collision_point);
+          if (dist < min_dist) {
+            min_dist = dist;
+            min_idx = cp_idx;
+          }
+        }
+
+        return collision_points.at(min_idx);
+      }();
+      debug_data.collision_point = nearest_collision_point;
+
       // running vehicle crossing the ego trajectory
       if (is_target_obstacle && !is_angle_aligned && has_high_speed) {
         const double time_to_collision = [&]() {
           const double dist_from_ego_to_obstacle =
             tier4_autoware_utils::calcSignedArcLength(
-              decimated_traj.points, current_pose.position, first_within_idx.get()) -
+              decimated_traj.points, current_pose.position, nearest_collision_point) -
             vehicle_info_.max_longitudinal_offset_m;
           return dist_from_ego_to_obstacle / std::max(1e-6, current_vel);
         }();
