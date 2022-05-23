@@ -79,7 +79,7 @@ private:
 
   // Member Functions
   std::vector<TargetObstacle> filterObstacles(
-    const std::vector<TargetObstacle> & obstacles, const Trajectory & traj,
+    const PredictedObjects & predicted_objects, const Trajectory & traj,
     const geometry_msgs::msg::Pose & current_pose, const double current_vel,
     DebugData & debug_data);
 

@@ -28,21 +28,10 @@
 
 struct TargetObstacle
 {
-  static std::vector<TargetObstacle> convertToTargetObstacles(
-    const autoware_auto_perception_msgs::msg::PredictedObjects & objects)
-  {
-    const auto time_stamp = rclcpp::Time(objects.header.stamp);
-
-    std::vector<TargetObstacle> target_obstacles;
-    for (const auto object : objects.objects) {
-      target_obstacles.push_back(TargetObstacle(time_stamp, object));
-    }
-    return target_obstacles;
-  }
-
   TargetObstacle(
     const rclcpp::Time & arg_time_stamp,
-    const autoware_auto_perception_msgs::msg::PredictedObject & object)
+    const autoware_auto_perception_msgs::msg::PredictedObject & object,
+    const geometry_msgs::msg::Point & arg_collision_point)
   {
     time_stamp = arg_time_stamp;
     orientation_reliable = true;
@@ -57,6 +46,8 @@ struct TargetObstacle
     for (const auto & path : object.kinematics.predicted_paths) {
       predicted_paths.push_back(path);
     }
+
+    collision_point = arg_collision_point;
   }
 
   rclcpp::Time time_stamp;
@@ -68,6 +59,7 @@ struct TargetObstacle
   autoware_auto_perception_msgs::msg::ObjectClassification classification;
   autoware_auto_perception_msgs::msg::Shape shape;
   std::vector<autoware_auto_perception_msgs::msg::PredictedPath> predicted_paths;
+  geometry_msgs::msg::Point collision_point;
 };
 
 struct ObstacleVelocityPlannerData

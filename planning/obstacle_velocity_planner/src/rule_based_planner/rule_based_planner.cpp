@@ -208,7 +208,7 @@ Trajectory RuleBasedPlanner::generateTrajectory(
     current_interpolated_obstacle_pose->position);
     */
     const double dist_to_obstacle = tier4_autoware_utils::calcSignedArcLength(
-      planner_data.traj.points, planner_data.current_pose.position, obstacle.pose.position);
+      planner_data.traj.points, planner_data.current_pose.position, obstacle.collision_point);
 
     const bool is_stop_required = [&]() {
       const bool is_slow_down_obstacle = isSlowDownObstacle(obstacle.classification.label);
