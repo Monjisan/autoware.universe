@@ -528,14 +528,28 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
         std::abs(object_velocity) > obstacle_filtering_param_.min_obstacle_crossing_velocity;
 
       nearest_collision_point = [&]() {
-        const size_t seg_idx = first_within_idx.get();
+        std::array<geometry_msgs::msg::Point, 2> segment_points;
+        if (first_within_idx.get() == 0) {
+          const auto & traj_front_pose = decimated_traj.points.at(0).pose;
+          segment_points.at(0) = traj_front_pose.position;
+
+          const auto front_pos =
+            tier4_autoware_utils::calcOffsetPose(
+              traj_front_pose, vehicle_info_.max_longitudinal_offset_m, 0.0, 0.0)
+              .position;
+          segment_points.at(1) = front_pos;
+        } else {
+          const size_t seg_idx = first_within_idx.get() - 1;
+          segment_points.at(0) = decimated_traj.points.at(seg_idx).pose.position;
+          segment_points.at(1) = decimated_traj.points.at(seg_idx + 1).pose.position;
+        }
 
         size_t min_idx = 0;
         double min_dist = std::numeric_limits<double>::max();
         for (size_t cp_idx = 0; cp_idx < collision_points.size(); ++cp_idx) {
           const auto & collision_point = collision_points.at(cp_idx);
           const double dist = tier4_autoware_utils::calcLongitudinalOffsetToSegment(
-            decimated_traj.points, seg_idx, collision_point);
+            segment_points, 0, collision_point);
           if (dist < min_dist) {
             min_dist = dist;
             min_idx = cp_idx;

@@ -398,6 +398,7 @@ boost::optional<size_t> RuleBasedPlanner::doStop(
           planner_data.traj.points,
           dist_to_obstacle - vehicle_info_.max_longitudinal_offset_m - min_behavior_stop_margin_,
           ego_idx);
+
         if (behavior_zero_vel_idx.get() < modified_obstacle_zero_vel_idx) {
           return {};
         }
@@ -418,7 +419,7 @@ boost::optional<size_t> RuleBasedPlanner::doStop(
     // wall marker
     visualization_msgs::msg::MarkerArray wall_msg;
     const auto markers = tier4_autoware_utils::createStopVirtualWallMarker(
-      marker_pose.get(), "obstacle to stop", planner_data.current_time, 0);
+      marker_pose.get(), "obstacle stop", planner_data.current_time, 0);
     tier4_autoware_utils::appendMarkerArray(markers, &debug_wall_marker);
   }
 
@@ -475,8 +476,7 @@ VelocityLimit RuleBasedPlanner::doSlowDown(
     getIndexWithLongitudinalOffset(planner_data.traj.points, dist_to_rss_wall, ego_idx);
 
   const auto markers = tier4_autoware_utils::createSlowDownVirtualWallMarker(
-    planner_data.traj.points.at(wall_idx).pose, "obstacle to slow down", planner_data.current_time,
-    0);
+    planner_data.traj.points.at(wall_idx).pose, "obstacle slow down", planner_data.current_time, 0);
   tier4_autoware_utils::appendMarkerArray(markers, &debug_wall_marker);
 
   debug_obstacles_to_slow_down.push_back(slow_down_obstacle_info.obstacle);
