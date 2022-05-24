@@ -91,6 +91,12 @@ private:
 
   std::shared_ptr<LowpassFilter1d> lpf_acc_{nullptr};
 
+  bool is_showing_debug_info_;
+
+  double min_behavior_stop_margin_;
+  double max_nearest_dist_deviation_;
+  double max_nearest_yaw_deviation_;
+
   // ROS related members
   // Subscriber
   rclcpp::Subscription<Trajectory>::SharedPtr trajectory_sub_;

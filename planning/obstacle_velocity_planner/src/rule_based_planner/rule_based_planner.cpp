@@ -297,7 +297,8 @@ Trajectory RuleBasedPlanner::generateTrajectory(
   boost::optional<size_t> zero_vel_idx = {};
   if (stop_obstacle_info) {
     RCLCPP_INFO_EXPRESSION(
-      rclcpp::get_logger("ObstacleVelocityPlanner::RuleBasedPlanner"), true, "stop planning");
+      rclcpp::get_logger("ObstacleVelocityPlanner::RuleBasedPlanner"), is_showing_debug_info_,
+      "stop planning");
 
     // set zero velocity index
     zero_vel_idx = doStop(
@@ -316,7 +317,8 @@ Trajectory RuleBasedPlanner::generateTrajectory(
   // do slow down
   if (slow_down_obstacle_info) {
     RCLCPP_INFO_EXPRESSION(
-      rclcpp::get_logger("ObstacleVelocityPlanner::RuleBasedPlanner"), true, "slow down planning");
+      rclcpp::get_logger("ObstacleVelocityPlanner::RuleBasedPlanner"), is_showing_debug_info_,
+      "slow down planning");
 
     vel_limit = doSlowDown(
       planner_data, slow_down_obstacle_info.get(), debug_data.obstacles_to_slow_down,
@@ -356,19 +358,58 @@ Trajectory RuleBasedPlanner::generateTrajectory(
   return output_traj;
 }
 
-size_t RuleBasedPlanner::doStop(
+boost::optional<size_t> RuleBasedPlanner::doStop(
   const ObstacleVelocityPlannerData & planner_data, const StopObstacleInfo & stop_obstacle_info,
   std::vector<TargetObstacle> & debug_obstacles_to_stop,
   visualization_msgs::msg::MarkerArray & debug_wall_marker) const
 {
   const double dist_to_stop = stop_obstacle_info.dist_to_stop;
+  const auto & obstacle = stop_obstacle_info.obstacle;
 
-  const size_t ego_idx = tier4_autoware_utils::findNearestIndex(
-    planner_data.traj.points, planner_data.current_pose.position);
+  const size_t ego_idx = [&]() -> size_t {
+    const auto ego_idx = tier4_autoware_utils::findNearestIndex(
+      planner_data.traj.points, planner_data.current_pose, max_nearest_dist_deviation_,
+      max_nearest_yaw_deviation_);
+    if (ego_idx) {
+      return ego_idx.get();
+    }
+    return tier4_autoware_utils::findNearestIndex(
+      planner_data.traj.points, planner_data.current_pose.position);
+  }();
 
   // TODO(murooka) Should I use interpolation?
-  const size_t zero_vel_idx = getIndexWithLongitudinalOffset(
-    planner_data.traj.points, dist_to_stop - vehicle_info_.max_longitudinal_offset_m, ego_idx);
+  const auto zero_vel_idx = [&]() -> boost::optional<size_t> {
+    const size_t obstacle_zero_vel_idx = getIndexWithLongitudinalOffset(
+      planner_data.traj.points, dist_to_stop - vehicle_info_.max_longitudinal_offset_m, ego_idx);
+
+    // check if there is already stop line between obstacle and zero_vel_idx
+    const auto behavior_zero_vel_idx =
+      tier4_autoware_utils::searchZeroVelocityIndex(planner_data.traj.points);
+    if (behavior_zero_vel_idx) {
+      const size_t obstacle_nearest_idx =
+        tier4_autoware_utils::findNearestIndex(planner_data.traj.points, obstacle.pose.position);
+      if (
+        obstacle_zero_vel_idx < behavior_zero_vel_idx.get() &&
+        behavior_zero_vel_idx.get() < obstacle_nearest_idx) {
+        const double dist_to_obstacle = tier4_autoware_utils::calcSignedArcLength(
+          planner_data.traj.points, planner_data.current_pose.position, obstacle.collision_point);
+
+        const size_t modified_obstacle_zero_vel_idx = getIndexWithLongitudinalOffset(
+          planner_data.traj.points,
+          dist_to_obstacle - vehicle_info_.max_longitudinal_offset_m - min_behavior_stop_margin_,
+          ego_idx);
+        if (behavior_zero_vel_idx.get() < modified_obstacle_zero_vel_idx) {
+          return {};
+        }
+        return modified_obstacle_zero_vel_idx;
+      }
+    }
+
+    return obstacle_zero_vel_idx;
+  }();
+  if (!zero_vel_idx) {
+    return {};
+  }
 
   // virtual wall marker for stop
   const auto marker_pose = obstacle_velocity_utils::calcForwardPose(
@@ -382,7 +423,7 @@ size_t RuleBasedPlanner::doStop(
   }
 
   debug_obstacles_to_stop.push_back(stop_obstacle_info.obstacle);
-  return zero_vel_idx;
+  return zero_vel_idx.get();
 }
 
 VelocityLimit RuleBasedPlanner::doSlowDown(
@@ -418,8 +459,8 @@ VelocityLimit RuleBasedPlanner::doSlowDown(
     std::clamp(target_acc, longitudinal_info_.min_accel, longitudinal_info_.max_accel);
 
   RCLCPP_INFO_EXPRESSION(
-    rclcpp::get_logger("ObstacleVelocityPlanner::RuleBasedPlanner"), true, "target_velocity %f",
-    target_vel_with_acc_limit);
+    rclcpp::get_logger("ObstacleVelocityPlanner::RuleBasedPlanner"), is_showing_debug_info_,
+    "target_velocity %f", target_vel_with_acc_limit);
 
   prev_target_vel_ = target_vel_with_acc_limit;
 

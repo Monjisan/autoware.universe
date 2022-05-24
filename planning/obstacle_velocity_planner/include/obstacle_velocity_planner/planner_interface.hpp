@@ -97,6 +97,16 @@ public:
 
   PlannerInterface() = default;
 
+  void setParams(
+    const bool is_showing_debug_info, const double min_behavior_stop_margin,
+    const double max_nearest_dist_deviation, const double max_nearest_yaw_deviation)
+  {
+    is_showing_debug_info_ = is_showing_debug_info;
+    min_behavior_stop_margin_ = min_behavior_stop_margin;
+    max_nearest_dist_deviation_ = max_nearest_dist_deviation;
+    max_nearest_yaw_deviation_ = max_nearest_yaw_deviation;
+  }
+
   /*
   // two kinds of velocity planning is supported.
   // 1. getZeroVelocityIndexWithVelocityLimit
@@ -147,7 +157,11 @@ public:
 
 protected:
   // Parameters
+  bool is_showing_debug_info_{false};
   LongitudinalInfo longitudinal_info_;
+  double min_behavior_stop_margin_;
+  double max_nearest_dist_deviation_;
+  double max_nearest_yaw_deviation_;
 
   // Vehicle Parameters
   vehicle_info_util::VehicleInfo vehicle_info_;

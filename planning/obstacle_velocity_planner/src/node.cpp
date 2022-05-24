@@ -261,6 +261,14 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
   const auto longitudinal_info =
     LongitudinalInfo(max_accel, min_accel, max_jerk, min_jerk, min_object_accel, idling_time);
 
+  const bool is_showing_debug_info_ = declare_parameter<bool>("common.is_showing_debug_info");
+  const double min_behavior_stop_margin_ =
+    declare_parameter<double>("common.min_behavior_stop_margin");
+  const double max_nearest_dist_deviation_ =
+    declare_parameter<double>("common.max_nearest_dist_deviation");
+  const double max_nearest_yaw_deviation_ =
+    declare_parameter<double>("common.max_nearest_yaw_deviation");
+
   // Obstacle filtering parameters
   obstacle_filtering_param_.rough_detection_area_expand_width =
     declare_parameter<double>("obstacle_filtering.rough_detection_area_expand_width");
@@ -295,6 +303,9 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
   } else {
     std::logic_error("Designated method is not supported.");
   }
+  planner_ptr_->setParams(
+    is_showing_debug_info_, min_behavior_stop_margin_, max_nearest_dist_deviation_,
+    max_nearest_yaw_deviation_);
 
   // set parameter callback
   set_param_res_ = this->add_on_set_parameters_callback(
@@ -319,6 +330,12 @@ rcl_interfaces::msg::SetParametersResult ObstacleVelocityPlannerNode::paramCallb
 {
   planner_ptr_->updateCommonParam(parameters);
   planner_ptr_->updateParam(parameters);
+
+  tier4_autoware_utils::updateParam<bool>(
+    parameters, "common.is_showing_debug_info", is_showing_debug_info_);
+  planner_ptr_->setParams(
+    is_showing_debug_info_, min_behavior_stop_margin_, max_nearest_dist_deviation_,
+    max_nearest_yaw_deviation_);
 
   // obstacle_filtering
   tier4_autoware_utils::updateParam<double>(
@@ -485,7 +502,8 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
     if (dist_from_obstacle_to_traj > obstacle_filtering_param_.rough_detection_area_expand_width) {
       // obstacle is farm from the trajectory
       RCLCPP_INFO_EXPRESSION(
-        get_logger(), true, "Ignore obstacles since it is far from the trajectory.");
+        get_logger(), is_showing_debug_info_,
+        "Ignore obstacles since it is far from the trajectory.");
       continue;
     }
 
@@ -558,7 +576,8 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
           // False Condition 1. Ignore vehicle obstacles inside the trajectory, which is running
           // and does not collide with ego in a certain time.
           RCLCPP_INFO_EXPRESSION(
-            get_logger(), true, "Ignore inside obstacles since it will not collide with the ego.");
+            get_logger(), is_showing_debug_info_,
+            "Ignore inside obstacles since it will not collide with the ego.");
           continue;
         }
       }
@@ -580,7 +599,8 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
         // False Condition 2. Ignore vehicle obstacles outside the trajectory, whose predicted path
         // overlaps the ego trajectory in a certain time.
         RCLCPP_INFO_EXPRESSION(
-          get_logger(), true, "Ignore outside obstacles since it will not collide with the ego.");
+          get_logger(), is_showing_debug_info_,
+          "Ignore outside obstacles since it will not collide with the ego.");
         continue;
       }
     }

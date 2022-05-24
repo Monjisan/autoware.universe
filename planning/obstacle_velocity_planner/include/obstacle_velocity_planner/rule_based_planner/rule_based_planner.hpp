@@ -89,7 +89,7 @@ private:
 
   boost::optional<double> prev_target_vel_;
 
-  size_t doStop(
+  boost::optional<size_t> doStop(
     const ObstacleVelocityPlannerData & planner_data, const StopObstacleInfo & stop_obstacle_info,
     std::vector<TargetObstacle> & debug_obstacles_to_stop,
     visualization_msgs::msg::MarkerArray & debug_walls_marker) const;
