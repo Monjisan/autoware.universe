@@ -33,7 +33,7 @@ using autoware_auto_perception_msgs::msg::ObjectClassification;
 
 bool isVehicle(const uint8_t label);
 
-visualization_msgs::msg::MarkerArray getObjectMarkerArray(
+visualization_msgs::msg::Marker getObjectMarker(
   const geometry_msgs::msg::Pose & obstacle_pose, size_t idx, const std::string & ns,
   const double r, const double g, const double b);
 

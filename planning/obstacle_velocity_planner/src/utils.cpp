@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <obstacle_velocity_planner/utils.hpp>
-#include <tier4_autoware_utils/tier4_autoware_utils.hpp>
+#include "obstacle_velocity_planner/utils.hpp"
+
+#include "tier4_autoware_utils/tier4_autoware_utils.hpp"
 
 namespace obstacle_velocity_utils
 {
@@ -23,28 +24,21 @@ bool isVehicle(const uint8_t label)
          label == ObjectClassification::BUS || label == ObjectClassification::MOTORCYCLE;
 }
 
-visualization_msgs::msg::MarkerArray getObjectMarkerArray(
+visualization_msgs::msg::Marker getObjectMarker(
   const geometry_msgs::msg::Pose & obstacle_pose, size_t idx, const std::string & ns,
   const double r, const double g, const double b)
 {
   const auto current_time = rclcpp::Clock().now();
-  visualization_msgs::msg::MarkerArray msg;
 
-  visualization_msgs::msg::Marker marker{};
-  marker.header.frame_id = "map";
-  marker.header.stamp = current_time;
-  marker.ns = ns;
+  auto marker = tier4_autoware_utils::createDefaultMarker(
+    "map", current_time, ns, idx, visualization_msgs::msg::Marker::SPHERE,
+    tier4_autoware_utils::createMarkerScale(2.0, 2.0, 2.0),
+    tier4_autoware_utils::createMarkerColor(r, g, b, 0.8));
 
-  marker.id = idx;
   marker.lifetime = rclcpp::Duration::from_seconds(0.8);
-  marker.type = visualization_msgs::msg::Marker::SPHERE;
-  marker.action = visualization_msgs::msg::Marker::ADD;
   marker.pose = obstacle_pose;
-  marker.scale = tier4_autoware_utils::createMarkerScale(2.0, 2.0, 2.0);
-  marker.color = tier4_autoware_utils::createMarkerColor(r, g, b, 0.8);
-  msg.markers.push_back(marker);
 
-  return msg;
+  return marker;
 }
 
 boost::optional<geometry_msgs::msg::Pose> calcForwardPose(

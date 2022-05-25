@@ -66,6 +66,56 @@ Polygon2d inverseClockWise(const Polygon2d & polygon)
   }
   return inverted_polygon;
 }
+
+Polygon2d createOneStepPolygon(
+  const geometry_msgs::msg::Pose & base_step_pose, const geometry_msgs::msg::Pose & next_step_pose,
+  const vehicle_info_util::VehicleInfo & vehicle_info, const double expand_width)
+{
+  Polygon2d polygon;
+
+  const double longitudinal_offset = vehicle_info.max_longitudinal_offset_m;
+  const double width = vehicle_info.vehicle_width_m / 2.0 + expand_width;
+  const double rear_overhang = vehicle_info.rear_overhang_m;
+
+  {  // base step
+    appendPointToPolygon(
+      polygon, tier4_autoware_utils::calcOffsetPose(base_step_pose, longitudinal_offset, width, 0.0)
+                 .position);
+    appendPointToPolygon(
+      polygon,
+      tier4_autoware_utils::calcOffsetPose(base_step_pose, longitudinal_offset, -width, 0.0)
+        .position);
+    appendPointToPolygon(
+      polygon,
+      tier4_autoware_utils::calcOffsetPose(base_step_pose, -rear_overhang, -width, 0.0).position);
+    appendPointToPolygon(
+      polygon,
+      tier4_autoware_utils::calcOffsetPose(base_step_pose, -rear_overhang, width, 0.0).position);
+  }
+
+  {  // next step
+    appendPointToPolygon(
+      polygon, tier4_autoware_utils::calcOffsetPose(next_step_pose, longitudinal_offset, width, 0.0)
+                 .position);
+    appendPointToPolygon(
+      polygon,
+      tier4_autoware_utils::calcOffsetPose(next_step_pose, longitudinal_offset, -width, 0.0)
+        .position);
+    appendPointToPolygon(
+      polygon,
+      tier4_autoware_utils::calcOffsetPose(next_step_pose, -rear_overhang, -width, 0.0).position);
+    appendPointToPolygon(
+      polygon,
+      tier4_autoware_utils::calcOffsetPose(next_step_pose, -rear_overhang, width, 0.0).position);
+  }
+
+  polygon = isClockWise(polygon) ? polygon : inverseClockWise(polygon);
+
+  Polygon2d hull_polygon;
+  bg::convex_hull(polygon, hull_polygon);
+
+  return hull_polygon;
+}
 }  // namespace
 
 namespace polygon_utils
@@ -131,30 +181,10 @@ Polygon2d convertObstacleToPolygon(
   return isClockWise(polygon) ? polygon : inverseClockWise(polygon);
 }
 
-/*
 boost::optional<size_t> getFirstCollisionIndex(
-  const std::vector<Polygon2d> & traj_polygons, const Polygon2d & obj_polygon, const double margin)
-{
-  constexpr double epsilon = 0.1;
-
-  for (size_t i = 0; i < traj_polygons.size(); ++i) {
-    const double dist = bg::distance(traj_polygons.at(i), obj_polygon);
-
-    if (dist < std::max(margin, epsilon)) {
-      return i;
-    }
-  }
-
-  return {};
-}
-*/
-
-boost::optional<size_t> getFirstCollisionIndex(
-  const std::vector<Polygon2d> & traj_polygons, const Polygon2d & obj_polygon, const double margin,
+  const std::vector<Polygon2d> & traj_polygons, const Polygon2d & obj_polygon,
   std::vector<geometry_msgs::msg::Point> & collision_geom_points)
 {
-  constexpr double epsilon = 0.1;
-
   for (size_t i = 0; i < traj_polygons.size(); ++i) {
     std::deque<Polygon2d> collision_polygons;
     boost::geometry::intersection(traj_polygons.at(i), obj_polygon, collision_polygons);
@@ -184,8 +214,7 @@ boost::optional<size_t> getFirstCollisionIndex(
 boost::optional<size_t> getFirstNonCollisionIndex(
   const std::vector<Polygon2d> & traj_polygons,
   const autoware_auto_perception_msgs::msg::PredictedPath & predicted_path,
-  const autoware_auto_perception_msgs::msg::Shape & shape, const size_t start_idx,
-  const double dist_margin)
+  const autoware_auto_perception_msgs::msg::Shape & shape, const size_t start_idx)
 {
   constexpr double epsilon = 1e-3;
 
@@ -194,7 +223,7 @@ boost::optional<size_t> getFirstNonCollisionIndex(
     const auto obj_polygon = convertObstacleToPolygon(path_point, shape);
     for (size_t i = start_idx; i < traj_polygons.size(); ++i) {
       const double dist = bg::distance(traj_polygons.at(i), obj_polygon);
-      if (dist <= dist_margin + epsilon) {
+      if (dist <= epsilon) {
         latest_collision_idx = i;
         break;
       }
@@ -210,10 +239,11 @@ bool willCollideWithSurroundObstacle(
   const autoware_auto_planning_msgs::msg::Trajectory & traj,
   const std::vector<Polygon2d> & traj_polygons,
   const autoware_auto_perception_msgs::msg::PredictedPath & predicted_path,
-  const autoware_auto_perception_msgs::msg::Shape & shape, const double dist_margin,
-  const double max_dist, const double max_ego_obj_overlap_time,
-  const double max_prediction_time_for_collision_check)
+  const autoware_auto_perception_msgs::msg::Shape & shape, const double max_dist,
+  const double max_ego_obj_overlap_time, const double max_prediction_time_for_collision_check)
 {
+  constexpr double epsilon = 1e-3;
+
   boost::optional<size_t> start_predicted_path_idx = {};
   for (size_t i = 0; i < predicted_path.path.size(); ++i) {
     const auto & path_point = predicted_path.path.at(i);
@@ -227,7 +257,7 @@ bool willCollideWithSurroundObstacle(
       const auto & traj_point = traj.points.at(j);
       const double approximated_dist =
         tier4_autoware_utils::calcDistance2d(path_point.position, traj_point.pose.position);
-      if (approximated_dist > dist_margin + max_dist) {
+      if (approximated_dist > max_dist) {
         continue;
       }
 
@@ -235,12 +265,11 @@ bool willCollideWithSurroundObstacle(
       const auto obj_polygon = polygon_utils::convertObstacleToPolygon(path_point, shape);
       const double dist = bg::distance(traj_polygon, obj_polygon);
 
-      if (dist < dist_margin) {
+      if (dist < epsilon) {
         if (!start_predicted_path_idx) {
           start_predicted_path_idx = i;
-          std::cerr << "idx " << start_predicted_path_idx.get() << std::endl;
         } else {
-          const double overlap_time = static_cast<double>(i - start_predicted_path_idx.get()) *
+          const double overlap_time = (static_cast<double>(i) - start_predicted_path_idx.get()) *
                                       rclcpp::Duration(predicted_path.time_step).seconds();
           // std::cerr << overlap_time << std::endl;
           if (max_ego_obj_overlap_time < overlap_time) {
@@ -257,70 +286,22 @@ bool willCollideWithSurroundObstacle(
 }
 std::vector<Polygon2d> createOneStepPolygons(
   const autoware_auto_planning_msgs::msg::Trajectory & traj,
-  const vehicle_info_util::VehicleInfo & vehicle_info)
+  const vehicle_info_util::VehicleInfo & vehicle_info, const double expand_width)
 {
   std::vector<Polygon2d> polygons;
 
   for (size_t i = 0; i < traj.points.size(); ++i) {
     const auto polygon = [&]() {
       if (i == 0) {
-        return createOneStepPolygon(traj.points.at(i).pose, traj.points.at(i).pose, vehicle_info);
+        return createOneStepPolygon(
+          traj.points.at(i).pose, traj.points.at(i).pose, vehicle_info, expand_width);
       }
-      return createOneStepPolygon(traj.points.at(i - 1).pose, traj.points.at(i).pose, vehicle_info);
+      return createOneStepPolygon(
+        traj.points.at(i - 1).pose, traj.points.at(i).pose, vehicle_info, expand_width);
     }();
 
     polygons.push_back(polygon);
   }
   return polygons;
-}
-
-Polygon2d createOneStepPolygon(
-  const geometry_msgs::msg::Pose & base_step_pose, const geometry_msgs::msg::Pose & next_step_pose,
-  const vehicle_info_util::VehicleInfo & vehicle_info)
-{
-  Polygon2d polygon;
-
-  const double longitudinal_offset = vehicle_info.max_longitudinal_offset_m;
-  const double width = vehicle_info.vehicle_width_m / 2.0;
-  const double rear_overhang = vehicle_info.rear_overhang_m;
-
-  {  // base step
-    appendPointToPolygon(
-      polygon, tier4_autoware_utils::calcOffsetPose(base_step_pose, longitudinal_offset, width, 0.0)
-                 .position);
-    appendPointToPolygon(
-      polygon,
-      tier4_autoware_utils::calcOffsetPose(base_step_pose, longitudinal_offset, -width, 0.0)
-        .position);
-    appendPointToPolygon(
-      polygon,
-      tier4_autoware_utils::calcOffsetPose(base_step_pose, -rear_overhang, -width, 0.0).position);
-    appendPointToPolygon(
-      polygon,
-      tier4_autoware_utils::calcOffsetPose(base_step_pose, -rear_overhang, width, 0.0).position);
-  }
-
-  {  // next step
-    appendPointToPolygon(
-      polygon, tier4_autoware_utils::calcOffsetPose(next_step_pose, longitudinal_offset, width, 0.0)
-                 .position);
-    appendPointToPolygon(
-      polygon,
-      tier4_autoware_utils::calcOffsetPose(next_step_pose, longitudinal_offset, -width, 0.0)
-        .position);
-    appendPointToPolygon(
-      polygon,
-      tier4_autoware_utils::calcOffsetPose(next_step_pose, -rear_overhang, -width, 0.0).position);
-    appendPointToPolygon(
-      polygon,
-      tier4_autoware_utils::calcOffsetPose(next_step_pose, -rear_overhang, width, 0.0).position);
-  }
-
-  // polygon = isClockWise(polygon) ? polygon : inverseClockWise(polygon);
-
-  Polygon2d hull_polygon;
-  bg::convex_hull(polygon, hull_polygon);
-
-  return hull_polygon;
 }
 }  // namespace polygon_utils

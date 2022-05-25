@@ -140,8 +140,9 @@ OptimizationBasedPlanner::OptimizationBasedPlanner(
 }
 
 Trajectory OptimizationBasedPlanner::generateTrajectory(
-  const ObstacleVelocityPlannerData & planner_data, boost::optional<VelocityLimit> & vel_limit,
-  DebugData & debug_data)
+  const ObstacleVelocityPlannerData & planner_data,
+  [[maybe_unused]] boost::optional<VelocityLimit> & vel_limit,
+  [[maybe_unused]] DebugData & debug_data)
 {
   // Create Time Vector defined by resampling time interval
   const std::vector<double> time_vec = createTimeVector();
@@ -734,7 +735,7 @@ OptimizationBasedPlanner::TrajectoryData OptimizationBasedPlanner::resampleTraje
   return resampled_traj_data;
 }
 
-// TODO(murooka) what is the difference with applylienar interpolation
+// TODO(shimizu) what is the difference with applylienar interpolation
 Trajectory OptimizationBasedPlanner::resampleTrajectory(
   const std::vector<double> & base_index, const Trajectory & base_trajectory,
   const std::vector<double> & query_index, const bool use_spline_for_pose)

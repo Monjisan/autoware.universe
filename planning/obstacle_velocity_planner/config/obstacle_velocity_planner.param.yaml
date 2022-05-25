@@ -1,8 +1,7 @@
 /**:
   ros__parameters:
     common:
-      planning_method: "rule_base"
-      # planning_method: "optimization_base"
+      planning_algorithm: "rule_base" # currently supported algorithm is "rule_base"
 
       # parameters to calculate RSS distance
       max_accel:  1.0
@@ -13,6 +12,8 @@
       min_object_accel: -1.0
 
       min_strong_stop_accel: -3.0
+
+      lpf_gain_for_accel: 0.2 # [-]
 
       slow_down_obstacle_type:
         unknown: true
@@ -37,7 +38,7 @@
     obstacle_filtering:
       rough_detection_area_expand_width : 5.0
       detection_area_expand_width : 0.0
-      decimate_step_length : 2.0
+      decimate_trajectory_step_length : 2.0
 
       min_obstacle_crossing_velocity : 3.0
       crossing_obstacle_traj_angle_threshold : 0.698 # = 40 [deg]
@@ -45,7 +46,6 @@
       margin_for_collision_time : 8.0
       max_ego_obj_overlap_time : 1.0
       max_prediction_time_for_collision_check : 20.0
-
 
     rule_based_planner:
       kp: 0.6 # 5.0 # 10.0 # 5.0 # 10.0 # 0.3 # 0.003

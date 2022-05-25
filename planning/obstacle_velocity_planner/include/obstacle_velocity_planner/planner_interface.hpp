@@ -40,30 +40,30 @@ public:
     const vehicle_info_util::VehicleInfo & vehicle_info)
   : longitudinal_info_(longitudinal_info), vehicle_info_(vehicle_info)
   {
-    {  // slow down obstacle type
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.unknown")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::UNKNOWN);
+    {  // cruise obstacle type
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.unknown")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::UNKNOWN);
       }
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.car")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::CAR);
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.car")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::CAR);
       }
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.truck")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::TRUCK);
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.truck")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::TRUCK);
       }
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.bus")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::BUS);
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.bus")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::BUS);
       }
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.trailer")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::TRAILER);
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.trailer")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::TRAILER);
       }
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.motorcycle")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::MOTORCYCLE);
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.motorcycle")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::MOTORCYCLE);
       }
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.bicycle")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::BICYCLE);
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.bicycle")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::BICYCLE);
       }
-      if (node.declare_parameter<bool>("common.slow_down_obstacle_type.pedestrian")) {
-        slow_down_obstacle_types_.push_back(ObjectClassification::PEDESTRIAN);
+      if (node.declare_parameter<bool>("common.cruise_obstacle_type.pedestrian")) {
+        cruise_obstacle_types_.push_back(ObjectClassification::PEDESTRIAN);
       }
     }
 
@@ -143,9 +143,9 @@ public:
   // TODO(shimizu) remove this function
   void setSmoothedTrajectory(const Trajectory::SharedPtr traj) { smoothed_trajectory_ptr_ = traj; }
 
-  bool isSlowDownObstacle(const uint8_t label)
+  bool isCruiseObstacle(const uint8_t label)
   {
-    const auto & types = slow_down_obstacle_types_;
+    const auto & types = cruise_obstacle_types_;
     return std::find(types.begin(), types.end(), label) != types.end();
   }
 
@@ -180,7 +180,7 @@ protected:
   }
 
 private:
-  std::vector<int> slow_down_obstacle_types_;
+  std::vector<int> cruise_obstacle_types_;
   std::vector<int> stop_obstacle_types_;
 };
 

@@ -18,6 +18,7 @@
 #include "obstacle_velocity_planner/planner_interface.hpp"
 #include "obstacle_velocity_planner/rule_based_planner/debug_values.hpp"
 #include "obstacle_velocity_planner/rule_based_planner/pid_controller.hpp"
+#include "tier4_autoware_utils/system/stop_watch.hpp"
 
 #include "tier4_debug_msgs/msg/float32_multi_array_stamped.hpp"
 #include "tier4_planning_msgs/msg/stop_reason_array.hpp"
@@ -35,30 +36,19 @@ using tier4_planning_msgs::msg::StopSpeedExceeded;
 class RuleBasedPlanner : public PlannerInterface
 {
 public:
-  RuleBasedPlanner(
-    rclcpp::Node & node, const LongitudinalInfo & longitudinal_info,
-    const vehicle_info_util::VehicleInfo & vehicle_info);
-
-  Trajectory generateTrajectory(
-    const ObstacleVelocityPlannerData & planner_data, boost::optional<VelocityLimit> & vel_limit,
-    DebugData & debug_data) override;
-
-  void updateParam(const std::vector<rclcpp::Parameter> & parameters) override;
-
-private:
-  struct SlowDownObstacleInfo
+  struct CruiseObstacleInfo
   {
-    SlowDownObstacleInfo(
-      const TargetObstacle & obstacle_arg, const double dist_to_slow_down_arg,
-      const double normalized_dist_to_slow_down_arg)
+    CruiseObstacleInfo(
+      const TargetObstacle & obstacle_arg, const double dist_to_cruise_arg,
+      const double normalized_dist_to_cruise_arg)
     : obstacle(obstacle_arg),
-      dist_to_slow_down(dist_to_slow_down_arg),
-      normalized_dist_to_slow_down(normalized_dist_to_slow_down_arg)
+      dist_to_cruise(dist_to_cruise_arg),
+      normalized_dist_to_cruise(normalized_dist_to_cruise_arg)
     {
     }
     TargetObstacle obstacle;
-    double dist_to_slow_down;
-    double normalized_dist_to_slow_down;
+    double dist_to_cruise;
+    double normalized_dist_to_cruise;
   };
 
   struct StopObstacleInfo
@@ -71,34 +61,65 @@ private:
     double dist_to_stop;
   };
 
-  // ROS param
-  double vel_to_acc_weight_;
-  double min_slow_down_target_vel_;
-  double max_slow_down_obstacle_velocity_to_stop_;
-  double safe_distance_margin_;
-  double min_strong_stop_accel_;
+  RuleBasedPlanner(
+    rclcpp::Node & node, const LongitudinalInfo & longitudinal_info,
+    const vehicle_info_util::VehicleInfo & vehicle_info);
 
-  // pid controller
-  std::unique_ptr<PIDController> pid_controller_;
-  double output_ratio_during_accel_;
+  Trajectory generateTrajectory(
+    const ObstacleVelocityPlannerData & planner_data, boost::optional<VelocityLimit> & vel_limit,
+    DebugData & debug_data) override;
 
-  // Publisher
-  rclcpp::Publisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr stop_reasons_pub_;
-  rclcpp::Publisher<StopSpeedExceeded>::SharedPtr stop_speed_exceeded_pub_;
-  rclcpp::Publisher<Float32MultiArrayStamped>::SharedPtr debug_values_pub_;
+  void updateParam(const std::vector<rclcpp::Parameter> & parameters) override;
 
-  boost::optional<double> prev_target_vel_;
+private:
+  void calcObstaclesToCruiseAndStop(
+    const ObstacleVelocityPlannerData & planner_data,
+    boost::optional<StopObstacleInfo> & stop_obstacle_info,
+    boost::optional<CruiseObstacleInfo> & cruise_obstacle_info);
+  double calcDistanceToObstacle(
+    const ObstacleVelocityPlannerData & planner_data, const TargetObstacle & obstacle);
+  bool isStopRequired(const TargetObstacle & obsatcle);
 
+  void planCruise(
+    const ObstacleVelocityPlannerData & planner_data, boost::optional<VelocityLimit> & vel_limit,
+    const boost::optional<CruiseObstacleInfo> & cruise_obstacle_info, DebugData & debug_data);
+  VelocityLimit doCruise(
+    const ObstacleVelocityPlannerData & planner_data,
+    const CruiseObstacleInfo & cruise_obstacle_info,
+    std::vector<TargetObstacle> & debug_obstacles_to_cruise,
+    visualization_msgs::msg::MarkerArray & debug_walls_marker);
+
+  Trajectory planStop(
+    const ObstacleVelocityPlannerData & planner_data,
+    const boost::optional<StopObstacleInfo> & stop_obstacle_info, DebugData & debug_data);
   boost::optional<size_t> doStop(
     const ObstacleVelocityPlannerData & planner_data, const StopObstacleInfo & stop_obstacle_info,
     std::vector<TargetObstacle> & debug_obstacles_to_stop,
     visualization_msgs::msg::MarkerArray & debug_walls_marker) const;
 
-  VelocityLimit doSlowDown(
-    const ObstacleVelocityPlannerData & planner_data,
-    const SlowDownObstacleInfo & slow_down_obstacle_info,
-    std::vector<TargetObstacle> & debug_obstacles_to_slow_down,
-    visualization_msgs::msg::MarkerArray & debug_walls_marker);
+  void publishDebugValues(const ObstacleVelocityPlannerData & planner_data) const;
+
+  // ROS parameters
+  double vel_to_acc_weight_;
+  double min_cruise_target_vel_;
+  double max_cruise_obstacle_velocity_to_stop_;
+  // bool use_predicted_obstacle_pose_;
+
+  // pid controller
+  std::unique_ptr<PIDController> pid_controller_;
+  double output_ratio_during_accel_;
+
+  // stop watch
+  tier4_autoware_utils::StopWatch<
+    std::chrono::milliseconds, std::chrono::microseconds, std::chrono::steady_clock>
+    stop_watch_;
+
+  // publisher
+  rclcpp::Publisher<tier4_planning_msgs::msg::StopReasonArray>::SharedPtr stop_reasons_pub_;
+  rclcpp::Publisher<StopSpeedExceeded>::SharedPtr stop_speed_exceeded_pub_;
+  rclcpp::Publisher<Float32MultiArrayStamped>::SharedPtr debug_values_pub_;
+
+  boost::optional<double> prev_target_vel_;
 
   DebugValues debug_values_;
 };
