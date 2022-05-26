@@ -1372,6 +1372,7 @@ void MPTOptimizer::calcBounds(
       enable_avoidance, convertRefPointsToPose(ref_point), maps, debug_data_ptr);
     sequential_bounds_candidates.push_back(bounds_candidates);
   }
+  debug_data_ptr->sequential_bounds_candidates = sequential_bounds_candidates;
 
   // search continuous and widest bounds only for front point
   for (size_t i = 0; i < sequential_bounds_candidates.size(); ++i) {
@@ -1434,8 +1435,8 @@ void MPTOptimizer::calcBounds(
         const auto nearest_bounds = std::min_element(
           filtered_bounds_candidates.begin(), filtered_bounds_candidates.end(),
           [](const auto & a, const auto & b) {
-            return std::abs(a.lower_bound + a.upper_bound) <
-                   std::abs(b.lower_bound + b.upper_bound);
+            return std::min(std::abs(a.lower_bound), std::abs(a.upper_bound)) <
+                   std::min(std::abs(b.lower_bound), std::abs(b.upper_bound));
           });
         if (
           filtered_bounds_candidates.begin() <= nearest_bounds &&
@@ -1553,7 +1554,7 @@ BoundsCandidates MPTOptimizer::getBoundsCandidates(
 {
   BoundsCandidates bounds_candidate;
 
-  constexpr double max_search_lane_width = 3.0;
+  constexpr double max_search_lane_width = 5.0;
   const auto search_widths = mpt_param_.bounds_search_widths;
 
   // search right to left
