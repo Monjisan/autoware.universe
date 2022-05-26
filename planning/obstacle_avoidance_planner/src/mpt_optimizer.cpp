@@ -1408,6 +1408,11 @@ void MPTOptimizer::calcBounds(
           RCLCPP_INFO_EXPRESSION(
             rclcpp::get_logger("mpt_optimizer"), is_showing_debug_info_,
             "non-overlapped length bounds is ignored.");
+          RCLCPP_INFO_EXPRESSION(
+                                 rclcpp::get_logger("mpt_optimizer"), is_showing_debug_info_,
+                                 "In detail, prev: lower=%f, upper=%f, candidate: lower=%f, upper=%f",
+                                 prev_continuous_bounds.lower_bound, prev_continuous_bounds.upper_bound,
+                                 bounds_candidate.lower_bound, bounds_candidate.upper_bound);
           continue;
         }
 
@@ -1436,13 +1441,18 @@ void MPTOptimizer::calcBounds(
           filtered_bounds_candidates.begin() <= nearest_bounds &&
           nearest_bounds < filtered_bounds_candidates.end()) {
           ref_points.at(i).bounds = *nearest_bounds;
+
+          RCLCPP_INFO_EXPRESSION(
+            rclcpp::get_logger("mpt_optimizer"), is_showing_debug_info_,
+            "select %d from %d/%d.", i, filtered_bounds_candidates.size(), bounds_candidates.size());
+
           continue;
         }
       }
 
       // invalid bounds
       RCLCPP_WARN_EXPRESSION(
-        rclcpp::get_logger("getBounds: front"), is_showing_debug_info_, "invalid bounds");
+        rclcpp::get_logger("getBounds: not front"), is_showing_debug_info_, "invalid bounds");
       const auto invalid_bounds =
         Bounds{-5.0, 5.0, CollisionType::OUT_OF_ROAD, CollisionType::OUT_OF_ROAD};
       ref_points.at(i).bounds = invalid_bounds;
@@ -1543,7 +1553,7 @@ BoundsCandidates MPTOptimizer::getBoundsCandidates(
 {
   BoundsCandidates bounds_candidate;
 
-  constexpr double max_search_lane_width = 5.0;
+  constexpr double max_search_lane_width = 3.0;
   const auto search_widths = mpt_param_.bounds_search_widths;
 
   // search right to left
