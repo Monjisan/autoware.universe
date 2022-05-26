@@ -1442,11 +1442,6 @@ void MPTOptimizer::calcBounds(
           filtered_bounds_candidates.begin() <= nearest_bounds &&
           nearest_bounds < filtered_bounds_candidates.end()) {
           ref_points.at(i).bounds = *nearest_bounds;
-
-          RCLCPP_INFO_EXPRESSION(
-            rclcpp::get_logger("mpt_optimizer"), is_showing_debug_info_,
-            "select %d from %d/%d.", i, filtered_bounds_candidates.size(), bounds_candidates.size());
-
           continue;
         }
       }
