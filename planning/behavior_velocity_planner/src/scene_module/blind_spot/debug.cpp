@@ -227,7 +227,7 @@ visualization_msgs::msg::MarkerArray BlindSpotModule::createDebugMarkerArray()
     createPathMarkerArray(debug_data_.spline_path, "spline", lane_id_, 0.5, 0.5, 0.5), current_time,
     &debug_marker_array);
 
-  if (state == BlindSpotModule::State::STOP) {
+  if (!isActivated()) {
     appendMarkerArray(
       createVirtualWallMarkerArray(debug_data_.virtual_wall_pose, lane_id_), current_time,
       &debug_marker_array);
