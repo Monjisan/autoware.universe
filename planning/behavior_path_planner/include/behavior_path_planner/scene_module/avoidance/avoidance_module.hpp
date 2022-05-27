@@ -26,7 +26,6 @@
 #include <autoware_auto_planning_msgs/msg/path.hpp>
 #include <autoware_auto_planning_msgs/msg/path_with_lane_id.hpp>
 #include <autoware_auto_vehicle_msgs/msg/turn_indicators_command.hpp>
-#include <rtc_interface/rtc_interface.hpp>
 
 #include <memory>
 #include <string>
@@ -99,8 +98,8 @@ private:
 
   void removeRTCStatus() override
   {
-      rtc_interface_left_.clearCooperateStatus();
-      rtc_interface_right_.clearCooperateStatus();
+    rtc_interface_left_.clearCooperateStatus();
+    rtc_interface_right_.clearCooperateStatus();
   }
 
   // data used in previous planning
