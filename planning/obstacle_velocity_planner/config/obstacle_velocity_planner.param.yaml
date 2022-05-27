@@ -1,21 +1,33 @@
 /**:
   ros__parameters:
     common:
-      planning_algorithm: "rule_base" # currently supported algorithm is "rule_base"
+      planning_algorithm: "pid_base" # currently supported algorithm is "pid_base"
 
-      # parameters to calculate RSS distance
-      max_accel:  1.0
-      min_accel: -1.0
-      max_jerk:  1.0
-      min_jerk: -0.5
-      idling_time: 4.0
-      min_object_accel: -1.0
+      is_showing_debug_info: true
 
-      min_strong_stop_accel: -3.0
+      # longitudinal info
+      idling_time: 4.0 # idling time to detect front vehicle starting deceleration [s]
+      min_object_accel: -1.0 # front obstacle's acceleration [m/ss]
+      safe_distance_margin : 6.0 # This is also used as a stop margin [m]
+      min_strong_accel: -3.0 # obstacle stop requiring deceleration less than this value will be ignored [m/ss]
 
-      lpf_gain_for_accel: 0.2 # [-]
+      lpf_gain_for_accel: 0.2 # gain of low pass filter for ego acceleration [-]
 
-      slow_down_obstacle_type:
+      nearest_dist_deviation_threshold: 3.0 # [m] for finding nearest index
+      nearest_yaw_deviation_threshold: 1.57 # [rad] for finding nearest index
+      min_behavior_stop_margin: 3.0 # [m]
+
+      cruise_obstacle_type:
+        unknown: true
+        car: true
+        truck: true
+        bus: true
+        trailer: true
+        motorcycle: true
+        bicycle: false
+        pedestrian: false
+
+      stop_obstacle_type:
         unknown: true
         car: true
         truck: true
@@ -25,49 +37,35 @@
         bicycle: true
         pedestrian: true
 
-      stop_obstacle_type:
-        unknown: true
-        car: false
-        truck: false
-        bus: false
-        trailer: false
-        motorcycle: true
-        bicycle: true
-        pedestrian: true
-
     obstacle_filtering:
-      rough_detection_area_expand_width : 5.0
-      detection_area_expand_width : 0.0
-      decimate_trajectory_step_length : 2.0
+      rough_detection_area_expand_width : 5.0 # rough lateral margin for rough detection area expansion [m]
+      detection_area_expand_width : 0.0 # lateral margin for precise detection area expansion
+      decimate_trajectory_step_length : 2.0 # longitudinal step length to calculate trajectory polygon for collision checking
 
-      min_obstacle_crossing_velocity : 3.0
-      crossing_obstacle_traj_angle_threshold : 0.698 # = 40 [deg]
+      # if crossing vehicle is decided as target obstacles or not
+      crossing_obstacle_velocity_threshold : 3.0 # velocity threshold for crossing obstacle for cruise or stop [m/s]
+      crossing_obstacle_traj_angle_threshold : 0.698 # [rad] = 40 [deg], yaw threshold of crossing obstacle against the nearest trajectory point for cruise or stop
+      collision_time_margin : 8.0 # time threshold of collision between obstacle adn ego for cruise or stop [s]
 
-      margin_for_collision_time : 8.0
-      max_ego_obj_overlap_time : 1.0
-      max_prediction_time_for_collision_check : 20.0
+      ego_obstacle_overlap_time_threshold : 1.0 #  time threshold to decide cut-in obstacle for cruise or stop [s]
+      max_prediction_time_for_collision_check : 20.0 # prediction time to check collision between obstacle and ego
 
-    rule_based_planner:
-      kp: 0.6 # 5.0 # 10.0 # 5.0 # 10.0 # 0.3 # 0.003
+    pid_based_planner:
+      # use_predicted_obstacle_pose: false
+
+      # PID gains to keep safe distance with the front vehicle
+      kp: 0.6
       ki: 0.0
-      kd: 0.5 # 5.0 # 3.0 # 0.0 # 0.1
-      output_ratio_during_accel: 2.5 # 0.2 # 0.1
+      kd: 0.5
 
-      #kp: 10.0
-      #ki: 0.0
-      #kd: 3.0
+      min_accel_during_cruise: -2.0 # minimum acceleration during cruise to slow down [m/ss]
 
-      #kp: 10.0
-      #ki: 0.0
-      #kd: 10.0
-      #output_ratio_during_accel: 0.03
+      output_ratio_during_accel: 2.5 # target acceleration is multiplied with this value while ego accelerates to catch up the front vehicle [-]
+      vel_to_acc_weight: 8.0 # target acceleration is calculated by (target_velocity - current_velocity) * vel_to_acc_weight [-]
 
-      vel_to_acc_weight: 8.0 # 1.0 # 0.3 # 30.0 # target acceleration is calculated by (target_velocity - current_velocity) * vel_to_acc_weight
+      min_cruise_target_vel: 0.0 # minimum target velocity during slow down [m/s]
 
-      min_slow_down_target_vel: 3.0 # minimum target velocity during slow down
-
-      max_slow_down_obstacle_velocity_to_stop : 3.0
-      safe_distance_margin : 7.0
+      obstacle_velocity_threshold_from_cruise_to_stop : 3.0 # stop planning is executed to the obstacle whose velocity is less than this value [m/s]
 
     optimization_based_planner:
       limit_min_accel: -3.0
@@ -95,6 +93,7 @@
       # Switch for each functions
       enable_adaptive_cruise: true
       use_object_acceleration: false
+      use_hd_map: true
 
       # For initial Motion
       replan_vel_deviation: 5.0         # velocity deviation to replan initial velocity [m/s]

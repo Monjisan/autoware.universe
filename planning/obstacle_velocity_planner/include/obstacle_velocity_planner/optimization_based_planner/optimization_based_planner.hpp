@@ -1,4 +1,4 @@
-// Copyright 2022 Tier IV, Inc.
+// Copyright 2022 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -122,13 +122,6 @@ private:
     const TargetObstacle & object, const rclcpp::Time & obj_base_time,
     const rclcpp::Time & current_time, const std::vector<double> & resolutions,
     const double horizon);
-
-  boost::optional<geometry_msgs::msg::Pose> calcForwardPose(
-    const Trajectory & traj, const geometry_msgs::msg::Point & point, const double target_length);
-
-  boost::optional<geometry_msgs::msg::Pose> calcForwardPose(
-    const TrajectoryData & ego_traj_data, const geometry_msgs::msg::Point & point,
-    const double target_length);
 
   boost::optional<double> getDistanceToCollisionPoint(
     const TrajectoryData & ego_traj_data, const ObjectData & obj_data,

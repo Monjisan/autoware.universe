@@ -1,4 +1,4 @@
-// Copyright 2022 Tier IV, Inc.
+// Copyright 2022 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,6 +53,58 @@ inline tf2::Vector3 getTransVector3(
   double dy = to.position.y - from.position.y;
   double dz = to.position.z - from.position.z;
   return tf2::Vector3(dx, dy, dz);
+}
+
+// TODO(shimizu) consider dist/yaw threshold for nearest index
+boost::optional<geometry_msgs::msg::Pose> calcForwardPose(
+  const autoware_auto_planning_msgs::msg::Trajectory & traj,
+  const geometry_msgs::msg::Point & point, const double target_length)
+{
+  if (traj.points.empty()) {
+    return {};
+  }
+
+  const size_t nearest_idx = tier4_autoware_utils::findNearestIndex(traj.points, point);
+
+  size_t search_idx = nearest_idx;
+  double length_to_search_idx = 0.0;
+  for (; search_idx < traj.points.size(); ++search_idx) {
+    length_to_search_idx =
+      tier4_autoware_utils::calcSignedArcLength(traj.points, nearest_idx, search_idx);
+    if (length_to_search_idx > target_length) {
+      break;
+    } else if (search_idx == traj.points.size() - 1) {
+      return {};
+    }
+  }
+
+  if (search_idx == 0 && !traj.points.empty()) {
+    return traj.points.at(0).pose;
+  }
+
+  const auto & pre_pose = traj.points.at(search_idx - 1).pose;
+  const auto & next_pose = traj.points.at(search_idx).pose;
+
+  geometry_msgs::msg::Pose target_pose;
+
+  // lerp position
+  const double seg_length =
+    tier4_autoware_utils::calcDistance2d(pre_pose.position, next_pose.position);
+  const double lerp_ratio = (length_to_search_idx - target_length) / seg_length;
+  target_pose.position.x =
+    pre_pose.position.x + (next_pose.position.x - pre_pose.position.x) * lerp_ratio;
+  target_pose.position.y =
+    pre_pose.position.y + (next_pose.position.y - pre_pose.position.y) * lerp_ratio;
+  target_pose.position.z =
+    pre_pose.position.z + (next_pose.position.z - pre_pose.position.z) * lerp_ratio;
+
+  // lerp orientation
+  const double pre_yaw = tf2::getYaw(pre_pose.orientation);
+  const double next_yaw = tf2::getYaw(next_pose.orientation);
+  target_pose.orientation =
+    tier4_autoware_utils::createQuaternionFromYaw(pre_yaw + (next_yaw - pre_yaw) * lerp_ratio);
+
+  return target_pose;
 }
 }  // namespace
 
@@ -735,7 +787,7 @@ OptimizationBasedPlanner::TrajectoryData OptimizationBasedPlanner::resampleTraje
   return resampled_traj_data;
 }
 
-// TODO(shimizu) what is the difference with applylienar interpolation
+// TODO(shimizu) what is the difference with apply linear interpolation
 Trajectory OptimizationBasedPlanner::resampleTrajectory(
   const std::vector<double> & base_index, const Trajectory & base_trajectory,
   const std::vector<double> & query_index, const bool use_spline_for_pose)
@@ -866,7 +918,7 @@ boost::optional<SBoundaries> OptimizationBasedPlanner::getSBoundaries(
     const auto current_object_pose = obstacle_velocity_utils::getCurrentObjectPoseFromPredictedPath(
       *predicted_path, obj.time_stamp, current_time);
 
-    const auto marker_pose = obstacle_velocity_utils::calcForwardPose(
+    const auto marker_pose = calcForwardPose(
       ego_traj_data.traj, planner_data.current_pose.position, min_slow_down_point_length);
 
     if (marker_pose) {

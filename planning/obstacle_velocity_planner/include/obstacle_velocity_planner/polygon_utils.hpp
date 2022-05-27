@@ -1,4 +1,4 @@
-// Copyright 2022 Tier IV, Inc.
+// Copyright 2022 TIER IV, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,7 +51,8 @@ bool willCollideWithSurroundObstacle(
   const std::vector<Polygon2d> & traj_polygons,
   const autoware_auto_perception_msgs::msg::PredictedPath & predicted_path,
   const autoware_auto_perception_msgs::msg::Shape & shape, const double max_dist,
-  const double max_ego_obj_overlap_time, const double max_prediction_time_for_collision_check);
+  const double ego_obstacle_overlap_time_threshold,
+  const double max_prediction_time_for_collision_check);
 
 std::vector<Polygon2d> createOneStepPolygons(
   const autoware_auto_planning_msgs::msg::Trajectory & traj,
