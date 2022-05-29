@@ -26,9 +26,11 @@
 #include <tier4_control_msgs/msg/external_command_selector_mode.hpp>
 #include <tier4_control_msgs/msg/gate_mode.hpp>
 #include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
+#include <autoware_auto_vehicle_msgs/msg/gear_command.hpp>
 
 namespace rviz_plugins
 {
+using autoware_auto_vehicle_msgs::msg::GearCommand;
 using autoware_auto_control_msgs::msg::AckermannControlCommand;
 class ManualController : public rviz_common::Panel
 {
@@ -57,6 +59,7 @@ protected:
     sub_selector_mode_;
   rclcpp::Publisher<tier4_control_msgs::msg::GateMode>::SharedPtr pub_gate_mode_;
   rclcpp::Publisher<AckermannControlCommand>::SharedPtr pub_control_command_;
+  rclcpp::Publisher<GearCommand>::SharedPtr pub_gear_cmd_;
 
   double criuse_velocity_{0.0};
   double steering_angle_{0.0};
@@ -66,10 +69,8 @@ protected:
   QLabel * autoware_state_label_ptr_;
   QLabel * gear_label_ptr_;
   QLabel * engage_status_label_ptr_;
-  QPushButton * engage_button_ptr_;
-  QPushButton * cruise_velocity_button_ptr_;
   QPushButton * gate_mode_button_ptr_;
-  QPushButton * path_change_approval_button_ptr_;
+  QPushButton * cruise_velocity_button_ptr_;
   QSpinBox * cruise_velocity_input_;
 
   bool current_engage_;

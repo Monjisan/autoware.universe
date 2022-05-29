@@ -78,25 +78,19 @@ ManualController::ManualController(QWidget * parent) : rviz_common::Panel(parent
   engage_status_layout->addWidget(engage_prefix_label_ptr);
   engage_status_layout->addWidget(engage_status_label_ptr_);
 
-  // Autoware Engage Button
-  engage_button_ptr_ = new QPushButton("Engage");
-  connect(engage_button_ptr_, SIGNAL(clicked()), SLOT(onClickAutowareEngage()));
-
   // Gate Mode Button
   gate_mode_button_ptr_ = new QPushButton("Gate Mode");
   connect(gate_mode_button_ptr_, SIGNAL(clicked()), SLOT(onClickGateMode()));
 
-  // Path Change Approval Button
-  path_change_approval_button_ptr_ = new QPushButton("Path Change Approval");
-  connect(path_change_approval_button_ptr_, SIGNAL(clicked()), SLOT(onClickPathChangeApproval()));
-
   // Velocity Limit
-  cruise_velocity_button_ptr_ = new QPushButton("Set Cruise Velocity");
-  cruise_velocity_input_ = new QSpinBox();
-  cruise_velocity_input_->setRange(-100.0, 100.0);
-  cruise_velocity_input_->setValue(0.0);
-  cruise_velocity_input_->setSingleStep(5.0);
-  connect(cruise_velocity_button_ptr_, SIGNAL(clicked()), this, SLOT(onClickCruiseVelocity()));
+  {
+    cruise_velocity_button_ptr_ = new QPushButton("Set Cruise Velocity");
+    cruise_velocity_input_ = new QSpinBox();
+    cruise_velocity_input_->setRange(-100.0, 100.0);
+    cruise_velocity_input_->setValue(0.0);
+    cruise_velocity_input_->setSingleStep(5.0);
+    connect(cruise_velocity_button_ptr_, SIGNAL(clicked()), this, SLOT(onClickCruiseVelocity()));
+  }
 
   // Layout
   auto * v_layout = new QVBoxLayout;
@@ -107,10 +101,8 @@ ManualController::ManualController(QWidget * parent) : rviz_common::Panel(parent
   v_layout->addLayout(state_layout);
   v_layout->addLayout(gear_layout);
   v_layout->addLayout(engage_status_layout);
-  v_layout->addWidget(engage_button_ptr_);
   v_layout->addLayout(engage_status_layout);
   gate_mode_path_change_approval_layout->addWidget(gate_mode_button_ptr_);
-  gate_mode_path_change_approval_layout->addWidget(path_change_approval_button_ptr_);
   v_layout->addLayout(gate_mode_path_change_approval_layout);
   velocity_limit_layout->addWidget(cruise_velocity_button_ptr_);
   velocity_limit_layout->addWidget(cruise_velocity_input_);
@@ -126,7 +118,27 @@ ManualController::ManualController(QWidget * parent) : rviz_common::Panel(parent
 void ManualController::update()
 {
   AckermannControlCommand ackermann;
-  std::cout<<"update"<<std::endl;
+  {
+    // ackermann.stamp;
+    // ackermann.lateral.stamp;
+    ackermann.lateral.steering_tire_angle=steering_angle_;
+    // ackermann.longitudinal.stamp;
+    ackermann.longitudinal.speed= criuse_velocity_;
+    ackermann.longitudinal.acceleration= 1.0;
+  }
+  GearCommand gear_cmd;
+  {
+    const double eps =0.001;
+    if(ackermann.longitudinal.speed>eps){
+      gear_cmd.command = GearCommand::DRIVE;
+    } else if(ackermann.longitudinal.speed < -eps) {
+      gear_cmd.command=GearCommand::REVERSE;
+    } else{
+      gear_cmd.command=GearCommand::PARK;
+    }
+  }
+  pub_control_command_->publish(ackermann);
+  pub_gear_cmd_->publish(gear_cmd);
   // akermann.lateral
 }
 
@@ -152,7 +164,9 @@ void ManualController::onInitialize()
     "/control/gate_mode_cmd", rclcpp::QoS(1));
 
   pub_control_command_ = raw_node_->create_publisher<AckermannControlCommand>(
-    "/control/command/control_cmd", rclcpp::QoS(1));
+    "/external/selected/control_cmd", rclcpp::QoS(1));
+  pub_gear_cmd_ = raw_node_->create_publisher<GearCommand>("/external/selected/gear_cmd", 1);
+ 
 }
 
 void ManualController::onGateMode(const tier4_control_msgs::msg::GateMode::ConstSharedPtr msg)
