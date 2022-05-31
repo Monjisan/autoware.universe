@@ -244,6 +244,33 @@ ObstacleVelocityPlannerNode::ObstacleVelocityPlannerNode(const rclcpp::NodeOptio
       declare_parameter<double>("obstacle_filtering.max_prediction_time_for_collision_check");
     obstacle_filtering_param_.crossing_obstacle_traj_angle_threshold =
       declare_parameter<double>("obstacle_filtering.crossing_obstacle_traj_angle_threshold");
+
+    {
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.unknown")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::UNKNOWN);
+      }
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.car")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::CAR);
+      }
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.truck")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::TRUCK);
+      }
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.bus")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::BUS);
+      }
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.trailer")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::TRAILER);
+      }
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.motorcycle")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::MOTORCYCLE);
+      }
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.bicycle")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::BICYCLE);
+      }
+      if (declare_parameter<bool>("obstacle_filtering.ignored_outside_obstacle_type.pedestrian")) {
+        obstacle_filtering_param_.ignored_outside_obstacle_types.push_back(ObjectClassification::PEDESTRIAN);
+      }
+    }
   }
 
   {  // planning algorithm
@@ -528,15 +555,17 @@ std::vector<TargetObstacle> ObstacleVelocityPlannerNode::filterObstacles(
         }
       }
     } else {  // obstacles outside the trajectory
-      const double max_dist =
-        3.0;  // std::max(vehicle_info_.max_longitudinal_offset_m, vehicle_info_.rear_overhang) +
-      // std::max(shape.dimensions.x, shape.dimensions.y) / 2.0;
+      const auto & types = obstacle_filtering_param_.ignored_outside_obstacle_types;
+      if (std::find(types.begin(), types.end(), predicted_object.classification.front().label) != types.end()) {
+        continue;
+      }
+
       const auto predicted_path_with_highest_confidence =
         getHighestConfidencePredictedPath(predicted_object);
 
       const bool will_collide = polygon_utils::willCollideWithSurroundObstacle(
         decimated_traj, decimated_traj_polygons, predicted_path_with_highest_confidence,
-        predicted_object.shape, max_dist,
+        predicted_object.shape, obstacle_filtering_param_.rough_detection_area_expand_width,
         obstacle_filtering_param_.ego_obstacle_overlap_time_threshold,
         obstacle_filtering_param_.max_prediction_time_for_collision_check);
 

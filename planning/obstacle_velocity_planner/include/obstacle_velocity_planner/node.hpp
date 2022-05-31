@@ -154,6 +154,7 @@ private:
     double ego_obstacle_overlap_time_threshold;
     double max_prediction_time_for_collision_check;
     double crossing_obstacle_traj_angle_threshold;
+    std::vector<int> ignored_outside_obstacle_types;
   };
   ObstacleFilteringParam obstacle_filtering_param_;
 
