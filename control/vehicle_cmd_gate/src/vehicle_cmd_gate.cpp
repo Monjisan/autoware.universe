@@ -199,6 +199,19 @@ bool VehicleCmdGate::isHeartbeatTimeout(
   return time_from_heartbeat.seconds() > timeout;
 }
 
+bool VehicleCmdGate::isDataReady()
+{
+  // emergency state must be received before running
+  if (use_emergency_handling_) {
+    if (!emergency_state_heartbeat_received_time_) {
+      RCLCPP_WARN(get_logger(), "emergency_state_heartbeat_received_time_ is false");
+      return false;
+    }
+  }
+
+  return true;
+}
+
 // for auto
 void VehicleCmdGate::onAutoCtrlCmd(AckermannControlCommand::ConstSharedPtr msg)
 {
@@ -267,6 +280,11 @@ void VehicleCmdGate::onEmergencyShiftCmd(GearCommand::ConstSharedPtr msg)
 void VehicleCmdGate::onTimer()
 {
   updater_.force_update();
+
+  if (!isDataReady()) {
+    RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 5000, "waiting topics...");
+    return;
+  }
 
   // Check system emergency heartbeat
   if (use_emergency_handling_) {
@@ -364,6 +382,11 @@ void VehicleCmdGate::publishControlCommands(const Commands & commands)
 
   // Check external emergency stop
   if (is_external_emergency_stop_) {
+    return;
+  }
+
+  // Check initialization is done
+  if (!isDataReady()) {
     return;
   }
 
@@ -518,6 +541,9 @@ void VehicleCmdGate::onEmergencyState(EmergencyState::ConstSharedPtr msg)
   is_system_emergency_ = (msg->state == EmergencyState::MRM_OPERATING) ||
                          (msg->state == EmergencyState::MRM_SUCCEEDED) ||
                          (msg->state == EmergencyState::MRM_FAILED);
+  if (is_system_emergency_) {
+    RCLCPP_ERROR(get_logger(), "is_system_emergency_ is true!!!");
+  }
   emergency_state_heartbeat_received_time_ = std::make_shared<rclcpp::Time>(this->now());
 }
 
