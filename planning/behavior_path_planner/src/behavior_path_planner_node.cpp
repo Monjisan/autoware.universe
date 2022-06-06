@@ -100,6 +100,10 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
 
   // Debug
   debug_marker_publisher_ = create_publisher<MarkerArray>("~/debug/markers", 1);
+  debug_callback_publisher_ =
+    create_publisher<Float32Stamped>("/vehicle/debug/behavior_path/callback", 1);
+  debug_timer_publisher_ =
+    create_publisher<Float32MultiArrayStamped>("/vehicle/debug/behavior_path/timer", 1);
 
   // behavior tree manager
   {
@@ -480,6 +484,8 @@ void BehaviorPathPlannerNode::waitForData()
 
 void BehaviorPathPlannerNode::run()
 {
+  const auto start_time = get_clock()->now();
+
   RCLCPP_DEBUG(get_logger(), "----- BehaviorPathPlannerNode start -----");
   mutex_bt_.lock();  // for bt_manager_
   mutex_pd_.lock();  // for planner_data_
@@ -492,19 +498,24 @@ void BehaviorPathPlannerNode::run()
   mutex_pd_.unlock();
 
   // run behavior planner
+  const auto middle_time1 = get_clock()->now();
   const auto output = bt_manager_->run(planner_data);
+  const auto middle_time2 = get_clock()->now();
 
   // path handling
   const auto path = getPath(output, planner_data);
   const auto path_candidate = getPathCandidate(output, planner_data);
+  const auto middle_time3 = get_clock()->now();
 
   // update planner data
   mutex_pd_.lock();  // for planner_data_
   planner_data_->prev_output_path = path;
   mutex_pd_.unlock();
+  const auto middle_time4 = get_clock()->now();
 
   auto clipped_path = modifyPathForSmoothGoalConnection(*path);
   clipPathLength(clipped_path);
+  const auto middle_time5 = get_clock()->now();
 
   if (!clipped_path.points.empty()) {
     path_publisher_->publish(clipped_path);
@@ -534,11 +545,30 @@ void BehaviorPathPlannerNode::run()
     turn_signal_publisher_->publish(turn_signal);
     hazard_signal_publisher_->publish(hazard_signal);
   }
+  const auto middle_time6 = get_clock()->now();
 
   // for remote operation
   publishModuleStatus(bt_manager_->getModulesStatus(), planner_data);
 
   publishDebugMarker(bt_manager_->getDebugMarkers());
+
+  /* debug */
+  const int debug_data_size = 8;
+  const auto end_time = get_clock()->now();
+  Float32MultiArrayStamped debug_msg;
+  debug_msg.stamp = end_time;
+  debug_msg.data.reserve(debug_data_size);
+  debug_msg.data.resize(debug_data_size);
+  debug_msg.data.at(0) = (end_time - start_time).seconds();
+  debug_msg.data.at(1) = (middle_time1 - start_time).seconds();
+  debug_msg.data.at(2) = (middle_time2 - middle_time1).seconds();
+  debug_msg.data.at(3) = (middle_time3 - middle_time2).seconds();
+  debug_msg.data.at(4) = (middle_time4 - middle_time3).seconds();
+  debug_msg.data.at(5) = (middle_time5 - middle_time4).seconds();
+  debug_msg.data.at(6) = (middle_time6 - middle_time5).seconds();
+  debug_msg.data.at(7) = (end_time - middle_time6).seconds();
+
+  debug_timer_publisher_->publish(debug_msg);
 
   mutex_bt_.unlock();
   RCLCPP_DEBUG(get_logger(), "----- behavior path planner end -----\n\n");
@@ -670,6 +700,13 @@ void BehaviorPathPlannerNode::onExternalApproval(const ApprovalMsg::ConstSharedP
   planner_data_->approval.is_approved.data = msg->approval;
   // TODO(wep21): Replace msg stamp after {stamp: now} is implemented in ros2 topic pub
   planner_data_->approval.is_approved.stamp = this->now();
+
+  static int approval_count_;
+  Float32Stamped debug_msg;
+  debug_msg.stamp = this->now();
+  debug_msg.data = approval_count_;
+  debug_callback_publisher_->publish(debug_msg);
+  approval_count_++;
 }
 void BehaviorPathPlannerNode::onForceApproval(const PathChangeModule::ConstSharedPtr msg)
 {
