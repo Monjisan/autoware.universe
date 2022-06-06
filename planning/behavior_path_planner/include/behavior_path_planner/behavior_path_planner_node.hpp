@@ -105,6 +105,9 @@ private:
   std::mutex mutex_pd_;  // mutex for planner_data_
   std::mutex mutex_bt_;  // mutex for bt_manager_
 
+  rclcpp::Time end_time;
+  bool enable_end_time = false;
+
   // setup
   void waitForData();
 

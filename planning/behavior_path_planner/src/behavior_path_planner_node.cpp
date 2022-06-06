@@ -486,6 +486,8 @@ void BehaviorPathPlannerNode::run()
 {
   const auto start_time = get_clock()->now();
 
+  const auto end_to_start_time = enable_end_time ? (start_time - end_time).seconds() : 0.0;
+
   RCLCPP_DEBUG(get_logger(), "----- BehaviorPathPlannerNode start -----");
   mutex_bt_.lock();  // for bt_manager_
   mutex_pd_.lock();  // for planner_data_
@@ -553,8 +555,9 @@ void BehaviorPathPlannerNode::run()
   publishDebugMarker(bt_manager_->getDebugMarkers());
 
   /* debug */
-  const int debug_data_size = 8;
-  const auto end_time = get_clock()->now();
+  const int debug_data_size = 9;
+  end_time = get_clock()->now();
+  enable_end_time = true;
   Float32MultiArrayStamped debug_msg;
   debug_msg.stamp = end_time;
   debug_msg.data.reserve(debug_data_size);
@@ -567,6 +570,7 @@ void BehaviorPathPlannerNode::run()
   debug_msg.data.at(5) = (middle_time5 - middle_time4).seconds();
   debug_msg.data.at(6) = (middle_time6 - middle_time5).seconds();
   debug_msg.data.at(7) = (end_time - middle_time6).seconds();
+  debug_msg.data.at(8) = end_to_start_time;
 
   debug_timer_publisher_->publish(debug_msg);
 
