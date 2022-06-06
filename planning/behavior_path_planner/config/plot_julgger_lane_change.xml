@@ -1,35 +1,44 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <root version="2.3.8">
- <tabbed_widget parent="main_window" name="Main Window">
-  <Tab tab_name="tab1" containers="1">
+ <tabbed_widget name="Main Window" parent="main_window">
+  <Tab containers="1" tab_name="tab1">
    <Container>
-    <DockSplitter count="3" orientation="-" sizes="0.333503;0.332994;0.333503">
+    <DockSplitter sizes="0.250143;0.250143;0.249571;0.250143" count="4" orientation="-">
      <DockArea name="...">
-      <plot style="Lines" mode="TimeSeries">
-       <range top="0.339400" left="0.000000" bottom="-0.008277" right="95.096772"/>
+      <plot mode="TimeSeries" style="Lines">
+       <range top="0.330195" bottom="-0.008053" left="0.000000" right="74.485699"/>
        <limitY/>
-       <curve color="#1f77b4" name="/vehicle/debug/behavior_path/timer/data.0"/>
-       <curve color="#d62728" name="/vehicle/debug/behavior_path/timer/data.1"/>
-       <curve color="#1ac938" name="/vehicle/debug/behavior_path/timer/data.2"/>
-       <curve color="#ff7f0e" name="/vehicle/debug/behavior_path/timer/data.3"/>
-       <curve color="#f14cc1" name="/vehicle/debug/behavior_path/timer/data.4"/>
-       <curve color="#9467bd" name="/vehicle/debug/behavior_path/timer/data.5"/>
-       <curve color="#17becf" name="/vehicle/debug/behavior_path/timer/data.6"/>
-       <curve color="#bcbd22" name="/vehicle/debug/behavior_path/timer/data.7"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.0" color="#1f77b4"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.1" color="#d62728"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.2" color="#1ac938"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.3" color="#ff7f0e"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.4" color="#f14cc1"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.5" color="#9467bd"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.6" color="#17becf"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.7" color="#bcbd22"/>
       </plot>
      </DockArea>
      <DockArea name="...">
-      <plot style="Lines" mode="TimeSeries">
-       <range top="0.002283" left="0.000000" bottom="-0.098569" right="95.096772"/>
+      <plot mode="TimeSeries" style="Lines">
+       <range top="0.100193" bottom="-0.002444" left="0.000000" right="74.485699"/>
        <limitY/>
-       <curve color="#d62728" name="/vehicle/debug/behavior_path/timer/data.8"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.8" color="#d62728"/>
       </plot>
      </DockArea>
      <DockArea name="...">
-      <plot style="Dots" mode="TimeSeries">
-       <range top="14.350000" left="80.729507" bottom="-0.350000" right="82.218554"/>
+      <plot mode="TimeSeries" style="Lines">
+       <range top="0.089997" bottom="-0.002195" left="0.000000" right="74.485699"/>
        <limitY/>
-       <curve color="#1f77b4" name="/vehicle/debug/behavior_path/callback/data"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.9" color="#1f77b4"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.10" color="#d62728"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.11" color="#1ac938"/>
+      </plot>
+     </DockArea>
+     <DockArea name="...">
+      <plot mode="TimeSeries" style="Dots">
+       <range top="32.800000" bottom="-0.800000" left="0.000000" right="74.485699"/>
+       <limitY/>
+       <curve name="/vehicle/debug/behavior_path/callback/data" color="#ff7f0e"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -62,8 +71,8 @@
   <plugin ID="UDP Server"/>
   <plugin ID="WebSocket Server"/>
   <plugin ID="ZMQ Subscriber"/>
-  <plugin status="idle" ID="CSV Exporter"/>
-  <plugin status="idle" ID="ROS2 Topic Re-Publisher"/>
+  <plugin ID="CSV Exporter" status="idle"/>
+  <plugin ID="ROS2 Topic Re-Publisher" status="idle"/>
  </Plugins>
  <!-- - - - - - - - - - - - - - - -->
  <previouslyLoaded_Datafiles/>

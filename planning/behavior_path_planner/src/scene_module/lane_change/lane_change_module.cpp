@@ -180,9 +180,18 @@ PathWithLaneId LaneChangeModule::planCandidate() const
 
 BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
 {
+  debug_time1 = rclcpp::Clock{RCL_ROS_TIME}.now();
+  debug_time2 = rclcpp::Clock{RCL_ROS_TIME}.now();
+  debug_time3 = rclcpp::Clock{RCL_ROS_TIME}.now();
+
   BehaviorModuleOutput out;
   out.path = std::make_shared<PathWithLaneId>(getReferencePath());
   out.path_candidate = std::make_shared<PathWithLaneId>(planCandidate());
+  debug_time4 = rclcpp::Clock{RCL_ROS_TIME}.now();
+
+  out.debug1 = (debug_time2 - debug_time1).seconds();
+  out.debug2 = (debug_time3 - debug_time2).seconds();
+  out.debug3 = (debug_time4 - debug_time3).seconds();
   return out;
 }
 
@@ -220,7 +229,7 @@ void LaneChangeModule::updateLaneChangeStatus()
   status_.lane_change_path.path.header = planner_data_->route_handler->getRouteHeader();
 }
 
-PathWithLaneId LaneChangeModule::getReferencePath() const
+PathWithLaneId LaneChangeModule::getReferencePath()
 {
   PathWithLaneId reference_path;
 
@@ -244,6 +253,8 @@ PathWithLaneId LaneChangeModule::getReferencePath() const
   const double lane_change_buffer =
     num_lane_change * (common_parameters.minimum_lane_change_length + buffer);
 
+  debug_time2 = rclcpp::Clock{RCL_ROS_TIME}.now();
+
   reference_path = util::getCenterLinePath(
     *route_handler, current_lanes, current_pose, common_parameters.backward_path_length,
     common_parameters.forward_path_length, common_parameters);
@@ -254,6 +265,7 @@ PathWithLaneId LaneChangeModule::getReferencePath() const
     current_lanes, common_parameters.drivable_area_resolution, common_parameters.vehicle_length,
     planner_data_);
 
+  debug_time3 = rclcpp::Clock{RCL_ROS_TIME}.now();
   return reference_path;
 }
 

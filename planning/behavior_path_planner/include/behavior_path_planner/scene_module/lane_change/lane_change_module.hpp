@@ -102,7 +102,13 @@ private:
   double lane_change_lane_length_{200.0};
   double check_distance_{100.0};
 
-  PathWithLaneId getReferencePath() const;
+  rclcpp::Time debug_time1;
+  rclcpp::Time debug_time2;
+  rclcpp::Time debug_time3;
+  rclcpp::Time debug_time4;
+  rclcpp::Time debug_time5;
+
+  PathWithLaneId getReferencePath();
   lanelet::ConstLanelets getCurrentLanes() const;
   lanelet::ConstLanelets getLaneChangeLanes(
     const lanelet::ConstLanelets & current_lanes, const double lane_change_lane_length) const;
