@@ -107,6 +107,8 @@ private:
 
   rclcpp::Time end_time;
   bool enable_end_time = false;
+  int approval_count_ = 0;
+  Float32Stamped count_debug_msg;
 
   // setup
   void waitForData();

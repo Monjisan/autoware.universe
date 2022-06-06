@@ -577,6 +577,7 @@ void BehaviorPathPlannerNode::run()
   debug_msg.data.at(12) = output.debug3;
 
   debug_timer_publisher_->publish(debug_msg);
+  debug_callback_publisher_->publish(count_debug_msg);
 
   mutex_bt_.unlock();
   RCLCPP_DEBUG(get_logger(), "----- behavior path planner end -----\n\n");
@@ -709,11 +710,8 @@ void BehaviorPathPlannerNode::onExternalApproval(const ApprovalMsg::ConstSharedP
   // TODO(wep21): Replace msg stamp after {stamp: now} is implemented in ros2 topic pub
   planner_data_->approval.is_approved.stamp = this->now();
 
-  static int approval_count_;
-  Float32Stamped debug_msg;
-  debug_msg.stamp = this->now();
-  debug_msg.data = approval_count_;
-  debug_callback_publisher_->publish(debug_msg);
+  count_debug_msg.stamp = this->now();
+  count_debug_msg.data = approval_count_;
   approval_count_++;
 }
 void BehaviorPathPlannerNode::onForceApproval(const PathChangeModule::ConstSharedPtr msg)
