@@ -75,6 +75,7 @@ struct BehaviorModuleOutput
 
   TurnSignalInfo turn_signal_info{};
 
+  double debug0{0.0};
   double debug1{0.0};
   double debug2{0.0};
   double debug3{0.0};

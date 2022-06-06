@@ -102,6 +102,7 @@ private:
   double lane_change_lane_length_{200.0};
   double check_distance_{100.0};
 
+  rclcpp::Time debug_time0;
   rclcpp::Time debug_time1;
   rclcpp::Time debug_time2;
   rclcpp::Time debug_time3;

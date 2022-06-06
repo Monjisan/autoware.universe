@@ -6,7 +6,7 @@
     <DockSplitter sizes="0.250143;0.250143;0.249571;0.250143" count="4" orientation="-">
      <DockArea name="...">
       <plot mode="TimeSeries" style="Lines">
-       <range top="0.330195" bottom="-0.008053" left="0.000000" right="74.485699"/>
+       <range top="0.025494" bottom="-0.000621" left="0.000000" right="35.393260"/>
        <limitY/>
        <curve name="/vehicle/debug/behavior_path/timer/data.0" color="#1f77b4"/>
        <curve name="/vehicle/debug/behavior_path/timer/data.1" color="#d62728"/>
@@ -20,23 +20,24 @@
      </DockArea>
      <DockArea name="...">
       <plot mode="TimeSeries" style="Lines">
-       <range top="0.100193" bottom="-0.002444" left="0.000000" right="74.485699"/>
+       <range top="0.093174" bottom="-0.002273" left="0.000000" right="35.393260"/>
        <limitY/>
        <curve name="/vehicle/debug/behavior_path/timer/data.8" color="#d62728"/>
       </plot>
      </DockArea>
      <DockArea name="...">
       <plot mode="TimeSeries" style="Lines">
-       <range top="0.089997" bottom="-0.002195" left="0.000000" right="74.485699"/>
+       <range top="0.007382" bottom="-0.000117" left="0.000000" right="35.393260"/>
        <limitY/>
        <curve name="/vehicle/debug/behavior_path/timer/data.9" color="#1f77b4"/>
        <curve name="/vehicle/debug/behavior_path/timer/data.10" color="#d62728"/>
        <curve name="/vehicle/debug/behavior_path/timer/data.11" color="#1ac938"/>
+       <curve name="/vehicle/debug/behavior_path/timer/data.12" color="#f14cc1"/>
       </plot>
      </DockArea>
      <DockArea name="...">
       <plot mode="TimeSeries" style="Dots">
-       <range top="32.800000" bottom="-0.800000" left="0.000000" right="74.485699"/>
+       <range top="0.100000" bottom="-0.100000" left="0.000000" right="0.000000"/>
        <limitY/>
        <curve name="/vehicle/debug/behavior_path/callback/data" color="#ff7f0e"/>
       </plot>
@@ -76,6 +77,7 @@
  </Plugins>
  <!-- - - - - - - - - - - - - - - -->
  <previouslyLoaded_Datafiles/>
+ <previouslyLoaded_Streamer name="ROS2 Topic Subscriber"/>
  <!-- - - - - - - - - - - - - - - -->
  <customMathEquations/>
  <snippets/>

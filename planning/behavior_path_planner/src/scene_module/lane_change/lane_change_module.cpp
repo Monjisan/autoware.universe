@@ -52,6 +52,7 @@ BehaviorModuleOutput LaneChangeModule::run()
 
 void LaneChangeModule::onEntry()
 {
+  debug_time0 = rclcpp::Clock{RCL_ROS_TIME}.now();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onEntry");
   current_state_ = BT::NodeStatus::SUCCESS;
   updateLaneChangeStatus();
@@ -189,6 +190,7 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
   out.path_candidate = std::make_shared<PathWithLaneId>(planCandidate());
   debug_time4 = rclcpp::Clock{RCL_ROS_TIME}.now();
 
+  out.debug0 = (debug_time1 - debug_time0).seconds();
   out.debug1 = (debug_time2 - debug_time1).seconds();
   out.debug2 = (debug_time3 - debug_time2).seconds();
   out.debug3 = (debug_time4 - debug_time3).seconds();

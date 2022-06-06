@@ -555,7 +555,7 @@ void BehaviorPathPlannerNode::run()
   publishDebugMarker(bt_manager_->getDebugMarkers());
 
   /* debug */
-  const int debug_data_size = 12;
+  const int debug_data_size = 13;
   end_time = get_clock()->now();
   enable_end_time = true;
   Float32MultiArrayStamped debug_msg;
@@ -571,9 +571,10 @@ void BehaviorPathPlannerNode::run()
   debug_msg.data.at(6) = (middle_time6 - middle_time5).seconds();
   debug_msg.data.at(7) = (end_time - middle_time6).seconds();
   debug_msg.data.at(8) = end_to_start_time;
-  debug_msg.data.at(9) = output.debug1;
-  debug_msg.data.at(10) = output.debug2;
-  debug_msg.data.at(11) = output.debug3;
+  debug_msg.data.at(9) = output.debug0;
+  debug_msg.data.at(10) = output.debug1;
+  debug_msg.data.at(11) = output.debug2;
+  debug_msg.data.at(12) = output.debug3;
 
   debug_timer_publisher_->publish(debug_msg);
 
