@@ -140,6 +140,43 @@ public:
   }
 
 protected:
+  virtual void modifyPathVelocity(autoware_auto_planning_msgs::msg::PathWithLaneId * path)
+  {
+    visualization_msgs::msg::MarkerArray debug_marker_array;
+    tier4_planning_msgs::msg::StopReasonArray stop_reason_array;
+    stop_reason_array.header.frame_id = "map";
+    stop_reason_array.header.stamp = clock_->now();
+
+    tier4_v2x_msgs::msg::InfrastructureCommandArray infrastructure_command_array;
+    infrastructure_command_array.stamp = clock_->now();
+
+    first_stop_path_point_index_ = static_cast<int>(path->points.size()) - 1;
+    for (const auto & scene_module : scene_modules_) {
+      tier4_planning_msgs::msg::StopReason stop_reason;
+      scene_module->setPlannerData(planner_data_);
+      scene_module->modifyPathVelocity(path, &stop_reason);
+      stop_reason_array.stop_reasons.emplace_back(stop_reason);
+
+      if (const auto command = scene_module->getInfrastructureCommand()) {
+        infrastructure_command_array.commands.push_back(*command);
+      }
+
+      if (scene_module->getFirstStopPathPointIndex() < first_stop_path_point_index_) {
+        first_stop_path_point_index_ = scene_module->getFirstStopPathPointIndex();
+      }
+
+      for (const auto & marker : scene_module->createDebugMarkerArray().markers) {
+        debug_marker_array.markers.push_back(marker);
+      }
+    }
+
+    if (!stop_reason_array.stop_reasons.empty()) {
+      pub_stop_reason_->publish(stop_reason_array);
+    }
+    pub_infrastructure_commands_->publish(infrastructure_command_array);
+    pub_debug_->publish(debug_marker_array);
+  }
+
   virtual void launchNewModules(const autoware_auto_planning_msgs::msg::PathWithLaneId & path) = 0;
 
   virtual std::function<bool(const std::shared_ptr<SceneModuleInterface> &)>
@@ -181,43 +218,6 @@ protected:
       scene_module->getModuleId());
     registered_module_id_set_.erase(scene_module->getModuleId());
     scene_modules_.erase(scene_module);
-  }
-
-  virtual void modifyPathVelocity(autoware_auto_planning_msgs::msg::PathWithLaneId * path)
-  {
-    visualization_msgs::msg::MarkerArray debug_marker_array;
-    tier4_planning_msgs::msg::StopReasonArray stop_reason_array;
-    stop_reason_array.header.frame_id = "map";
-    stop_reason_array.header.stamp = clock_->now();
-
-    tier4_v2x_msgs::msg::InfrastructureCommandArray infrastructure_command_array;
-    infrastructure_command_array.stamp = clock_->now();
-
-    first_stop_path_point_index_ = static_cast<int>(path->points.size()) - 1;
-    for (const auto & scene_module : scene_modules_) {
-      tier4_planning_msgs::msg::StopReason stop_reason;
-      scene_module->setPlannerData(planner_data_);
-      scene_module->modifyPathVelocity(path, &stop_reason);
-      stop_reason_array.stop_reasons.emplace_back(stop_reason);
-
-      if (const auto command = scene_module->getInfrastructureCommand()) {
-        infrastructure_command_array.commands.push_back(*command);
-      }
-
-      if (scene_module->getFirstStopPathPointIndex() < first_stop_path_point_index_) {
-        first_stop_path_point_index_ = scene_module->getFirstStopPathPointIndex();
-      }
-
-      for (const auto & marker : scene_module->createDebugMarkerArray().markers) {
-        debug_marker_array.markers.push_back(marker);
-      }
-    }
-
-    if (!stop_reason_array.stop_reasons.empty()) {
-      pub_stop_reason_->publish(stop_reason_array);
-    }
-    pub_infrastructure_commands_->publish(infrastructure_command_array);
-    pub_debug_->publish(debug_marker_array);
   }
 
   std::set<std::shared_ptr<SceneModuleInterface>> scene_modules_;
