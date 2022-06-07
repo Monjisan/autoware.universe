@@ -508,9 +508,6 @@ void BehaviorPathPlannerNode::run()
     hazard_signal_publisher_->publish(hazard_signal);
   }
 
-  // for remote operation
-  publishModuleStatus(bt_manager_->getModulesStatus(), planner_data);
-
   publishDebugMarker(bt_manager_->getDebugMarkers());
 
   mutex_bt_.unlock();
