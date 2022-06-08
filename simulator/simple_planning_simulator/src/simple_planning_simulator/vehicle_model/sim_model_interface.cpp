@@ -34,8 +34,10 @@ void SimModelInterface::updateEuler(const float64_t & dt, const Eigen::VectorXd 
 {
   state_ += calcModel(state_, input) * dt;
 }
-void SimModelInterface::getState(Eigen::VectorXd & state) {state = state_;}
-void SimModelInterface::getInput(Eigen::VectorXd & input) {input = input_;}
-void SimModelInterface::setState(const Eigen::VectorXd & state) {state_ = state;}
-void SimModelInterface::setInput(const Eigen::VectorXd & input) {input_ = input;}
-void SimModelInterface::setGear(const uint8_t gear) {gear_ = gear;}
+
+void SimModelInterface::getState(Eigen::VectorXd & state) { state = state_; }
+void SimModelInterface::getInput(Eigen::VectorXd & input) { input = input_; }
+void SimModelInterface::setState(const Eigen::VectorXd & state) { state_ = state; }
+void SimModelInterface::setInput(const Eigen::VectorXd & input) { input_ = input; }
+void SimModelInterface::setGear(const uint8_t gear) { gear_ = gear; }
+uint8_t SimModelInterface::getGear() const { return gear_; }
