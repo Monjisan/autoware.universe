@@ -121,6 +121,60 @@ bool8_t MPC::calculateMPC(
   }
   trajectory_follower::MPCUtils::convertToAutowareTrajectory(mpc_predicted_traj, predicted_traj);
 
+  // calc predicted trajectory
+  {
+    trajectory_follower::MPCTrajectory traj;
+
+    double x = current_pose.position.x;
+    double y = current_pose.position.y;
+    const double z = current_pose.position.z;
+    double v = 0.0;
+    const double k = 0.0;  // not used
+    double yaw = to_angle(current_pose.orientation);
+    double steer = current_steer.steering_tire_angle;
+    double t = mpc_data.nearest_time;
+    const double wheelbase = m_vehicle_model_ptr->getWheelbase();
+    const double tau = m_param.steer_tau;
+
+    // std::cerr << "pred traj integrate: tau = " << tau << std::endl;
+    const auto integrate = [&](const double _v, const double _u, const double _dt) {
+      x += _v * cos(yaw) * _dt;
+      y += _v * sin(yaw) * _dt;
+      yaw += _v * tan(steer) / wheelbase * _dt;
+      steer += - (steer - _u) / tau * _dt;
+      t += _dt;
+      // std::cerr << "x: " << x << ", y: " << y << ", yaw: " << yaw << ", steer: " << steer
+      //           << ", u: " << _u << ", v: " << _v << ", dt: " << _dt << ", t: " << t << std::endl;
+    };
+
+    // initial state
+    traj.push_back(x, y, z, yaw, v, k, k, t);
+
+    // integrate for timer delay compensation
+    const double dt_for_delay_compensation = m_ctrl_period;
+    for (uint64_t i = 0; i < m_input_buffer.size(); ++i) {
+      trajectory_follower::linearInterpolate(traj.relative_time, traj.vx, t, v);
+      integrate(v, m_input_buffer.at(i), dt_for_delay_compensation);
+      traj.push_back(x, y, z, yaw, v, k, k, t);
+    }
+
+    // integrate for prediction in mpc
+    const double dt_for_prediction = m_param.prediction_dt;
+    for (size_t i = 0; i < static_cast<size_t>(m_param.prediction_horizon); ++i) {
+      v = mpc_resampled_ref_traj.vx.at(i);
+      integrate(v, Uex(i), dt_for_prediction);
+      traj.push_back(x, y, z, yaw, v, k, k, t);
+    }
+
+    // publish
+    using autoware_auto_planning_msgs::msg::Trajectory;
+    Trajectory traj_msg;
+    traj_msg.header.frame_id = "map";
+    traj_msg.header.stamp = m_clock->now();
+    trajectory_follower::MPCUtils::convertToAutowareTrajectory(traj, traj_msg);
+    pub_traj_debug_->publish(traj_msg);
+  }
+
   /* prepare diagnostic message */
   const float64_t nearest_k = reference_trajectory.k[static_cast<size_t>(mpc_data.nearest_idx)];
   const float64_t nearest_smooth_k =

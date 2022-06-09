@@ -146,6 +146,8 @@ struct MPCMatrix
  */
 class TRAJECTORY_FOLLOWER_PUBLIC MPC
 {
+public:
+  rclcpp::Publisher<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr pub_traj_debug_;
 private:
   //!< @brief ROS logger used for debug logging
   rclcpp::Logger m_logger = rclcpp::get_logger("mpc_logger");

@@ -162,6 +162,8 @@ LateralController::LateralController(const rclcpp::NodeOptions & node_options)
 
   m_mpc.setLogger(get_logger());
   m_mpc.setClock(get_clock());
+
+  m_mpc.pub_traj_debug_ = create_publisher<autoware_auto_planning_msgs::msg::Trajectory>("~/output/debug_predicted_trajectory_integrate", 1);
 }
 
 LateralController::~LateralController()
