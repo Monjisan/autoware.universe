@@ -331,6 +331,7 @@ bool getObjectiveLanelets(
   const auto & assigned_lanelet = lanelet_map_ptr->laneletLayer.get(lane_id);
 
   lanelet::ConstLanelets yield_lanelets;
+  std::set<int64_t> yield_lanelets_id_set;
 
   // for low priority lane
   // If ego_lane has right of way (i.e. is high priority),
@@ -339,16 +340,21 @@ bool getObjectiveLanelets(
   for (const auto & right_of_way : right_of_ways) {
     if (lanelet::utils::contains(right_of_way->rightOfWayLanelets(), assigned_lanelet)) {
       for (const auto & yield_lanelet : right_of_way->yieldLanelets()) {
+        // the first candidate wont include duplicated
         yield_lanelets.push_back(yield_lanelet);
         for (const auto & previous_lanelet : routing_graph_ptr->previous(yield_lanelet)) {
-          yield_lanelets.push_back(previous_lanelet);
+          // remove duplicated yield lane from loop path add yield lanelet if it's not found
+          const int64_t lanelet_id = previous_lanelet.id();
+          if(yield_lanelets_id_set.find(lanelet_id)!=yield_lanelets_id_set.end()) continue;
+            yield_lanelets_id_set.insert(lanelet_id);
+            yield_lanelets.push_back(previous_lanelet);
+          }
         }
-      }
     }
   }
 
   lanelet::ConstLanelets ego_lanelets;
-
+  std::set<int64_t> ego_lanelets_id_set;
   // for the behind ego-car lane.
   for (const auto & previous_lanelet : routing_graph_ptr->previous(assigned_lanelet)) {
     ego_lanelets.push_back(previous_lanelet);
@@ -356,6 +362,9 @@ bool getObjectiveLanelets(
       if (lanelet::utils::contains(ego_lanelets, following_lanelet)) {
         continue;
       }
+      const int64_t lanelet_id = following_lanelet.id();
+      if(ego_lanelets_id_set.find(lanelet_id)!=ego_lanelets_id_set.end()) continue;
+      ego_lanelets_id_set.insert(lanelet_id);
       ego_lanelets.push_back(following_lanelet);
     }
   }
@@ -368,7 +377,8 @@ bool getObjectiveLanelets(
     conflicting_lanelets_ex_yield_ego;                     // excluding ego lanes and yield lanes
   std::vector<lanelet::ConstLanelets> objective_lanelets;  // final objective lanelets
   std::vector<lanelet::ConstLanelets> objective_lanelets_with_margin;  // final objective lanelets
-
+  //std::set<int64_t> conflicting_lanelets_id_set;
+  std::set<int64_t> objective_lanelets_id_set;
   // exclude yield lanelets and ego lanelets from objective_lanelets
   for (const auto & conflicting_lanelet : conflicting_lanelets) {
     if (lanelet::utils::contains(yield_lanelets, conflicting_lanelet)) {
@@ -380,7 +390,11 @@ bool getObjectiveLanelets(
     const auto objective_lanelet_with_margin =
       generateOffsetLanelet(conflicting_lanelet, right_margin, left_margin);
     conflicting_lanelets_ex_yield_ego.push_back({conflicting_lanelet});
-    objective_lanelets.push_back({conflicting_lanelet});
+    const int64_t lanelet_id = conflicting_lanelet.id();
+    //if(ego_lanelets_id_set.find(lanelet_id)==objective_lanelets_id_set.end()){
+      objective_lanelets_id_set.insert(lanelet_id);
+      objective_lanelets.push_back({conflicting_lanelet});
+    //}
     objective_lanelets_with_margin.push_back({objective_lanelet_with_margin});
   }
 
@@ -403,6 +417,10 @@ bool getObjectiveLanelets(
   *objective_lanelets_result = objective_lanelets_sequences;
   *objective_lanelets_with_margin_result = objective_lanelets_with_margin;
 
+
+  const bool is_debug_mode = true;
+  if(is_debug_mode)
+  {
   std::stringstream ss_c, ss_y, ss_e, ss_o, ss_os;
   for (const auto & l : conflicting_lanelets) {
     ss_c << l.id() << ", ";
@@ -421,12 +439,13 @@ bool getObjectiveLanelets(
       ss_os << ll.id() << ", ";
     }
   }
-  RCLCPP_DEBUG(
+  RCLCPP_INFO(
     logger, "getObjectiveLanelets() conflict = %s yield = %s ego = %s", ss_c.str().c_str(),
     ss_y.str().c_str(), ss_e.str().c_str());
-  RCLCPP_DEBUG(
+  RCLCPP_INFO(
     logger, "getObjectiveLanelets() object = %s object_sequences = %s", ss_o.str().c_str(),
     ss_os.str().c_str());
+  }
   return true;
 }
 
