@@ -520,11 +520,11 @@ autoware_auto_control_msgs::msg::AckermannControlCommand VehicleCmdGate::filterC
   const double dt = getDt();
 
   if (current_operation_mode_.mode == OperationMode::TRANSITION_TO_AUTO) {
-    filter_.limitLongitudinalWithVel(out);
-    filter_.limitLongitudinalWithAcc(dt, out);
-    filter_.limitLongitudinalWithJerk(dt, out);
-    filter_.limitLateralWithLatAcc(dt, out);
-    filter_.limitLateralWithLatJerk(dt, out);
+    filter_on_transition_.limitLongitudinalWithVel(out);
+    filter_on_transition_.limitLongitudinalWithAcc(dt, out);
+    filter_on_transition_.limitLongitudinalWithJerk(dt, out);
+    filter_on_transition_.limitLateralWithLatAcc(dt, out);
+    filter_on_transition_.limitLateralWithLatJerk(dt, out);
   } else {
     filter_.limitLongitudinalWithVel(out);
     filter_.limitLongitudinalWithAcc(dt, out);
