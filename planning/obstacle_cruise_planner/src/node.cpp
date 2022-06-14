@@ -587,6 +587,10 @@ std::vector<TargetObstacle> ObstacleCruisePlannerNode::filterObstacles(
       if (
         std::find(types.begin(), types.end(), predicted_object.classification.front().label) !=
         types.end()) {
+          RCLCPP_INFO_EXPRESSION(
+            get_logger(), is_showing_debug_info_,
+            "Ignore outside obstacles since its type is not designated.");
+
         continue;
       }
 
