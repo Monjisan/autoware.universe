@@ -497,7 +497,7 @@ void BehaviorPathPlannerNode::run()
 
   // NOTE: planner_data must not be referenced for multithreading
   const auto planner_data = planner_data_;
-  mutex_pd_.unlock();
+  // mutex_pd_.unlock();
 
   // run behavior planner
   const auto middle_time1 = get_clock()->now();
@@ -510,7 +510,7 @@ void BehaviorPathPlannerNode::run()
   const auto middle_time3 = get_clock()->now();
 
   // update planner data
-  mutex_pd_.lock();  // for planner_data_
+  // mutex_pd_.lock();  // for planner_data_
   planner_data_->prev_output_path = path;
   mutex_pd_.unlock();
   const auto middle_time4 = get_clock()->now();
