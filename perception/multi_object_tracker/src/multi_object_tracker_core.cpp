@@ -182,14 +182,9 @@ MultiObjectTracker::MultiObjectTracker(const rclcpp::NodeOptions & node_options)
 
   // Create ROS time based timer
   if (enable_delay_compensation) {
-    auto timer_callback = std::bind(&MultiObjectTracker::onTimer, this);
-    auto period = std::chrono::duration_cast<std::chrono::nanoseconds>(
-      std::chrono::duration<double>(1.0 / publish_rate));
-
-    publish_timer_ = std::make_shared<rclcpp::GenericTimer<decltype(timer_callback)>>(
-      this->get_clock(), period, std::move(timer_callback),
-      this->get_node_base_interface()->get_context());
-    this->get_node_timers_interface()->add_timer(publish_timer_, nullptr);
+    const auto period_ns = rclcpp::Rate(publish_rate).period();
+    publish_timer_ = rclcpp::create_timer(
+      this, get_clock(), period_ns, std::bind(&MultiObjectTracker::onTimer, this));
   }
 
   const auto tmp = this->declare_parameter<std::vector<int64_t>>("can_assign_matrix");
@@ -199,9 +194,11 @@ MultiObjectTracker::MultiObjectTracker(const rclcpp::NodeOptions & node_options)
   const auto max_area_matrix = this->declare_parameter<std::vector<double>>("max_area_matrix");
   const auto min_area_matrix = this->declare_parameter<std::vector<double>>("min_area_matrix");
   const auto max_rad_matrix = this->declare_parameter<std::vector<double>>("max_rad_matrix");
+  const auto min_iou_matrix = this->declare_parameter<std::vector<double>>("min_iou_matrix");
 
   data_association_ = std::make_unique<DataAssociation>(
-    can_assign_matrix, max_dist_matrix, max_area_matrix, min_area_matrix, max_rad_matrix);
+    can_assign_matrix, max_dist_matrix, max_area_matrix, min_area_matrix, max_rad_matrix,
+    min_iou_matrix);
 }
 
 void MultiObjectTracker::onMeasurement(

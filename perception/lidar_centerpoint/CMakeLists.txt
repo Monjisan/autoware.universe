@@ -86,11 +86,11 @@ if(TRT_AVAIL AND CUDA_AVAIL AND TORCH_AVAIL)
       file(MD5 ${FILE_PATH} EXISTING_FILE_HASH)
       if(NOT ${FILE_HASH} EQUAL ${EXISTING_FILE_HASH})
         message(STATUS "... file hash changes. Downloading now ...")
-        execute_process(COMMAND gdown --quiet https://drive.google.com//uc?id=${GFILE_ID} -O ${FILE_PATH})
+        execute_process(COMMAND gdown --quiet https://drive.google.com/uc?id=${GFILE_ID} -O ${FILE_PATH})
       endif()
     else()
       message(STATUS "... file doesn't exists. Downloading now ...")
-      execute_process(COMMAND gdown --quiet https://drive.google.com//uc?id=${GFILE_ID} -O ${FILE_PATH})
+      execute_process(COMMAND gdown --quiet https://drive.google.com/uc?id=${GFILE_ID} -O ${FILE_PATH})
     endif()
   endfunction()
 
@@ -130,7 +130,6 @@ if(TRT_AVAIL AND CUDA_AVAIL AND TORCH_AVAIL)
     ${NVINFER_PLUGIN}
     ${CUDA_LIBRARIES}
     ${CUBLAS_LIBRARIES}
-    ${CUDA_curand_LIBRARY}
     ${TORCH_LIBRARIES}
   )
 

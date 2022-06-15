@@ -102,7 +102,7 @@ message(STATUS "Checking and downloading yolov4.onnx")
 if(NOT EXISTS "${FILE}")
   message(STATUS "... file does not exist. Downloading now ...")
   execute_process(
-    COMMAND gdown "https://drive.google.com//uc?id=1vkNmSwcIpTkJ_-BrKhxtit0PBJeJYTVX" -O ${PATH}/yolov4.onnx
+    COMMAND gdown "https://drive.google.com/uc?id=1vkNmSwcIpTkJ_-BrKhxtit0PBJeJYTVX" -O ${PATH}/yolov4.onnx
     ERROR_QUIET
   )
 endif()
@@ -124,7 +124,7 @@ message(STATUS "Checking and downloading yolov5s.onnx")
 if(NOT EXISTS "${FILE}")
   message(STATUS "... file does not exist. Downloading now ...")
   execute_process(
-    COMMAND gdown "https://drive.google.com//uc?id=1CF21nQWigwCPTr5psQZXg6cBQIOYKbad" -O ${PATH}/yolov5s.onnx
+    COMMAND gdown "https://drive.google.com/uc?id=1CF21nQWigwCPTr5psQZXg6cBQIOYKbad" -O ${PATH}/yolov5s.onnx
     ERROR_QUIET
   )
 endif()
@@ -135,7 +135,7 @@ message(STATUS "Checking and downloading yolov5m.onnx")
 if(NOT EXISTS "${FILE}")
   message(STATUS "... file does not exist. Downloading now ...")
   execute_process(
-    COMMAND gdown "https://drive.google.com//uc?id=1a1h50KJH6slwmjKZpPlS-errukF-BrgG" -O ${PATH}/yolov5m.onnx
+    COMMAND gdown "https://drive.google.com/uc?id=1a1h50KJH6slwmjKZpPlS-errukF-BrgG" -O ${PATH}/yolov5m.onnx
     ERROR_QUIET
   )
 endif()
@@ -217,7 +217,6 @@ if(TRT_AVAIL AND CUDA_AVAIL AND CUDNN_AVAIL)
     ${NVINFER_PLUGIN}
     ${CUDA_LIBRARIES}
     ${CUBLAS_LIBRARIES}
-    ${CUDA_curand_LIBRARY}
     ${CUDNN_LIBRARY}
     mish_plugin
     yolo_layer_plugin

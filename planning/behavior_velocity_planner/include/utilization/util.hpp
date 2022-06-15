@@ -16,6 +16,7 @@
 #define UTILIZATION__UTIL_HPP_
 
 #include <lanelet2_extension/utility/query.hpp>
+#include <tier4_autoware_utils/geometry/geometry.hpp>
 #include <utilization/boost_geometry_helper.hpp>
 
 #include <autoware_auto_perception_msgs/msg/predicted_object.hpp>
@@ -38,12 +39,26 @@
 #include <pcl/point_types.h>
 #include <tf2/utils.h>
 
+#include <algorithm>
+#include <limits>
 #include <string>
 #include <vector>
+
+namespace tier4_autoware_utils
+{
+template <>
+inline geometry_msgs::msg::Point getPoint(
+  const autoware_auto_planning_msgs::msg::PathPointWithLaneId & p)
+{
+  return p.point.pose.position;
+}
+}  // namespace tier4_autoware_utils
 
 namespace behavior_velocity_planner
 {
 using Point2d = boost::geometry::model::d2::point_xy<double>;
+using autoware_auto_planning_msgs::msg::PathPointWithLaneId;
+using autoware_auto_planning_msgs::msg::PathWithLaneId;
 namespace planning_utils
 {
 inline geometry_msgs::msg::Point getPoint(const geometry_msgs::msg::Point & p) { return p; }
@@ -82,6 +97,10 @@ inline geometry_msgs::msg::Pose getPose(
   return traj.points.at(idx).pose;
 }
 
+void setVelocityFrom(const size_t idx, const double vel, PathWithLaneId * input);
+void insertVelocity(
+  PathWithLaneId & path, const PathPointWithLaneId & path_point, const double v,
+  size_t & insert_index, const double min_distance = 0.001);
 inline int64_t bitShift(int64_t original_id) { return original_id << (sizeof(int32_t) * 8 / 2); }
 
 inline double square(const double & a) { return a * a; }
@@ -125,6 +144,14 @@ double calcJudgeLineDistWithAccLimit(
 double calcJudgeLineDistWithJerkLimit(
   const double velocity, const double acceleration, const double max_stop_acceleration,
   const double max_stop_jerk, const double delay_response_time);
+
+double calcDecelerationVelocityFromDistanceToTarget(
+  const double max_slowdown_jerk, const double max_slowdown_accel, const double current_accel,
+  const double current_velocity, const double distance_to_target);
+
+double findReachTime(
+  const double jerk, const double accel, const double velocity, const double distance,
+  const double t_min, const double t_max);
 
 tier4_planning_msgs::msg::StopReason initializeStopReason(const std::string & stop_reason);
 
