@@ -40,6 +40,9 @@
 #include <tier4_debug_msgs/msg/float32_multi_array_stamped.hpp>
 #include <tier4_debug_msgs/msg/float32_stamped.hpp>
 #include <tier4_planning_msgs/msg/approval.hpp>
+#include <tier4_planning_msgs/msg/avoidance_debug_factor.hpp>
+#include <tier4_planning_msgs/msg/avoidance_debug_msg.hpp>
+#include <tier4_planning_msgs/msg/avoidance_debug_msg_array.hpp>
 #include <tier4_planning_msgs/msg/path_change_module.hpp>
 #include <tier4_planning_msgs/msg/path_change_module_array.hpp>
 #include <tier4_planning_msgs/msg/path_change_module_id.hpp>
@@ -69,6 +72,9 @@ using nav_msgs::msg::Odometry;
 using route_handler::RouteHandler;
 using tier4_debug_msgs::msg::Float32MultiArrayStamped;
 using tier4_debug_msgs::msg::Float32Stamped;
+using tier4_planning_msgs::msg::AvoidanceDebugFactor;
+using tier4_planning_msgs::msg::AvoidanceDebugMsg;
+using tier4_planning_msgs::msg::AvoidanceDebugMsgArray;
 using tier4_planning_msgs::msg::PathChangeModule;
 using tier4_planning_msgs::msg::PathChangeModuleArray;
 using visualization_msgs::msg::MarkerArray;
@@ -168,6 +174,7 @@ private:
 private:
   rclcpp::Publisher<OccupancyGrid>::SharedPtr debug_drivable_area_publisher_;
   rclcpp::Publisher<Path>::SharedPtr debug_path_publisher_;
+  rclcpp::Publisher<AvoidanceDebugMsgArray>::SharedPtr debug_avoidance_msg_array_publisher_;
   rclcpp::Publisher<MarkerArray>::SharedPtr debug_marker_publisher_;
   rclcpp::Publisher<Float32Stamped>::SharedPtr debug_callback_publisher_;
   rclcpp::Publisher<Float32MultiArrayStamped>::SharedPtr debug_timer_publisher_;
