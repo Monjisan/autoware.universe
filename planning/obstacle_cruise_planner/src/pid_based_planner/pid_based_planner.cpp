@@ -231,7 +231,7 @@ void PIDBasedPlanner::calcObstaclesToCruiseAndStop(
       const double error_dist = dist_to_obstacle - longitudinal_info_.safe_distance_margin;
       if (stop_obstacle_info) {
         if (error_dist > stop_obstacle_info->dist_to_stop) {
-          return;
+          continue;
         }
       }
       stop_obstacle_info = StopObstacleInfo(obstacle, error_dist);
@@ -253,7 +253,7 @@ void PIDBasedPlanner::calcObstaclesToCruiseAndStop(
       const double error_dist = dist_to_obstacle - rss_dist;
       if (cruise_obstacle_info) {
         if (error_dist > cruise_obstacle_info->dist_to_cruise) {
-          return;
+          continue;
         }
       }
       const double normalized_dist_to_cruise = error_dist / dist_to_obstacle;
@@ -271,8 +271,6 @@ void PIDBasedPlanner::calcObstaclesToCruiseAndStop(
 double PIDBasedPlanner::calcDistanceToObstacle(
   const ObstacleCruisePlannerData & planner_data, const TargetObstacle & obstacle)
 {
-  const double offset = vehicle_info_.max_longitudinal_offset_m;
-
   // TODO(murooka) enable this option considering collision_point (precise obstacle point to measure
   // distance) if (use_predicted_obstacle_pose_) {
   //   // interpolate current obstacle pose from predicted path
@@ -291,25 +289,16 @@ double PIDBasedPlanner::calcDistanceToObstacle(
   //     pose.");
   // }
 
-  const size_t ego_idx = findExtendedNearestIndex(planner_data.traj, planner_data.current_pose);
+  const size_t ego_segment_idx =
+    findExtendedNearestSegmentIndex(planner_data.traj, planner_data.current_pose);
+  const double segment_offset = std::max(
+    0.0, tier4_autoware_utils::calcLongitudinalOffsetToSegment(
+           planner_data.traj.points, ego_segment_idx, planner_data.current_pose.position));
+  const double offset = vehicle_info_.max_longitudinal_offset_m + segment_offset;
+
   return tier4_autoware_utils::calcSignedArcLength(
-           planner_data.traj.points, ego_idx, obstacle.collision_point) -
+           planner_data.traj.points, ego_segment_idx, obstacle.collision_point) -
          offset;
-}
-
-// Note: If stop planning is not required, cruise planning will be done instead.
-bool PIDBasedPlanner::isStopRequired(const TargetObstacle & obstacle)
-{
-  const bool is_cruise_obstacle = isCruiseObstacle(obstacle.classification.label);
-  const bool is_stop_obstacle = isStopObstacle(obstacle.classification.label);
-
-  if (is_cruise_obstacle) {
-    return std::abs(obstacle.velocity) < obstacle_velocity_threshold_from_cruise_to_stop_;
-  } else if (is_stop_obstacle && !is_cruise_obstacle) {
-    return true;
-  }
-
-  return false;
 }
 
 Trajectory PIDBasedPlanner::planStop(
@@ -411,7 +400,6 @@ boost::optional<size_t> PIDBasedPlanner::doStop(
   const auto marker_pose = obstacle_cruise_utils::calcForwardPose(
     planner_data.traj, ego_idx, modified_dist_to_stop + vehicle_info_.max_longitudinal_offset_m);
   if (marker_pose) {
-    visualization_msgs::msg::MarkerArray wall_msg;
     const auto markers = tier4_autoware_utils::createStopVirtualWallMarker(
       marker_pose.get(), "obstacle stop", planner_data.current_time, 0);
     tier4_autoware_utils::appendMarkerArray(markers, &debug_wall_marker);
