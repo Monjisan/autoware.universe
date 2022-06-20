@@ -71,14 +71,25 @@ void VehicleCmdFilter::limitLateralWithLatJerk(
   }
 }
 
+void VehicleCmdFilter::limitActualSteerDiff(
+  const double current_steer_angle,
+  autoware_auto_control_msgs::msg::AckermannControlCommand & input) const
+{
+  auto ds = input.lateral.steering_tire_angle - current_steer_angle;
+  ds = std::clamp(ds, -param_.actual_steer_diff_lim, param_.actual_steer_diff_lim);
+  input.lateral.steering_tire_angle = current_steer_angle + ds;
+}
+
 void VehicleCmdFilter::filterAll(
-  const double dt, autoware_auto_control_msgs::msg::AckermannControlCommand & cmd) const
+  const double dt, const double current_steer_angle,
+  autoware_auto_control_msgs::msg::AckermannControlCommand & cmd) const
 {
   limitLongitudinalWithVel(cmd);
   limitLongitudinalWithAcc(dt, cmd);
   limitLongitudinalWithJerk(dt, cmd);
   limitLateralWithLatAcc(dt, cmd);
   limitLateralWithLatJerk(dt, cmd);
+  limitActualSteerDiff(current_steer_angle, cmd);
   return;
 }
 

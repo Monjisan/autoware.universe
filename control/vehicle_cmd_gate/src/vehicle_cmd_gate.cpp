@@ -40,28 +40,6 @@ const char * getGateModeName(const tier4_control_msgs::msg::GateMode::_data_type
 
 }  // namespace
 
-// namespace vehicle_cmd_gate
-// {
-
-// using autoware_auto_control_msgs::msg::AckermannControlCommand;
-// using autoware_auto_system_msgs::msg::EmergencyState;
-// using autoware_auto_vehicle_msgs::msg::GearCommand;
-// using autoware_auto_vehicle_msgs::msg::HazardLightsCommand;
-// using autoware_auto_vehicle_msgs::msg::SteeringReport;
-// using autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand;
-// using tier4_control_msgs::msg::GateMode;
-// using tier4_external_api_msgs::msg::Emergency;
-// using tier4_external_api_msgs::msg::Heartbeat;
-// using tier4_external_api_msgs::srv::SetEmergency;
-// using tier4_system_msgs::msg::OperationMode;
-// using tier4_vehicle_msgs::msg::VehicleEmergencyStamped;
-
-// using diagnostic_msgs::msg::DiagnosticStatus;
-// using nav_msgs::msg::Odometry;
-
-// using EngageMsg = autoware_auto_vehicle_msgs::msg::Engage;
-// using EngageSrv = tier4_external_api_msgs::srv::Engage;
-
 VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
 : Node("vehicle_cmd_gate", node_options), is_engaged_(false), updater_(this)
 {
@@ -181,6 +159,7 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
     p.lon_jerk_lim = declare_parameter("nominal.lon_jerk_lim", 5.0);
     p.lat_acc_lim = declare_parameter("nominal.lat_acc_lim", 5.0);
     p.lat_jerk_lim = declare_parameter("nominal.lat_jerk_lim", 5.0);
+    p.actual_steer_diff_lim = declare_parameter("nominal.actual_steer_diff_lim", 1.0);
     filter_.setParam(p);
   }
 
@@ -192,6 +171,7 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
     p.lon_jerk_lim = declare_parameter("on_transition.lon_jerk_lim", 0.25);
     p.lat_acc_lim = declare_parameter("on_transition.lat_acc_lim", 0.5);
     p.lat_jerk_lim = declare_parameter("on_transition.lat_jerk_lim", 0.25);
+    p.actual_steer_diff_lim = declare_parameter("on_transition.actual_steer_diff_lim", 0.05);
     filter_on_transition_.setParam(p);
   }
 
@@ -535,9 +515,9 @@ autoware_auto_control_msgs::msg::AckermannControlCommand VehicleCmdGate::filterC
   const double dt = getDt();
 
   if (current_operation_mode_.mode == tier4_system_msgs::msg::OperationMode::TRANSITION_TO_AUTO) {
-    filter_on_transition_.filterAll(dt, out);
+    filter_on_transition_.filterAll(dt, current_steer_, out);
   } else {
-    filter_.filterAll(dt, out);
+    filter_.filterAll(dt, current_steer_, out);
   }
 
   // set prev value for both to keep consistency over switching

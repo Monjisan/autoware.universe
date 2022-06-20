@@ -25,6 +25,7 @@ struct VehicleCmdFilterParam
   double lon_jerk_lim;
   double lat_acc_lim;
   double lat_jerk_lim;
+  double actual_steer_diff_lim;
 };
 class VehicleCmdFilter
 {
@@ -38,6 +39,7 @@ public:
   void setLonJerkLim(double v) { param_.lon_jerk_lim = v; }
   void setLatAccLim(double v) { param_.lat_acc_lim = v; }
   void setLatJerkLim(double v) { param_.lat_jerk_lim = v; }
+  void setActualSteerDiffLim(double v) { param_.actual_steer_diff_lim = v; }
   void setParam(const VehicleCmdFilterParam & p) { param_ = p; }
   void setPrevCmd(const autoware_auto_control_msgs::msg::AckermannControlCommand & v)
   {
@@ -54,8 +56,12 @@ public:
     const double dt, autoware_auto_control_msgs::msg::AckermannControlCommand & input) const;
   void limitLateralWithLatJerk(
     const double dt, autoware_auto_control_msgs::msg::AckermannControlCommand & input) const;
+  void limitActualSteerDiff(
+    const double current_steer_angle,
+    autoware_auto_control_msgs::msg::AckermannControlCommand & input) const;
   void filterAll(
-    const double dt, autoware_auto_control_msgs::msg::AckermannControlCommand & input) const;
+    const double dt, const double current_steer_angle,
+    autoware_auto_control_msgs::msg::AckermannControlCommand & input) const;
 
 private:
   VehicleCmdFilterParam param_;
