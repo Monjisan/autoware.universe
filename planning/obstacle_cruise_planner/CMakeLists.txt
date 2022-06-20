@@ -6,6 +6,7 @@ autoware_package()
 
 find_package(Eigen3 REQUIRED)
 
+# node
 ament_auto_add_library(obstacle_cruise_planner_core SHARED
   src/node.cpp
   src/utils.cpp
@@ -21,6 +22,12 @@ rclcpp_components_register_node(obstacle_cruise_planner_core
   PLUGIN "motion_planning::ObstacleCruisePlannerNode"
   EXECUTABLE obstacle_cruise_planner
 )
+
+# cruis object extractor script
+ament_auto_add_executable(cruise_object_extractor
+  src/cruise_object_extractor.cpp
+)
+ament_target_dependencies(cruise_object_extractor)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
