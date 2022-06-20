@@ -20,9 +20,8 @@
 #include "obstacle_cruise_planner/utils.hpp"
 #include "tier4_autoware_utils/tier4_autoware_utils.hpp"
 
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-
 #include <tf2/utils.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 constexpr double ZERO_VEL_THRESHOLD = 0.01;
 constexpr double CLOSE_S_DIST_THRESHOLD = 1e-3;
@@ -30,15 +29,6 @@ constexpr double CLOSE_S_DIST_THRESHOLD = 1e-3;
 // TODO(shimizu) Is is ok to use planner_data.current_time instead of get_clock()->now()?
 namespace
 {
-[[maybe_unused]] std::string toHexString(const unique_identifier_msgs::msg::UUID & id)
-{
-  std::stringstream ss;
-  for (auto i = 0; i < 16; ++i) {
-    ss << std::hex << std::setfill('0') << std::setw(2) << +id.uuid[i];
-  }
-  return ss.str();
-}
-
 inline void convertEulerAngleToMonotonic(std::vector<double> & a)
 {
   for (unsigned int i = 1; i < a.size(); ++i) {
@@ -176,6 +166,9 @@ Trajectory OptimizationBasedPlanner::generateTrajectory(
   [[maybe_unused]] boost::optional<VelocityLimit> & vel_limit,
   [[maybe_unused]] DebugData & debug_data)
 {
+  // TODO(shimizu) refactor obstacle stop;
+  prev_target_obstacles_.clear();
+
   // Create Time Vector defined by resampling time interval
   const std::vector<double> time_vec = createTimeVector();
   if (time_vec.size() < 2) {
@@ -457,6 +450,8 @@ std::vector<double> OptimizationBasedPlanner::createTimeVector()
 double OptimizationBasedPlanner::getClosestStopDistance(
   const ObstacleCruisePlannerData & planner_data, const TrajectoryData & ego_traj_data)
 {
+  auto modified_target_obstacles = planner_data.target_obstacles;
+
   const auto & current_time = planner_data.current_time;
   double closest_stop_dist = ego_traj_data.s.back();
   const auto closest_stop_id =
@@ -467,11 +462,12 @@ double OptimizationBasedPlanner::getClosestStopDistance(
 
   double closest_obj_distance = ego_traj_data.s.back();
   boost::optional<TargetObstacle> closest_obj;
-  for (const auto & obj : planner_data.target_obstacles) {
+  for (size_t o_idx = 0; o_idx < planner_data.target_obstacles.size(); ++o_idx) {
+    const auto & obj = planner_data.target_obstacles.at(o_idx);
     const auto obj_base_time = obj.time_stamp;
 
     // Ignore obstacles that are not required to stop
-    if (!isStopRequired(obj)) {
+    if (!isStopRequired(obj, modified_target_obstacles.at(o_idx))) {
       continue;
     }
 
@@ -509,6 +505,9 @@ double OptimizationBasedPlanner::getClosestStopDistance(
       closest_obj = obj;
     }
   }
+
+  // TODO(shimizu) refactor obstacle stop;
+  prev_target_obstacles_ = modified_target_obstacles;
 
   // Publish distance from the ego vehicle to the object which is on the trajectory
   if (closest_obj && closest_obj_distance < ego_traj_data.s.back()) {
