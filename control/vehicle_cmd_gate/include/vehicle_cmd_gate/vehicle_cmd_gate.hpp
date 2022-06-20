@@ -41,28 +41,6 @@
 
 #include <memory>
 
-namespace vehicle_cmd_gate
-{
-
-using autoware_auto_control_msgs::msg::AckermannControlCommand;
-using autoware_auto_system_msgs::msg::EmergencyState;
-using autoware_auto_vehicle_msgs::msg::GearCommand;
-using autoware_auto_vehicle_msgs::msg::HazardLightsCommand;
-using autoware_auto_vehicle_msgs::msg::SteeringReport;
-using autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand;
-using tier4_control_msgs::msg::GateMode;
-using tier4_external_api_msgs::msg::Emergency;
-using tier4_external_api_msgs::msg::Heartbeat;
-using tier4_external_api_msgs::srv::SetEmergency;
-using tier4_system_msgs::msg::OperationMode;
-using tier4_vehicle_msgs::msg::VehicleEmergencyStamped;
-
-using diagnostic_msgs::msg::DiagnosticStatus;
-using nav_msgs::msg::Odometry;
-
-using EngageMsg = autoware_auto_vehicle_msgs::msg::Engage;
-using EngageSrv = tier4_external_api_msgs::srv::Engage;
-
 struct Commands
 {
   autoware_auto_control_msgs::msg::AckermannControlCommand control;
@@ -98,16 +76,16 @@ private:
 
   // Subscription
 
-  rclcpp::Subscription<EmergencyState>::SharedPtr emergency_state_sub_;
-  rclcpp::Subscription<Heartbeat>::SharedPtr external_emergency_stop_heartbeat_sub_;
-  rclcpp::Subscription<GateMode>::SharedPtr gate_mode_sub_;
-  rclcpp::Subscription<SteeringReport>::SharedPtr steer_sub_;
-  rclcpp::Subscription<OperationMode>::SharedPtr operation_mode_sub_;
+  rclcpp::Subscription<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr emergency_state_sub_;
+  rclcpp::Subscription<tier4_external_api_msgs::msg::Heartbeat>::SharedPtr external_emergency_stop_heartbeat_sub_;
+  rclcpp::Subscription<tier4_control_msgs::msg::GateMode>::SharedPtr gate_mode_sub_;
+  rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr steer_sub_;
+  rclcpp::Subscription<tier4_system_msgs::msg::OperationMode>::SharedPtr operation_mode_sub_;
 
-  void onGateMode(GateMode::ConstSharedPtr msg);
-  void onEmergencyState(EmergencyState::ConstSharedPtr msg);
-  void onExternalEmergencyStopHeartbeat(Heartbeat::ConstSharedPtr msg);
-  void onSteering(SteeringReport::ConstSharedPtr msg);
+  void onGateMode(tier4_control_msgs::msg::GateMode::ConstSharedPtr msg);
+  void onEmergencyState(autoware_auto_system_msgs::msg::EmergencyState::ConstSharedPtr msg);
+  void onExternalEmergencyStopHeartbeat(tier4_external_api_msgs::msg::Heartbeat::ConstSharedPtr msg);
+  void onSteering(autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg);
 
   bool is_engaged_;
   bool is_system_emergency_ = false;
@@ -233,7 +211,7 @@ private:
     const autoware_auto_control_msgs::msg::AckermannControlCommand & msg);
 
   // filtering on transition
-  OperationMode current_operation_mode_;
+  tier4_system_msgs::msg::OperationMode current_operation_mode_;
   VehicleCmdFilter filter_on_transition_;
 
   // Start request service

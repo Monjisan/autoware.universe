@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 project(engage_transition_manager)
 
-find_package(autoware_cmake REQUIRED)
-autoware_package()
+# find_package(autoware_cmake REQUIRED)
+# autoware_package()
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
 
 ament_auto_add_library(engage_transition_manager_node SHARED
   src/engage_transition_manager.cpp

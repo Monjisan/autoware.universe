@@ -40,6 +40,28 @@ const char * getGateModeName(const tier4_control_msgs::msg::GateMode::_data_type
 
 }  // namespace
 
+// namespace vehicle_cmd_gate
+// {
+
+// using autoware_auto_control_msgs::msg::AckermannControlCommand;
+// using autoware_auto_system_msgs::msg::EmergencyState;
+// using autoware_auto_vehicle_msgs::msg::GearCommand;
+// using autoware_auto_vehicle_msgs::msg::HazardLightsCommand;
+// using autoware_auto_vehicle_msgs::msg::SteeringReport;
+// using autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand;
+// using tier4_control_msgs::msg::GateMode;
+// using tier4_external_api_msgs::msg::Emergency;
+// using tier4_external_api_msgs::msg::Heartbeat;
+// using tier4_external_api_msgs::srv::SetEmergency;
+// using tier4_system_msgs::msg::OperationMode;
+// using tier4_vehicle_msgs::msg::VehicleEmergencyStamped;
+
+// using diagnostic_msgs::msg::DiagnosticStatus;
+// using nav_msgs::msg::Odometry;
+
+// using EngageMsg = autoware_auto_vehicle_msgs::msg::Engage;
+// using EngageSrv = tier4_external_api_msgs::srv::Engage;
+
 VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
 : Node("vehicle_cmd_gate", node_options), is_engaged_(false), updater_(this)
 {
@@ -52,7 +74,7 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
 
   // Publisher
   vehicle_cmd_emergency_pub_ =
-    this->create_publisher<VehicleEmergencyStamped>("output/vehicle_cmd_emergency", durable_qos);
+    this->create_publisher<tier4_vehicle_msgs::msg::VehicleEmergencyStamped>("output/vehicle_cmd_emergency", durable_qos);
   control_cmd_pub_ =
     this->create_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "output/control_cmd", durable_qos);
@@ -85,9 +107,9 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
     "input/engage", 1, std::bind(&VehicleCmdGate::onEngage, this, _1));
   steer_sub_ = this->create_subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>(
     "input/steering", 1, std::bind(&VehicleCmdGate::onSteering, this, _1));
-  operation_mode_sub_ = this->create_subscription<OperationMode>(
+  operation_mode_sub_ = this->create_subscription<tier4_system_msgs::msg::OperationMode>(
     "input/engage_state", 1,
-    [this](const OperationMode::SharedPtr msg) { current_operation_mode_ = *msg; });
+    [this](const tier4_system_msgs::msg::OperationMode::SharedPtr msg) { current_operation_mode_ = *msg; });
 
   // Subscriber for auto
   auto_control_cmd_sub_ =
@@ -512,7 +534,7 @@ autoware_auto_control_msgs::msg::AckermannControlCommand VehicleCmdGate::filterC
   autoware_auto_control_msgs::msg::AckermannControlCommand out = in;
   const double dt = getDt();
 
-  if (current_operation_mode_.mode == OperationMode::TRANSITION_TO_AUTO) {
+  if (current_operation_mode_.mode == tier4_system_msgs::msg::OperationMode::TRANSITION_TO_AUTO) {
     filter_on_transition_.filterAll(dt, out);
   } else {
     filter_.filterAll(dt, out);
