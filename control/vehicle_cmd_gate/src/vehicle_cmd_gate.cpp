@@ -516,6 +516,7 @@ autoware_auto_control_msgs::msg::AckermannControlCommand VehicleCmdGate::filterC
 
   if (current_operation_mode_.mode == tier4_system_msgs::msg::OperationMode::TRANSITION_TO_AUTO) {
     filter_on_transition_.filterAll(dt, current_steer_, out);
+    RCLCPP_INFO(get_logger(), "now transition filter is running");
   } else {
     filter_.filterAll(dt, current_steer_, out);
   }
