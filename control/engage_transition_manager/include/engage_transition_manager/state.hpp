@@ -35,7 +35,7 @@ public:
   virtual State update() = 0;
 
   State getCurrentState() { return state_; };
-  void setData(const Data & data) { data_ = data; };
+  void setData(const std::shared_ptr<Data> data) { data_ = data; };
   void setParam(const StableCheckParam & param) { stable_check_param_ = param; };
 
 protected:
@@ -45,7 +45,7 @@ protected:
   rclcpp::Clock::SharedPtr clock_;
 
   State state_;
-  Data data_;
+  std::shared_ptr<Data> data_;
   StableCheckParam stable_check_param_;
 
   State defaultUpdateOnManual();
@@ -88,8 +88,13 @@ public:
   State update() override;
 
 private:
-  std::unique_ptr<rclcpp::Time> stable_start_time_;
+  std::shared_ptr<rclcpp::Time> stable_start_time_;
   bool checkSystemStable();
+
+  // return true when MANUAL mode is detected after AUTO transition is done.
+  bool checkVehicleOverride();
+
+  bool is_vehicle_mode_change_done_ = false;  // set to true when the mode changed to Auto.
 };
 
 class AutonomousState : public EngageStateBase

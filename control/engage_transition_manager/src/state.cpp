@@ -35,12 +35,12 @@ EngageStateBase::EngageStateBase(const State state, rclcpp::Node * node)
 
 State EngageStateBase::defaultUpdateOnManual()
 {
-  const bool all_engage_requirements_are_satisfied = data_.is_auto_available;
-  const bool is_engage_requested = isAuto(data_.requested_state);
+  const bool all_engage_requirements_are_satisfied = data_->is_auto_available;
+  const bool is_engage_requested = isAuto(data_->requested_state);
 
   // manual to manual: change state directly
   if (!is_engage_requested) {
-    return isManual(data_.requested_state) ? data_.requested_state : getCurrentState();
+    return isManual(data_->requested_state) ? data_->requested_state : getCurrentState();
   }
 
   // manual to auto:
@@ -78,12 +78,33 @@ bool EngageStateBase::sendAutonomousModeRequest()
   return success;
 }
 
+bool TransitionState::checkVehicleOverride()
+{
+  const auto mode = data_->current_control_mode.mode;
+
+  if (mode == ControlModeReport::AUTONOMOUS) {
+    is_vehicle_mode_change_done_ = true;
+  }
+
+  if (is_vehicle_mode_change_done_) {
+    if (mode != ControlModeReport::AUTONOMOUS) {
+      return true;
+    }
+  }
+  return false;
+}
+
 State TransitionState::update()
 {
   // return to manual soon if requested.
-  const bool is_disengage_requested = isManual(data_.requested_state);
+  const bool is_disengage_requested = isManual(data_->requested_state);
   if (is_disengage_requested) {
-    return data_.requested_state;
+    return data_->requested_state;
+  }
+
+  if (checkVehicleOverride()) {
+    data_->requested_state = State::MANUAL_DIRECT;
+    return State::MANUAL_DIRECT;
   }
 
   const bool is_system_stable = checkSystemStable();
@@ -105,34 +126,34 @@ bool TransitionState::checkSystemStable()
     return false;
   };
 
-  if (data_.current_control_mode.mode != ControlModeReport::AUTONOMOUS) {
+  if (data_->current_control_mode.mode != ControlModeReport::AUTONOMOUS) {
     RCLCPP_INFO(logger_, "Not stable yet: vehicle control_mode is still NOT Autonomous");
     return unstable();
   }
 
-  if (data_.trajectory.points.size() < 2) {
+  if (data_->trajectory.points.size() < 2) {
     RCLCPP_INFO(logger_, "Not stable yet: trajectory size must be > 2");
     return unstable();
   }
 
   const auto closest_idx =
-    findNearestIndex(data_.trajectory.points, data_.kinematics.pose.pose, dist_max, yaw_max);
+    findNearestIndex(data_->trajectory.points, data_->kinematics.pose.pose, dist_max, yaw_max);
   if (!closest_idx) {
     RCLCPP_INFO(logger_, "Not stable yet: closest point not found");
     return unstable();
   }
 
-  const auto closest_point = data_.trajectory.points.at(*closest_idx);
+  const auto closest_point = data_->trajectory.points.at(*closest_idx);
 
   // check for lateral deviation
-  const auto dist_deviation = calcDistance2d(closest_point.pose, data_.kinematics.pose.pose);
+  const auto dist_deviation = calcDistance2d(closest_point.pose, data_->kinematics.pose.pose);
   if (dist_deviation > stable_check_param_.dist_threshold) {
     RCLCPP_INFO(logger_, "Not stable yet: distance deviation is too large: %f", dist_deviation);
     return unstable();
   }
 
   // check for yaw deviation
-  const auto yaw_deviation = calcYawDeviation(closest_point.pose, data_.kinematics.pose.pose);
+  const auto yaw_deviation = calcYawDeviation(closest_point.pose, data_->kinematics.pose.pose);
   if (yaw_deviation > stable_check_param_.yaw_threshold) {
     RCLCPP_INFO(logger_, "Not stable yet: yaw deviation is too large: %f", yaw_deviation);
     return unstable();
@@ -140,7 +161,7 @@ bool TransitionState::checkSystemStable()
 
   // check for speed deviation
   const auto speed_deviation =
-    std::abs(closest_point.longitudinal_velocity_mps - data_.kinematics.twist.twist.linear.x);
+    std::abs(closest_point.longitudinal_velocity_mps - data_->kinematics.twist.twist.linear.x);
   if (speed_deviation > stable_check_param_.speed_threshold) {
     RCLCPP_INFO(logger_, "Not stable yet: speed deviation is too large: %f", speed_deviation);
     return unstable();
@@ -161,10 +182,17 @@ bool TransitionState::checkSystemStable()
 
 State AutonomousState::update()
 {
-  bool is_disengage_requested = isManual(data_.requested_state);
+  // check current mode
+  if (data_->current_control_mode.mode == ControlModeReport::MANUAL) {
+    data_->requested_state = State::MANUAL_DIRECT;
+    return State::MANUAL_DIRECT;
+  }
+
+  // check request mode
+  bool is_disengage_requested = isManual(data_->requested_state);
 
   if (is_disengage_requested) {
-    return data_.requested_state;
+    return data_->requested_state;
   } else {
     return getCurrentState();
   }

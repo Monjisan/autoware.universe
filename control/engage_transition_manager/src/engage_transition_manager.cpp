@@ -32,24 +32,25 @@ EngageTransitionManager::EngageTransitionManager(const rclcpp::NodeOptions & opt
   using std::placeholders::_1;
   using std::placeholders::_2;
   engage_transition_manager_ = std::make_unique<NoneState>(this);
+  data_ = std::make_shared<Data>();
 
   pub_operation_mode_ = create_publisher<OperationMode>("engage_state", 1);
   pub_auto_available_ = create_publisher<IsAutonomousAvailable>("is_auto_available", 1);
   pub_debug_info_ = create_publisher<EngageTransitionManagerDebug>("debug_info", 1);
 
   sub_vehicle_kinematics_ = create_subscription<Odometry>(
-    "kinematics", 1, [this](const Odometry::SharedPtr msg) { data_.kinematics = *msg; });
+    "kinematics", 1, [this](const Odometry::SharedPtr msg) { data_->kinematics = *msg; });
 
   sub_trajectory_ = create_subscription<Trajectory>(
-    "trajectory", 1, [this](const Trajectory::SharedPtr msg) { data_.trajectory = *msg; });
+    "trajectory", 1, [this](const Trajectory::SharedPtr msg) { data_->trajectory = *msg; });
 
   sub_control_cmd_ = create_subscription<AckermannControlCommand>(
     "control_cmd", 1,
-    [this](const AckermannControlCommand::SharedPtr msg) { data_.control_cmd = *msg; });
+    [this](const AckermannControlCommand::SharedPtr msg) { data_->control_cmd = *msg; });
 
   sub_control_mode_ = create_subscription<ControlModeReport>(
     "control_mode_report", 1,
-    [this](const ControlModeReport::SharedPtr msg) { data_.current_control_mode = *msg; });
+    [this](const ControlModeReport::SharedPtr msg) { data_->current_control_mode = *msg; });
 
   srv_mode_change_server_ = create_service<OperationModeRequest>(
     "operation_mode_request",
@@ -105,7 +106,7 @@ void EngageTransitionManager::onOperationModeRequest(
     return;
   }
 
-  data_.requested_state = toEnum(request->mode);
+  data_->requested_state = toEnum(request->mode);
 
   const auto state = updateState(data_);
 
@@ -126,7 +127,7 @@ void EngageTransitionManager::onOperationModeRequest(
 
 void EngageTransitionManager::onTimer()
 {
-  data_.is_auto_available = checkEngageAvailable();
+  data_->is_auto_available = checkEngageAvailable();
 
   updateState(data_);
 
@@ -135,8 +136,8 @@ void EngageTransitionManager::onTimer()
   // TODO: remove
   RCLCPP_INFO_STREAM(
     get_logger(), "Timer: engage_available: "
-                    << (data_.is_auto_available ? "True" : "False")
-                    << ", requested_state: " << toStr(data_.requested_state)
+                    << (data_->is_auto_available ? "True" : "False")
+                    << ", requested_state: " << toStr(data_->requested_state)
                     << ", current state: " << toStr(engage_transition_manager_->getCurrentState()));
 }
 
@@ -151,7 +152,7 @@ void EngageTransitionManager::publishData()
 
   IsAutonomousAvailable msg;
   msg.stamp = time;
-  msg.is_autonomous_available = data_.is_auto_available;
+  msg.is_autonomous_available = data_->is_auto_available;
   pub_auto_available_->publish(msg);
 
   debug_info_.stamp = time;
@@ -160,12 +161,12 @@ void EngageTransitionManager::publishData()
 
 bool EngageTransitionManager::hasDangerAcceleration()
 {
-  const bool is_stopping = std::abs(data_.kinematics.twist.twist.linear.x) < 0.01;
+  const bool is_stopping = std::abs(data_->kinematics.twist.twist.linear.x) < 0.01;
   if (is_stopping) {
     return false;  // any acceleration is ok when stopped
   }
 
-  const bool has_large_acc = std::abs(data_.control_cmd.longitudinal.acceleration) >
+  const bool has_large_acc = std::abs(data_->control_cmd.longitudinal.acceleration) >
                              engage_acceptable_param_.large_acc_threshold;
   return has_large_acc;
 }
@@ -175,39 +176,39 @@ bool EngageTransitionManager::checkEngageAvailable()
   constexpr auto dist_max = 5.0;
   constexpr auto yaw_max = M_PI_4;
 
-  if (data_.trajectory.points.size() < 2) {
+  if (data_->trajectory.points.size() < 2) {
     RCLCPP_WARN(get_logger(), "Engage unavailable: trajectory size must be > 2");
     debug_info_ = EngageTransitionManagerDebug{};  // all false
     return false;
   }
 
   const auto closest_idx =
-    findNearestIndex(data_.trajectory.points, data_.kinematics.pose.pose, dist_max, yaw_max);
+    findNearestIndex(data_->trajectory.points, data_->kinematics.pose.pose, dist_max, yaw_max);
   if (!closest_idx) {
     RCLCPP_INFO(get_logger(), "Engage unavailable: closest point not found");
     debug_info_ = EngageTransitionManagerDebug{};  // all false
     return false;                                  // closest trajectory point not found.
   }
-  const auto closest_point = data_.trajectory.points.at(*closest_idx);
+  const auto closest_point = data_->trajectory.points.at(*closest_idx);
   debug_info_.trajectory_available_ok = true;
 
   // No engagement is lateral control error is large
-  const auto lateral_deviation = calcDistance2d(closest_point.pose, data_.kinematics.pose.pose);
+  const auto lateral_deviation = calcDistance2d(closest_point.pose, data_->kinematics.pose.pose);
   const bool lateral_deviation_ok = lateral_deviation < engage_acceptable_param_.dist_threshold;
 
   // No engagement is yaw control error is large
-  const auto yaw_deviation = calcYawDeviation(closest_point.pose, data_.kinematics.pose.pose);
+  const auto yaw_deviation = calcYawDeviation(closest_point.pose, data_->kinematics.pose.pose);
   const bool yaw_deviation_ok = yaw_deviation < engage_acceptable_param_.yaw_threshold;
 
   // No engagement if speed control error is large
   const auto speed_deviation =
-    std::abs(closest_point.longitudinal_velocity_mps - data_.kinematics.twist.twist.linear.x);
+    std::abs(closest_point.longitudinal_velocity_mps - data_->kinematics.twist.twist.linear.x);
   const bool speed_deviation_ok = speed_deviation < engage_acceptable_param_.speed_threshold;
 
   // No engagement if the vehicle is moving but the target speed is zero.
   const bool no_stop_ok =
-    !(std::abs(data_.kinematics.twist.twist.linear.x) > 0.1 &&
-      std::abs(data_.control_cmd.longitudinal.speed) < 0.01);
+    !(std::abs(data_->kinematics.twist.twist.linear.x) > 0.1 &&
+      std::abs(data_->control_cmd.longitudinal.speed) < 0.01);
 
   // No engagement if the large acceleration is commanded.
   const bool no_large_acceleration_ok = !hasDangerAcceleration();
@@ -228,7 +229,7 @@ bool EngageTransitionManager::checkEngageAvailable()
   return is_all_ok;
 }
 
-State EngageTransitionManager::updateState(const Data & data)
+State EngageTransitionManager::updateState(const std::shared_ptr<Data> data)
 {
   const auto current_state = engage_transition_manager_->getCurrentState();
 

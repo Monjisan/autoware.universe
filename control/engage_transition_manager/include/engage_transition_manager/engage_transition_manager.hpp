@@ -63,9 +63,9 @@ private:
 
   std::unique_ptr<EngageStateBase> engage_transition_manager_;
 
-  Data data_;
+  std::shared_ptr<Data> data_;
 
-  State updateState(const Data & data);
+  State updateState(const std::shared_ptr<Data> data);
   State getCurrentState() { return engage_transition_manager_->getCurrentState(); };
 
   EngageAcceptableParam engage_acceptable_param_;
