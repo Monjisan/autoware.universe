@@ -36,7 +36,6 @@
 #include <tier4_external_api_msgs/msg/heartbeat.hpp>
 #include <tier4_external_api_msgs/srv/engage.hpp>
 #include <tier4_external_api_msgs/srv/set_emergency.hpp>
-#include <tier4_system_msgs/msg/operation_mode.hpp>
 #include <tier4_vehicle_msgs/msg/vehicle_emergency_stamped.hpp>
 
 #include <memory>
@@ -75,16 +74,17 @@ private:
   rclcpp::Publisher<autoware_auto_vehicle_msgs::msg::Engage>::SharedPtr engage_pub_;
 
   // Subscription
-
-  rclcpp::Subscription<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr emergency_state_sub_;
-  rclcpp::Subscription<tier4_external_api_msgs::msg::Heartbeat>::SharedPtr external_emergency_stop_heartbeat_sub_;
+  rclcpp::Subscription<autoware_auto_system_msgs::msg::EmergencyState>::SharedPtr
+    emergency_state_sub_;
+  rclcpp::Subscription<tier4_external_api_msgs::msg::Heartbeat>::SharedPtr
+    external_emergency_stop_heartbeat_sub_;
   rclcpp::Subscription<tier4_control_msgs::msg::GateMode>::SharedPtr gate_mode_sub_;
   rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr steer_sub_;
-  rclcpp::Subscription<tier4_system_msgs::msg::OperationMode>::SharedPtr operation_mode_sub_;
 
   void onGateMode(tier4_control_msgs::msg::GateMode::ConstSharedPtr msg);
   void onEmergencyState(autoware_auto_system_msgs::msg::EmergencyState::ConstSharedPtr msg);
-  void onExternalEmergencyStopHeartbeat(tier4_external_api_msgs::msg::Heartbeat::ConstSharedPtr msg);
+  void onExternalEmergencyStopHeartbeat(
+    tier4_external_api_msgs::msg::Heartbeat::ConstSharedPtr msg);
   void onSteering(autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg);
 
   bool is_engaged_;
@@ -209,10 +209,6 @@ private:
   VehicleCmdFilter filter_;
   autoware_auto_control_msgs::msg::AckermannControlCommand filterControlCommand(
     const autoware_auto_control_msgs::msg::AckermannControlCommand & msg);
-
-  // filtering on transition
-  tier4_system_msgs::msg::OperationMode current_operation_mode_;
-  VehicleCmdFilter filter_on_transition_;
 
   // Start request service
   struct StartRequest
