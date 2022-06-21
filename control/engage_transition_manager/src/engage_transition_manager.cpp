@@ -158,6 +158,18 @@ void EngageTransitionManager::publishData()
   pub_debug_info_->publish(debug_info_);
 }
 
+bool EngageTransitionManager::hasDangerAcceleration()
+{
+  const bool is_stopping = std::abs(data_.kinematics.twist.twist.linear.x) < 0.01;
+  if (is_stopping) {
+    return false;  // any acceleration is ok when stopped
+  }
+
+  const bool has_large_acc = std::abs(data_.control_cmd.longitudinal.acceleration) >
+                             engage_acceptable_param_.large_acc_threshold;
+  return has_large_acc;
+}
+
 bool EngageTransitionManager::checkEngageAvailable()
 {
   constexpr auto dist_max = 5.0;
@@ -198,8 +210,7 @@ bool EngageTransitionManager::checkEngageAvailable()
       std::abs(data_.control_cmd.longitudinal.speed) < 0.01);
 
   // No engagement if the large acceleration is commanded.
-  const bool no_large_acceleration_ok = std::abs(data_.control_cmd.longitudinal.acceleration) <
-                                        engage_acceptable_param_.large_acc_threshold;
+  const bool no_large_acceleration_ok = !hasDangerAcceleration();
 
   // No engagement if a stop is expected within a certain period of time
   // TODO: write me

@@ -71,6 +71,7 @@ private:
   EngageAcceptableParam engage_acceptable_param_;
   StableCheckParam stable_check_param_;
 
+  bool hasDangerAcceleration();
   bool checkEngageAvailable();
 
   void publishData();
@@ -88,3 +89,4 @@ private:
 }  // namespace engage_transition_manager
 
 #endif  // ENGAGE_TRANSITION_MANAGER__ENGAGE_TRANSITION_MANAGER_HPP_
+;
