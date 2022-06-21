@@ -29,6 +29,8 @@ ament_auto_add_executable(ad_service_state_monitor
   ${AD_SERVICE_STATE_MONITOR_SRC}
 )
 
+target_link_libraries(ad_service_state_monitor glog)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
