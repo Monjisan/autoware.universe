@@ -79,6 +79,9 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
     "input/engage", 1, std::bind(&VehicleCmdGate::onEngage, this, _1));
   steer_sub_ = this->create_subscription<SteeringReport>(
     "input/steering", 1, std::bind(&VehicleCmdGate::onSteering, this, _1));
+  operation_mode_sub_ = this->create_subscription<tier4_system_msgs::msg::OperationMode>(
+    "input/engage_state", 1,
+    [this](const tier4_system_msgs::msg::OperationMode::SharedPtr msg) { current_operation_mode_ = *msg; });
 
   // Subscriber for auto
   auto_control_cmd_sub_ = this->create_subscription<AckermannControlCommand>(
@@ -133,18 +136,29 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
 
   // Vehicle Parameter
   const auto vehicle_info = vehicle_info_util::VehicleInfoUtil(*this).getVehicleInfo();
-  double wheel_base = vehicle_info.wheel_base_m;
-  double vel_lim = declare_parameter("vel_lim", 25.0);
-  double lon_acc_lim = declare_parameter("lon_acc_lim", 5.0);
-  double lon_jerk_lim = declare_parameter("lon_jerk_lim", 5.0);
-  double lat_acc_lim = declare_parameter("lat_acc_lim", 5.0);
-  double lat_jerk_lim = declare_parameter("lat_jerk_lim", 5.0);
-  filter_.setWheelBase(wheel_base);
-  filter_.setVelLim(vel_lim);
-  filter_.setLonAccLim(lon_acc_lim);
-  filter_.setLonJerkLim(lon_jerk_lim);
-  filter_.setLatAccLim(lat_acc_lim);
-  filter_.setLatJerkLim(lat_jerk_lim);
+  {
+    VehicleCmdFilterParam p;
+    p.wheel_base = vehicle_info.wheel_base_m;
+    p.vel_lim = declare_parameter("nominal.vel_lim", 25.0);
+    p.lon_acc_lim = declare_parameter("nominal.lon_acc_lim", 5.0);
+    p.lon_jerk_lim = declare_parameter("nominal.lon_jerk_lim", 5.0);
+    p.lat_acc_lim = declare_parameter("nominal.lat_acc_lim", 5.0);
+    p.lat_jerk_lim = declare_parameter("nominal.lat_jerk_lim", 5.0);
+    p.actual_steer_diff_lim = declare_parameter("nominal.actual_steer_diff_lim", 1.0);
+    filter_.setParam(p);
+  }
+
+  {
+    VehicleCmdFilterParam p;
+    p.wheel_base = vehicle_info.wheel_base_m;
+    p.vel_lim = declare_parameter("on_transition.vel_lim", 25.0);
+    p.lon_acc_lim = declare_parameter("on_transition.lon_acc_lim", 0.5);
+    p.lon_jerk_lim = declare_parameter("on_transition.lon_jerk_lim", 0.25);
+    p.lat_acc_lim = declare_parameter("on_transition.lat_acc_lim", 0.5);
+    p.lat_jerk_lim = declare_parameter("on_transition.lat_jerk_lim", 0.25);
+    p.actual_steer_diff_lim = declare_parameter("on_transition.actual_steer_diff_lim", 0.05);
+    filter_on_transition_.setParam(p);
+  }
 
   // Set default value
   current_gate_mode_.data = GateMode::AUTO;
@@ -489,12 +503,16 @@ AckermannControlCommand VehicleCmdGate::filterControlCommand(const AckermannCont
   AckermannControlCommand out = in;
   const double dt = getDt();
 
-  filter_.limitLongitudinalWithVel(out);
-  filter_.limitLongitudinalWithAcc(dt, out);
-  filter_.limitLongitudinalWithJerk(dt, out);
-  filter_.limitLateralWithLatAcc(dt, out);
-  filter_.limitLateralWithLatJerk(dt, out);
+  if (current_operation_mode_.mode == tier4_system_msgs::msg::OperationMode::TRANSITION_TO_AUTO) {
+    filter_on_transition_.filterAll(dt, current_steer_, out);
+    RCLCPP_INFO(get_logger(), "now transition filter is running");
+  } else {
+    filter_.filterAll(dt, current_steer_, out);
+  }
+
+  // set prev value for both to keep consistency over switching
   filter_.setPrevCmd(out);
+  filter_on_transition_.setPrevCmd(out);
 
   return out;
 }
