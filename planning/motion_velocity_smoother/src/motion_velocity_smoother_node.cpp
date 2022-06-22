@@ -97,6 +97,9 @@ MotionVelocitySmootherNode::MotionVelocitySmootherNode(const rclcpp::NodeOptions
   sub_external_velocity_limit_ = create_subscription<VelocityLimit>(
     "~/input/external_velocity_limit_mps", 1,
     std::bind(&MotionVelocitySmootherNode::onExternalVelocityLimit, this, _1));
+  sub_control_mode_ = create_subscription<ControlModeReport>(
+    "~/input/control_mode_report", 1,
+    [this](const ControlModeReport::SharedPtr msg) { current_control_mode_ = *msg; });
 
   // parameter update
   set_param_res_ = this->add_on_set_parameters_callback(
@@ -734,6 +737,16 @@ MotionVelocitySmootherNode::calcInitialMotion(
     initial_vel = vehicle_speed;
     initial_acc = 0.0;
     type = InitializeType::INIT;
+    return std::make_tuple(initial_vel, initial_acc, type);
+  }
+
+  // On manual control
+  if (current_control_mode_.mode == ControlModeReport::MANUAL)
+  {
+    initial_vel = vehicle_speed;
+    initial_acc = 0.0;  // TODO(horibe): must be ego acceleration
+    type = InitializeType::INIT;
+    std::cerr << "motion plan from ego vel!" << std::endl;
     return std::make_tuple(initial_vel, initial_acc, type);
   }
 

@@ -39,6 +39,7 @@
 #include "tier4_debug_msgs/msg/float32_stamped.hpp"         // temporary
 #include "tier4_planning_msgs/msg/stop_speed_exceeded.hpp"  // temporary
 #include "tier4_planning_msgs/msg/velocity_limit.hpp"       // temporary
+#include "autoware_auto_vehicle_msgs/msg/control_mode_report.hpp"
 
 #include <iostream>
 #include <memory>
@@ -50,6 +51,7 @@ namespace motion_velocity_smoother
 {
 using autoware_auto_planning_msgs::msg::Trajectory;
 using autoware_auto_planning_msgs::msg::TrajectoryPoint;
+using autoware_auto_vehicle_msgs::msg::ControlModeReport;
 using TrajectoryPoints = std::vector<TrajectoryPoint>;
 using geometry_msgs::msg::Pose;
 using geometry_msgs::msg::PoseStamped;
@@ -74,6 +76,7 @@ private:
     sub_current_trajectory_;  //!< @brief subscriber for reference trajectory
   rclcpp::Subscription<VelocityLimit>::SharedPtr
     sub_external_velocity_limit_;  //!< @brief subscriber for external velocity limit
+  rclcpp::Subscription<ControlModeReport>::SharedPtr sub_control_mode_;
 
   PoseStamped::ConstSharedPtr current_pose_ptr_;   // current vehicle pose
   Odometry::ConstSharedPtr current_odometry_ptr_;  // current odometry
@@ -131,6 +134,8 @@ private:
   AnalyticalJerkConstrainedSmoother::Param analytical_jerk_constrained_smoother_param_{};
 
   std::shared_ptr<SmootherBase> smoother_;
+
+  ControlModeReport current_control_mode_;
 
   bool publish_debug_trajs_;  // publish planned trajectories
 
