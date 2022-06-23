@@ -1,6 +1,7 @@
 import rclpy
 import tf2_ros
 import tf2_py
+import tf2_geometry_msgs
 import numpy as np
 
 from rclpy.node import Node
@@ -20,7 +21,7 @@ class SimpleTrajectoryFollower(Node):
         super().__init__('simple_trajectory_follower')
         self.pub_cmd = self.create_publisher(AckermannControlCommand, '/simulation/input/manual_ackermann_control_command', 1)
         self.sub_traj = self.create_subscription(Trajectory, '/planning/scenario_planning/trajectory', self.on_trajectory, 1)
-        self.sub_ego = self.create_subscription(Odometry, '/localization/kinematics', self.on_kinematics, 1)
+        self.sub_ego = self.create_subscription(Odometry, '/localization/kinematic_state', self.on_kinematics, 1)
         self.timer = self.create_timer(0.1 , self.timer_callback) # 0.1 sec
         self.ego_pose = Pose()
         self.ego_twist = Twist()
@@ -31,8 +32,8 @@ class SimpleTrajectoryFollower(Node):
         self.trajectory = msg
 
     def on_kinematics(self, msg):
-        self.ego_pose = msg.pose
-        self.ego_twist = msg.twist
+        self.ego_pose = msg.pose.pose
+        self.ego_twist = msg.twist.twist
 
     def timer_callback(self):
         self.get_logger().info("timer run")
@@ -46,7 +47,10 @@ class SimpleTrajectoryFollower(Node):
         self.get_logger().info("error: lat={}, yaw={}, vel={}".format(lat_err, yaw_err, vel_err))
 
         cmd = AckermannControlCommand()
-        cmd.stamp = self.get_clock().now().to_msg()
+        now = self.get_clock().now().to_msg()
+        cmd.stamp = now
+        cmd.lateral.stamp = now
+        cmd.longitudinal.stamp = now
         cmd.lateral.steering_tire_angle = self.calc_steer_feedback(lat_err, yaw_err)
         cmd.lateral.steering_tire_rotation_rate = 0.0
         cmd.longitudinal.speed = self.target_point.longitudinal_velocity_mps
@@ -75,14 +79,18 @@ class SimpleTrajectoryFollower(Node):
         # lateral error
         lat_err = self.calc_dist2d(self.target_point.pose, self.ego_pose)
 
+        self.get_logger().info("error: target.x, y={}, {}, ego.x, y={}, {}".format(self.target_point.pose.position.x, self.target_point.pose.position.y, self.ego_pose.position.x, self.ego_pose.position.y))
+
+
         # yaw error
         ego_yaw = self.to_yaw(self.ego_pose.orientation)
         target_yaw = self.to_yaw(self.target_point.pose.orientation)
-        yaw_err = target_yaw - ego_yaw
+        yaw_err = ego_yaw - target_yaw
         yaw_err = np.arctan2(np.sin(yaw_err), np.cos(yaw_err))
 
         # vel_err
-        vel_err = self.target_point.lateral_velocity_mps - self.ego_twist.linear.x
+        vel_err = self.ego_twist.linear.x - self.target_point.longitudinal_velocity_mps
+        self.get_logger().info("target_v={}, ego_v={}".format(self.target_point.longitudinal_velocity_mps, self.ego_twist.linear.x))
 
         return lat_err, yaw_err, vel_err
 
