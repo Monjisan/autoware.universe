@@ -16,6 +16,7 @@
 #define VEHICLE_CMD_GATE__VEHICLE_CMD_FILTER_HPP_
 
 #include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 struct VehicleCmdFilterParam
 {
@@ -66,6 +67,10 @@ public:
 private:
   VehicleCmdFilterParam param_;
   autoware_auto_control_msgs::msg::AckermannControlCommand prev_cmd_;
+
+  bool compareCmd(
+    const std::string & name, const autoware_auto_control_msgs::msg::AckermannControlCommand & b,
+    const autoware_auto_control_msgs::msg::AckermannControlCommand & a) const;
 
   double calcLatAcc(const autoware_auto_control_msgs::msg::AckermannControlCommand & cmd) const;
   double calcSteerFromLatacc(const double v, const double latacc) const;

@@ -80,16 +80,56 @@ void VehicleCmdFilter::limitActualSteerDiff(
   input.lateral.steering_tire_angle = current_steer_angle + ds;
 }
 
+bool VehicleCmdFilter::compareCmd(const std::string & name, const autoware_auto_control_msgs::msg::AckermannControlCommand & b, const autoware_auto_control_msgs::msg::AckermannControlCommand & a) const
+{
+  const auto ep = 1.0e-3;
+  const auto vb = b.longitudinal.speed;
+  const auto ab = b.longitudinal.acceleration;
+  const auto sb = b.lateral.steering_tire_angle;
+  const auto srb = b.lateral.steering_tire_rotation_rate;
+
+  const auto va = a.longitudinal.speed;
+  const auto aa = a.longitudinal.acceleration;
+  const auto sa = a.lateral.steering_tire_angle;
+  const auto sra = a.lateral.steering_tire_rotation_rate;
+
+
+  const auto dv = std::abs(va - vb);
+  const auto da = std::abs(aa - ab);
+  const auto ds = std::abs(sa - sb);
+  const auto dsv = std::abs(sra - srb);
+
+  const bool has_change = dv > ep || da > ep || ds > ep || dsv > ep;
+  if (has_change) {
+    RCLCPP_ERROR(rclcpp::get_logger("cmd_filter"), "[%s] has change: v: %f -> %f, a: %f -> %f, s: %f -> %f, sr: %f -> %f", name.c_str(), vb, va, ab, aa, sb, sa, srb, sra);
+  }
+
+  return has_change;
+}
+
 void VehicleCmdFilter::filterAll(
   const double dt, const double current_steer_angle,
   autoware_auto_control_msgs::msg::AckermannControlCommand & cmd) const
 {
+
+  auto tmp = cmd;
   limitLongitudinalWithVel(cmd);
+  compareCmd("limitLongitudinalWithVel", tmp, cmd);
+  tmp = cmd;
   limitLongitudinalWithAcc(dt, cmd);
+  compareCmd("limitLongitudinalWithAcc", tmp, cmd);
+  tmp = cmd;
   limitLongitudinalWithJerk(dt, cmd);
+  compareCmd("limitLongitudinalWithJerk", tmp, cmd);
+  tmp = cmd;
   limitLateralWithLatAcc(dt, cmd);
+  compareCmd("limitLateralWithLatAcc", tmp, cmd);
+  tmp = cmd;
   limitLateralWithLatJerk(dt, cmd);
+  compareCmd("limitLateralWithLatJerk", tmp, cmd);
+  tmp = cmd;
   limitActualSteerDiff(current_steer_angle, cmd);
+  compareCmd("limitActualSteerDiff", tmp, cmd);
   return;
 }
 
