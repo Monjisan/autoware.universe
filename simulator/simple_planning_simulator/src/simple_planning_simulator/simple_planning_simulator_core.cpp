@@ -390,10 +390,10 @@ void SimplePlanningSimulator::on_control_mode_request(
   current_control_mode_ = request->mode;
 
   // take some time
-  for (int i = 0; i < 50; ++i) {
-    rclcpp::sleep_for(std::chrono::milliseconds(100));
-    std::cerr << "simple planning sim: changing control mode..." << std::endl;
-  }
+  // for (int i = 0; i < 50; ++i) {
+  //   rclcpp::sleep_for(std::chrono::milliseconds(100));
+  //   std::cerr << "simple planning sim: changing control mode..." << std::endl;
+  // }
 
   response->success = true;
   return;
