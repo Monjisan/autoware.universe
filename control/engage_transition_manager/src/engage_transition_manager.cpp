@@ -122,6 +122,8 @@ void EngageTransitionManager::onOperationModeRequest(
 
   // not satisfy any success conditions.
   response->success = false;
+  data_->requested_state = engage_transition_manager_->getCurrentState();
+  RCLCPP_WARN(get_logger(), "mode change failed. Request was declined.");
   return;
 }
 

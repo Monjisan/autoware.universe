@@ -84,7 +84,10 @@ public:
 class TransitionState : public EngageStateBase
 {
 public:
-  TransitionState(rclcpp::Node * node) : EngageStateBase(State::TRANSITION_TO_AUTO, node){};
+  TransitionState(rclcpp::Node * node) : EngageStateBase(State::TRANSITION_TO_AUTO, node)
+  {
+    transition_requested_time_ = clock_->now();
+  };
   State update() override;
 
 private:
@@ -94,7 +97,11 @@ private:
   // return true when MANUAL mode is detected after AUTO transition is done.
   bool checkVehicleOverride();
 
+  bool checkTransitionTimeout();
+
+
   bool is_vehicle_mode_change_done_ = false;  // set to true when the mode changed to Auto.
+  rclcpp::Time transition_requested_time_;
 };
 
 class AutonomousState : public EngageStateBase

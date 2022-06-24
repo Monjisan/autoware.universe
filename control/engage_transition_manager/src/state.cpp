@@ -94,15 +94,31 @@ bool TransitionState::checkVehicleOverride()
   return false;
 }
 
+bool TransitionState::checkTransitionTimeout()
+{
+  const auto timeout_thr = 3.0;
+  if ((clock_->now() - transition_requested_time_).seconds() > timeout_thr) {
+    return true;
+  }
+  return false;
+}
+
 State TransitionState::update()
 {
-  // return to manual soon if requested.
+  // return to Manual soon if requested.
   const bool is_disengage_requested = isManual(data_->requested_state);
   if (is_disengage_requested) {
     return data_->requested_state;
   }
 
+  // return to Manual when vehicle control_mode is set to Manual after Auto transition is done.
   if (checkVehicleOverride()) {
+    data_->requested_state = State::MANUAL_DIRECT;
+    return State::MANUAL_DIRECT;
+  }
+
+  if (checkTransitionTimeout()) {
+    RCLCPP_WARN(logger_, "time out for ControlMode change. Return to MANUAL state.");
     data_->requested_state = State::MANUAL_DIRECT;
     return State::MANUAL_DIRECT;
   }
