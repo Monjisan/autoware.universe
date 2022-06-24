@@ -503,7 +503,9 @@ AckermannControlCommand VehicleCmdGate::filterControlCommand(const AckermannCont
   AckermannControlCommand out = in;
   const double dt = getDt();
 
-  if (current_operation_mode_.mode == tier4_system_msgs::msg::OperationMode::TRANSITION_TO_AUTO) {
+  using tier4_system_msgs::msg::OperationMode;
+
+  if (current_operation_mode_.mode == OperationMode::TRANSITION_TO_AUTO) {
     filter_on_transition_.filterAll(dt, current_steer_, out);
     RCLCPP_INFO(get_logger(), "now transition filter is running");
   } else {
@@ -511,6 +513,8 @@ AckermannControlCommand VehicleCmdGate::filterControlCommand(const AckermannCont
   }
 
   // set prev value for both to keep consistency over switching
+  // TODO(Horibe): prev value should be actual steer, vel, acc when Manual mode to keep
+  // consistency when switching from Manual to Auto.
   filter_.setPrevCmd(out);
   filter_on_transition_.setPrevCmd(out);
 

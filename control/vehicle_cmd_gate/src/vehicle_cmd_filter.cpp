@@ -113,20 +113,20 @@ void VehicleCmdFilter::filterAll(
 {
 
   auto tmp = cmd;
-  limitLongitudinalWithVel(cmd);
-  compareCmd("limitLongitudinalWithVel", tmp, cmd);
+  limitLongitudinalWithJerk(dt, cmd);
+  compareCmd("limitLongitudinalWithJerk", tmp, cmd);
   tmp = cmd;
   limitLongitudinalWithAcc(dt, cmd);
   compareCmd("limitLongitudinalWithAcc", tmp, cmd);
   tmp = cmd;
-  limitLongitudinalWithJerk(dt, cmd);
-  compareCmd("limitLongitudinalWithJerk", tmp, cmd);
-  tmp = cmd;
-  limitLateralWithLatAcc(dt, cmd);
-  compareCmd("limitLateralWithLatAcc", tmp, cmd);
+  limitLongitudinalWithVel(cmd);
+  compareCmd("limitLongitudinalWithVel", tmp, cmd);
   tmp = cmd;
   limitLateralWithLatJerk(dt, cmd);
   compareCmd("limitLateralWithLatJerk", tmp, cmd);
+  tmp = cmd;
+  limitLateralWithLatAcc(dt, cmd);
+  compareCmd("limitLateralWithLatAcc", tmp, cmd);
   tmp = cmd;
   limitActualSteerDiff(current_steer_angle, cmd);
   compareCmd("limitActualSteerDiff", tmp, cmd);
