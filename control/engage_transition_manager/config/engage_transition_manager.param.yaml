@@ -5,6 +5,9 @@
       dist_threshold: 1.0
       yaw_threshold: 0.524
       speed_threshold: 10.0
+      acc_threshold: 5.0
+      lateral_acc_threshold: 2.0
+      lateral_acc_diff_threshold: 1.0
     stable_check:
       duration: 3.0
       dist_threshold: 0.5

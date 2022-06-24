@@ -96,6 +96,10 @@ bool TransitionState::checkVehicleOverride()
 
 bool TransitionState::checkTransitionTimeout()
 {
+  if (data_->current_control_mode.mode == ControlModeReport::AUTONOMOUS) {
+    return false;
+  }
+
   const auto timeout_thr = 3.0;
   if ((clock_->now() - transition_requested_time_).seconds() > timeout_thr) {
     return true;

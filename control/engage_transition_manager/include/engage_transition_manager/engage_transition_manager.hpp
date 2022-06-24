@@ -33,16 +33,6 @@
 namespace engage_transition_manager
 {
 
-// using nav_msgs::msg::Odometry;
-
-// using autoware_auto_planning_msgs::msg::Trajectory;
-// using autoware_auto_control_msgs::msg::AckermannControlCommand;
-// using autoware_auto_vehicle_msgs::msg::ControlModeReport;
-// using tier4_system_msgs::msg::OperationMode;
-// using tier4_system_msgs::srv::OperationModeRequest;
-// using tier4_vehicle_msgs::msg::IsAutonomousAvailable;
-// using engage_transition_manager::msg::EngageTransitionManagerDebug;
-
 class EngageTransitionManager : public rclcpp::Node
 {
 public:

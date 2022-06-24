@@ -61,6 +61,9 @@ EngageTransitionManager::EngageTransitionManager(const rclcpp::NodeOptions & opt
     p.dist_threshold = declare_parameter<double>("engage_acceptable_limits.dist_threshold");
     p.speed_threshold = declare_parameter<double>("engage_acceptable_limits.speed_threshold");
     p.yaw_threshold = declare_parameter<double>("engage_acceptable_limits.yaw_threshold");
+    p.acc_threshold = declare_parameter<double>("engage_acceptable_limits.acc_threshold");
+    p.lateral_acc_threshold = declare_parameter<double>("engage_acceptable_limits.lateral_acc_threshold");
+    p.lateral_acc_diff_threshold = declare_parameter<double>("engage_acceptable_limits.lateral_acc_diff_threshold");
 
     // TODO: remove
     std::cerr << "param_.dist_threshold" << p.dist_threshold << ", yaw_threshold" << p.yaw_threshold
@@ -169,7 +172,7 @@ bool EngageTransitionManager::hasDangerAcceleration()
   }
 
   const bool has_large_acc = std::abs(data_->control_cmd.longitudinal.acceleration) >
-                             engage_acceptable_param_.large_acc_threshold;
+                             engage_acceptable_param_.acc_threshold;
   return has_large_acc;
 }
 

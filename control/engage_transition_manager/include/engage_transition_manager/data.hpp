@@ -69,7 +69,9 @@ struct EngageAcceptableParam
   double dist_threshold = 2.0;
   double speed_threshold = 10.0;
   double yaw_threshold = 0.785;
-  double large_acc_threshold = 2.0;
+  double acc_threshold = 2.0;
+  double lateral_acc_threshold = 2.0;
+  double lateral_acc_diff_threshold = 1.0;
 };
 
 struct StableCheckParam
