@@ -741,14 +741,14 @@ MotionVelocitySmootherNode::calcInitialMotion(
   }
 
   // On manual control
-  if (current_control_mode_.mode == ControlModeReport::MANUAL)
-  {
-    initial_vel = vehicle_speed;
-    initial_acc = 0.0;  // TODO(horibe): must be ego acceleration
-    type = InitializeType::INIT;
-    std::cerr << "motion plan from ego vel!" << std::endl;
-    return std::make_tuple(initial_vel, initial_acc, type);
-  }
+  // if (current_control_mode_.mode == ControlModeReport::MANUAL)
+  // {
+  //   initial_vel = std::max(vehicle_speed, node_param_.engage_velocity);
+  //   initial_acc = 0.0;  // TODO(horibe): must be ego acceleration
+  //   type = InitializeType::INIT;
+  //   std::cerr << "motion plan from ego vel!" << std::endl;
+  //   return std::make_tuple(initial_vel, initial_acc, type);
+  // }
 
   const auto prev_output_closest_point =
     trajectory_utils::calcInterpolatedTrajectoryPoint(prev_traj, input_traj.at(input_closest).pose);
