@@ -1,4 +1,4 @@
-// Copyright 2018-2021 The Autoware Foundation
+// Copyright 2022 The Autoware Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "trajectory_follower/vehicle_model/vehicle_model_interface.hpp"
+#ifndef TRAJECTORY_FOLLOWER__SYNC_DATA_HPP_
+#define TRAJECTORY_FOLLOWER__SYNC_DATA_HPP_
 
 namespace autoware
 {
@@ -22,18 +23,19 @@ namespace control
 {
 namespace trajectory_follower
 {
-VehicleModelInterface::VehicleModelInterface(
-  int64_t dim_x, int64_t dim_u, int64_t dim_y, float64_t wheelbase)
-: m_dim_x(dim_x), m_dim_u(dim_u), m_dim_y(dim_y), m_wheelbase(wheelbase)
+struct LateralSyncData
 {
-}
-int64_t VehicleModelInterface::getDimX() { return m_dim_x; }
-int64_t VehicleModelInterface::getDimU() { return m_dim_u; }
-int64_t VehicleModelInterface::getDimY() { return m_dim_y; }
-float64_t VehicleModelInterface::getWheelbase() { return m_wheelbase; }
-void VehicleModelInterface::setVelocity(const float64_t velocity) { m_velocity = velocity; }
-void VehicleModelInterface::setCurvature(const float64_t curvature) { m_curvature = curvature; }
+  bool is_steer_converged{false};
+};
+
+struct LongitudinalSyncData
+{
+  bool is_velocity_converged{false};
+};
+
 }  // namespace trajectory_follower
 }  // namespace control
 }  // namespace motion
 }  // namespace autoware
+
+#endif  // TRAJECTORY_FOLLOWER__SYNC_DATA_HPP_

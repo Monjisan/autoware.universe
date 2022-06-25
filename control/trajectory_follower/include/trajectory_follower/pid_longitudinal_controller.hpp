@@ -12,35 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TRAJECTORY_FOLLOWER_NODES__LONGITUDINAL_CONTROLLER_NODE_HPP_
-#define TRAJECTORY_FOLLOWER_NODES__LONGITUDINAL_CONTROLLER_NODE_HPP_
+#ifndef TRAJECTORY_FOLLOWER__PID_LONGITUDINAL_CONTROLLER_HPP_
+#define TRAJECTORY_FOLLOWER__PID_LONGITUDINAL_CONTROLLER_HPP_
 
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
-
-#include "autoware_auto_control_msgs/msg/longitudinal_command.hpp"
-#include "autoware_auto_planning_msgs/msg/trajectory.hpp"
-#include "autoware_auto_vehicle_msgs/msg/vehicle_odometry.hpp"
-#include "autoware_auto_system_msgs/msg/float32_multi_array_diagnostic.hpp"
 #include "eigen3/Eigen/Core"
 #include "eigen3/Eigen/Geometry"
-#include "geometry_msgs/msg/pose_stamped.hpp"
 #include "motion_common/motion_common.hpp"
 #include "motion_common/trajectory_common.hpp"
-#include "nav_msgs/msg/odometry.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2/utils.h"
-#include "tf2_msgs/msg/tf_message.hpp"
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 #include "trajectory_follower/debug_values.hpp"
+#include "trajectory_follower/longitudinal_controller_base.hpp"
 #include "trajectory_follower/longitudinal_controller_utils.hpp"
 #include "trajectory_follower/lowpass_filter.hpp"
 #include "trajectory_follower/pid.hpp"
 #include "trajectory_follower/smooth_stop.hpp"
 #include "vehicle_info_util/vehicle_info_util.hpp"
+
+#include "autoware_auto_control_msgs/msg/longitudinal_command.hpp"
+#include "autoware_auto_planning_msgs/msg/trajectory.hpp"
+#include "autoware_auto_system_msgs/msg/float32_multi_array_diagnostic.hpp"
+#include "autoware_auto_vehicle_msgs/msg/vehicle_odometry.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include "nav_msgs/msg/odometry.hpp"
+#include "tf2_msgs/msg/tf_message.hpp"
+
+#include <deque>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace autoware
 {
@@ -48,19 +51,19 @@ namespace motion
 {
 namespace control
 {
-namespace trajectory_follower_nodes
+namespace trajectory_follower
 {
-using autoware::common::types::float64_t;
 using autoware::common::types::bool8_t;
+using autoware::common::types::float64_t;
 namespace trajectory_follower = ::autoware::motion::control::trajectory_follower;
 namespace motion_common = ::autoware::motion::motion_common;
 
-/// \class LongitudinalController
+/// \class PidLongitudinalController
 /// \brief The node class used for generating longitudinal control commands (velocity/acceleration)
-class TRAJECTORY_FOLLOWER_PUBLIC LongitudinalController : public rclcpp::Node
+class TRAJECTORY_FOLLOWER_PUBLIC PidLongitudinalController : public LongitudinalControllerBase
 {
 public:
-  explicit LongitudinalController(const rclcpp::NodeOptions & node_options);
+  explicit PidLongitudinalController(rclcpp::Node & node);
 
 private:
   struct Motion
@@ -81,22 +84,19 @@ private:
     float64_t slope_angle{0.0};
     float64_t dt{0.0};
   };
-
+  rclcpp::Node * node_;
   // ros variables
-  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr
-    m_sub_current_velocity;
-  rclcpp::Subscription<autoware_auto_planning_msgs::msg::Trajectory>::SharedPtr m_sub_trajectory;
-  rclcpp::Publisher<autoware_auto_control_msgs::msg::LongitudinalCommand>::SharedPtr m_pub_control_cmd;
-  rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr m_pub_slope;
-  rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr m_pub_debug;
-  rclcpp::TimerBase::SharedPtr m_timer_control;
+  rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr
+    m_pub_slope;
+  rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr
+    m_pub_debug;
 
   rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_tf_sub;
   rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_tf_static_sub;
   tf2::BufferCore m_tf_buffer{tf2::BUFFER_CORE_DEFAULT_CACHE_TIME};
   tf2_ros::TransformListener m_tf_listener{m_tf_buffer};
 
-  OnSetParametersCallbackHandle::SharedPtr m_set_param_res;
+  rclcpp::Node::OnSetParametersCallbackHandle::SharedPtr m_set_param_res;
   rcl_interfaces::msg::SetParametersResult paramCallback(
     const std::vector<rclcpp::Parameter> & parameters);
 
@@ -112,8 +112,8 @@ private:
   enum class ControlState { DRIVE = 0, STOPPING, STOPPED, EMERGENCY };
   ControlState m_control_state{ControlState::STOPPED};
 
-  // timer callback
-  float64_t m_control_rate;
+  // control period
+  float64_t m_longitudinal_ctrl_period;
 
   // delay compensation
   float64_t m_delay_compensation_time;
@@ -122,6 +122,10 @@ private:
   bool8_t m_enable_smooth_stop;
   bool8_t m_enable_overshoot_emergency;
   bool8_t m_enable_slope_compensation;
+  bool8_t m_enable_keep_stopped_until_steer_convergence;
+
+  // trajectory beffer for detecting new trajectory
+  std::deque<autoware_auto_planning_msgs::msg::Trajectory> m_trajectory_buffer;
 
   // smooth stop transition
   struct StateTransitionParams
@@ -132,8 +136,11 @@ private:
     // stopping
     float64_t stopping_state_stop_dist;
     // stop
+    float64_t stopped_state_entry_duration_time;
     float64_t stopped_state_entry_vel;
     float64_t stopped_state_entry_acc;
+    float64_t stopped_state_new_traj_duration_time;
+    float64_t stopped_state_new_traj_end_dist;
     // emergency
     float64_t emergency_state_overshoot_stop_dist;
     float64_t emergency_state_traj_trans_dev;
@@ -203,25 +210,29 @@ private:
   // debug values
   trajectory_follower::DebugValues m_debug_values;
 
-  std::shared_ptr<rclcpp::Time> m_last_running_time{std::make_shared<rclcpp::Time>(this->now())};
+  std::shared_ptr<rclcpp::Time> m_last_running_time{std::make_shared<rclcpp::Time>(node_->now())};
 
   /**
    * @brief set current and previous velocity with received message
    * @param [in] msg current state message
    */
-  void callbackCurrentVelocity(
-    const nav_msgs::msg::Odometry::ConstSharedPtr msg);
+  void setCurrentVelocity(const nav_msgs::msg::Odometry::ConstSharedPtr msg);
 
   /**
    * @brief set reference trajectory with received message
    * @param [in] msg trajectory message
    */
-  void callbackTrajectory(const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg);
+  void setTrajectory(const autoware_auto_planning_msgs::msg::Trajectory::ConstSharedPtr msg);
 
   /**
    * @brief compute control command, and publish periodically
    */
-  void callbackTimerControl();
+  boost::optional<LongitudinalOutput> run() override;
+
+  /**
+   * @brief set input data like current odometry and trajectory.
+   */
+  void setInputData(InputData const & input_data) override;
 
   /**
    * @brief calculate data for controllers whose type is ControlData
@@ -234,6 +245,8 @@ private:
    * @param [in] dt time between previous and current one
    */
   Motion calcEmergencyCtrlCmd(const float64_t dt) const;
+
+  bool isNewTrajectory();
 
   /**
    * @brief update control state according to the current situation
@@ -258,7 +271,8 @@ private:
    * @param [in] ctrl_cmd calculated control command to control velocity
    * @param [in] current_vel current velocity of the vehicle
    */
-  void publishCtrlCmd(const Motion & ctrl_cmd, const float64_t current_vel);
+  autoware_auto_control_msgs::msg::LongitudinalCommand createCtrlCmdMsg(
+    const Motion & ctrl_cmd, const float64_t & current_vel);
 
   /**
    * @brief publish debug data
@@ -284,7 +298,8 @@ private:
   enum Shift getCurrentShift(const size_t nearest_idx) const;
 
   /**
-   * @brief filter acceleration command with limitation of acceleration and jerk, and slope compensation
+   * @brief filter acceleration command with limitation of acceleration and jerk, and slope
+   * compensation
    * @param [in] raw_acc acceleration before filtered
    * @param [in] control_data data for control calculation
    */
@@ -303,8 +318,7 @@ private:
    * @param [in] shift direction that vehicle move (forward or backward)
    */
   float64_t applySlopeCompensation(
-    const float64_t acc, const float64_t pitch,
-    const Shift shift) const;
+    const float64_t acc, const float64_t pitch, const Shift shift) const;
 
   /**
    * @brief keep target motion acceleration negative before stop
@@ -322,8 +336,8 @@ private:
    * @param [in] nearest_idx index of the trajectory point nearest to the vehicle position
    */
   autoware_auto_planning_msgs::msg::TrajectoryPoint calcInterpolatedTargetValue(
-    const autoware_auto_planning_msgs::msg::Trajectory & traj, const geometry_msgs::msg::Point & point,
-    const size_t nearest_idx) const;
+    const autoware_auto_planning_msgs::msg::Trajectory & traj,
+    const geometry_msgs::msg::Pose & pose, const size_t nearest_idx) const;
 
   /**
    * @brief calculate predicted velocity after time delay based on past control commands
@@ -335,7 +349,8 @@ private:
 
   /**
    * @brief calculate velocity feedback with feed forward and pid controller
-   * @param [in] target_motion reference velocity and acceleration. This acceleration will be used as feed forward.
+   * @param [in] target_motion reference velocity and acceleration. This acceleration will be used
+   * as feed forward.
    * @param [in] dt time step to use
    * @param [in] current_vel current velocity of the vehicle
    */
@@ -349,8 +364,7 @@ private:
    * @param [in] raw_pitch current raw pitch of the vehicle (unfiltered)
    */
   void updatePitchDebugValues(
-    const float64_t pitch, const float64_t traj_pitch,
-    const float64_t raw_pitch);
+    const float64_t pitch, const float64_t traj_pitch, const float64_t raw_pitch);
 
   /**
    * @brief update variables for velocity and acceleration
@@ -362,9 +376,9 @@ private:
     const Motion & ctrl_cmd, const geometry_msgs::msg::Pose & current_pose,
     const ControlData & control_data);
 };
-}  // namespace trajectory_follower_nodes
+}  // namespace trajectory_follower
 }  // namespace control
 }  // namespace motion
 }  // namespace autoware
 
-#endif  // TRAJECTORY_FOLLOWER_NODES__LONGITUDINAL_CONTROLLER_NODE_HPP_
+#endif  // TRAJECTORY_FOLLOWER__PID_LONGITUDINAL_CONTROLLER_HPP_

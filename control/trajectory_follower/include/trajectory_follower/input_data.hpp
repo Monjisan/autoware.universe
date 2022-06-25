@@ -1,4 +1,4 @@
-// Copyright 2018-2021 The Autoware Foundation
+// Copyright 2022 The Autoware Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "trajectory_follower/vehicle_model/vehicle_model_interface.hpp"
+#ifndef TRAJECTORY_FOLLOWER__INPUT_DATA_HPP_
+#define TRAJECTORY_FOLLOWER__INPUT_DATA_HPP_
+
+#include "autoware_auto_planning_msgs/msg/trajectory.hpp"
+#include "autoware_auto_vehicle_msgs/msg/steering_report.hpp"
+#include "nav_msgs/msg/odometry.hpp"
 
 namespace autoware
 {
@@ -22,18 +27,15 @@ namespace control
 {
 namespace trajectory_follower
 {
-VehicleModelInterface::VehicleModelInterface(
-  int64_t dim_x, int64_t dim_u, int64_t dim_y, float64_t wheelbase)
-: m_dim_x(dim_x), m_dim_u(dim_u), m_dim_y(dim_y), m_wheelbase(wheelbase)
+struct InputData
 {
-}
-int64_t VehicleModelInterface::getDimX() { return m_dim_x; }
-int64_t VehicleModelInterface::getDimU() { return m_dim_u; }
-int64_t VehicleModelInterface::getDimY() { return m_dim_y; }
-float64_t VehicleModelInterface::getWheelbase() { return m_wheelbase; }
-void VehicleModelInterface::setVelocity(const float64_t velocity) { m_velocity = velocity; }
-void VehicleModelInterface::setCurvature(const float64_t curvature) { m_curvature = curvature; }
+  autoware_auto_planning_msgs::msg::Trajectory::SharedPtr current_trajectory_ptr;
+  nav_msgs::msg::Odometry::SharedPtr current_odometry_ptr;
+  autoware_auto_vehicle_msgs::msg::SteeringReport::SharedPtr current_steering_ptr;
+};
 }  // namespace trajectory_follower
 }  // namespace control
 }  // namespace motion
 }  // namespace autoware
+
+#endif  // TRAJECTORY_FOLLOWER__INPUT_DATA_HPP_
