@@ -43,14 +43,14 @@ Controller::Controller(const rclcpp::NodeOptions & node_options) : Node("control
   const double ctrl_period = declare_parameter<double>("ctrl_period", 0.03);
   timeout_thr_sec_ = declare_parameter<double>("timeout_thr_sec", 0.5);
 
-  const auto lateral_controller_type =
+  const auto lateral_controller_mode =
     getLateralControllerMode(declare_parameter("lateral_controller_mode", "mpc_follower"));
-  switch (lateral_controller_type) {
-    case LateralControllerType::MPC: {
+  switch (lateral_controller_mode) {
+    case LateralControllerMode::MPC: {
       lateral_controller_ = std::make_shared<trajectory_follower::MpcLateralController>(*this);
       break;
     }
-    case LateralControllerType::PURE_PURSUIT: {
+    case LateralControllerMode::PURE_PURSUIT: {
       lateral_controller_ = std::make_shared<pure_pursuit::PurePursuitLateralController>(*this);
       break;
     }
@@ -61,7 +61,7 @@ Controller::Controller(const rclcpp::NodeOptions & node_options) : Node("control
   const auto longitudinal_controller_mode =
     getLongitudinalControllerMode(declare_parameter("longitudinal_controller_mode", "pid"));
   switch (longitudinal_controller_mode) {
-    case LongitudinalControllerType::PID: {
+    case LongitudinalControllerMode::PID: {
       longitudinal_controller_ =
         std::make_shared<trajectory_follower::PidLongitudinalController>(*this);
       break;
@@ -88,23 +88,23 @@ Controller::Controller(const rclcpp::NodeOptions & node_options) : Node("control
   }
 }
 
-Controller::LateralControllerType Controller::getLateralControllerMode(
-  const std::string & controller_type) const
+Controller::LateralControllerMode Controller::getLateralControllerMode(
+  const std::string & controller_mode) const
 {
-  if (controller_type == "mpc_follower") return LateralControllerType::MPC;
-  if (controller_type == "pure_pursuit") return LateralControllerType::PURE_PURSUIT;
+  if (controller_mode == "mpc_follower") return LateralControllerMode::MPC;
+  if (controller_mode == "pure_pursuit") return LateralControllerMode::PURE_PURSUIT;
 
   throw std::domain_error("[LateralController] undesired algorithm is selected.");
-  return LateralControllerType::INVALID;
+  return LateralControllerMode::INVALID;
 }
 
-Controller::LongitudinalControllerType Controller::getLongitudinalControllerMode(
-  const std::string & controller_type) const
+Controller::LongitudinalControllerMode Controller::getLongitudinalControllerMode(
+  const std::string & controller_mode) const
 {
-  if (controller_type == "pid") return LongitudinalControllerType::PID;
+  if (controller_mode == "pid") return LongitudinalControllerMode::PID;
 
   throw std::domain_error("[LongitudinalController] undesired algorithm is selected.");
-  return LongitudinalControllerType::INVALID;
+  return LongitudinalControllerMode::INVALID;
 }
 
 void Controller::onTrajectory(const autoware_auto_planning_msgs::msg::Trajectory::SharedPtr msg)

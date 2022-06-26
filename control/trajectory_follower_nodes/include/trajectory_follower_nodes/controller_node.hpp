@@ -85,12 +85,12 @@ private:
   rclcpp::Publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
     control_cmd_pub_;
 
-  enum class LateralControllerType {
+  enum class LateralControllerMode {
     INVALID = 0,
     MPC = 1,
     PURE_PURSUIT = 2,
   };
-  enum class LongitudinalControllerType {
+  enum class LongitudinalControllerMode {
     INVALID = 0,
     PID = 1,
   };
@@ -103,8 +103,8 @@ private:
   void onOdometry(const nav_msgs::msg::Odometry::SharedPtr msg);
   void onSteering(const autoware_auto_vehicle_msgs::msg::SteeringReport::SharedPtr msg);
   bool isTimeOut();
-  LateralControllerType getLateralControllerMode(const std::string & algorithm_name) const;
-  LongitudinalControllerType getLongitudinalControllerMode(
+  LateralControllerMode getLateralControllerMode(const std::string & algorithm_name) const;
+  LongitudinalControllerMode getLongitudinalControllerMode(
     const std::string & algorithm_name) const;
 };
 }  // namespace trajectory_follower_nodes
