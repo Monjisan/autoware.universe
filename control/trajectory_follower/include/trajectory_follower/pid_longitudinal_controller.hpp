@@ -84,16 +84,12 @@ private:
     float64_t slope_angle{0.0};
     float64_t dt{0.0};
   };
-  rclcpp::Node::SharedPtr node_;
-
+  rclcpp::Node * node_;
   // ros variables
-  rclcpp::Publisher<autoware_auto_control_msgs::msg::LongitudinalCommand>::SharedPtr
-    m_pub_control_cmd;
   rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr
     m_pub_slope;
   rclcpp::Publisher<autoware_auto_system_msgs::msg::Float32MultiArrayDiagnostic>::SharedPtr
     m_pub_debug;
-  rclcpp::TimerBase::SharedPtr m_timer_control;
 
   rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_tf_sub;
   rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_tf_static_sub;
@@ -231,7 +227,7 @@ private:
   /**
    * @brief compute control command, and publish periodically
    */
-  LongitudinalOutput run() override;
+  boost::optional<LongitudinalOutput> run() override;
 
   /**
    * @brief set input data like current odometry and trajectory.
@@ -250,7 +246,7 @@ private:
    */
   Motion calcEmergencyCtrlCmd(const float64_t dt) const;
 
-  bool checkNewTrajectory();
+  bool isNewTrajectory();
 
   /**
    * @brief update control state according to the current situation
@@ -341,7 +337,7 @@ private:
    */
   autoware_auto_planning_msgs::msg::TrajectoryPoint calcInterpolatedTargetValue(
     const autoware_auto_planning_msgs::msg::Trajectory & traj,
-    const geometry_msgs::msg::Point & point, const size_t nearest_idx) const;
+    const geometry_msgs::msg::Pose & pose, const size_t nearest_idx) const;
 
   /**
    * @brief calculate predicted velocity after time delay based on past control commands

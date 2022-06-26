@@ -139,12 +139,6 @@ MpcLateralController::MpcLateralController(rclcpp::Node & node) : node_{&node}
     m_mpc.initializeLowPassFilters(steering_lpf_cutoff_hz, error_deriv_lpf_cutoff_hz);
   }
 
-  /* set up ros system */
-  // initTimer(m_mpc.m_ctrl_period);
-
-  m_pub_ctrl_cmd =
-    node_->create_publisher<autoware_auto_control_msgs::msg::AckermannLateralCommand>(
-      "~/output/lateral_control_cmd", 1);
   m_pub_predicted_traj = node_->create_publisher<autoware_auto_planning_msgs::msg::Trajectory>(
     "~/output/predicted_trajectory", 1);
   m_pub_diagnostic =
@@ -165,17 +159,12 @@ MpcLateralController::MpcLateralController(rclcpp::Node & node) : node_{&node}
   m_mpc.setClock(node_->get_clock());
 }
 
-MpcLateralController::~MpcLateralController()
-{
-  autoware_auto_control_msgs::msg::AckermannLateralCommand stop_cmd = getStopControlCommand();
-  createCtrlCmdMsg(stop_cmd);  // todo
-}
+MpcLateralController::~MpcLateralController() {}
 
-LateralOutput MpcLateralController::run()
+boost::optional<LateralOutput> MpcLateralController::run()
 {
   if (!checkData() || !updateCurrentPose()) {
-    LateralOutput output;
-    return output;  // todo
+    return boost::none;
   }
 
   autoware_auto_control_msgs::msg::AckermannLateralCommand ctrl_cmd;
@@ -207,11 +196,7 @@ LateralOutput MpcLateralController::run()
     output.sync_data.is_steer_converged =
       std::abs(cmd_msg.steering_tire_angle - m_current_steering_ptr->steering_tire_angle) <
       static_cast<float>(m_converged_steer_rad);
-    std::cerr << "mpc: is_steer_converged: " << output.sync_data.is_steer_converged
-              << " steer diff: "
-              << std::abs(cmd_msg.steering_tire_angle - m_current_steering_ptr->steering_tire_angle)
-              << " th: " << static_cast<float>(m_converged_steer_rad) << std::endl;
-    return output;
+    return boost::optional<LateralOutput>(output);
   }
 
   if (!is_mpc_solved) {
@@ -231,8 +216,7 @@ LateralOutput MpcLateralController::run()
     std::abs(cmd_msg.steering_tire_angle - m_current_steering_ptr->steering_tire_angle) <
     static_cast<float>(m_converged_steer_rad);
 
-
-  return output;
+  return boost::optional<LateralOutput>(output);
 }
 
 void MpcLateralController::setInputData(InputData const & input_data)
@@ -378,7 +362,6 @@ autoware_auto_control_msgs::msg::AckermannLateralCommand MpcLateralController::c
   autoware_auto_control_msgs::msg::AckermannLateralCommand ctrl_cmd)
 {
   ctrl_cmd.stamp = node_->now();
-  // m_pub_ctrl_cmd->publish(ctrl_cmd);
   m_steer_cmd_prev = ctrl_cmd.steering_tire_angle;
   return ctrl_cmd;
 }
@@ -398,14 +381,6 @@ void MpcLateralController::publishDiagnostic(
   diagnostic.diag_header.name = std::string("linear-MPC lateral controller");
   m_pub_diagnostic->publish(diagnostic);
 }
-
-// void MpcLateralController::initTimer(float64_t period_s)
-// {
-//   const auto period_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
-//     std::chrono::duration<float64_t>(period_s));
-//   m_timer = rclcpp::create_timer(
-//     this, node_->get_clock(), period_ns, std::bind(&MpcLateralController::onTimer, this));
-// }
 
 void MpcLateralController::declareMPCparameters()
 {
@@ -449,8 +424,6 @@ void MpcLateralController::declareMPCparameters()
   m_mpc.m_param.acceleration_limit = node_->declare_parameter<float64_t>("mpc_acceleration_limit");
   m_mpc.m_param.velocity_time_constant =
     node_->declare_parameter<float64_t>("mpc_velocity_time_constant");
-  m_mpc.m_param.min_prediction_length =
-    node_->declare_parameter<float64_t>("mpc_min_prediction_length");
 }
 
 rcl_interfaces::msg::SetParametersResult MpcLateralController::paramCallback(
@@ -503,7 +476,6 @@ rcl_interfaces::msg::SetParametersResult MpcLateralController::paramCallback(
     update_param(parameters, "mpc_zero_ff_steer_deg", param.zero_ff_steer_deg);
     update_param(parameters, "mpc_acceleration_limit", param.acceleration_limit);
     update_param(parameters, "mpc_velocity_time_constant", param.velocity_time_constant);
-    update_param(parameters, "mpc_min_prediction_length", param.min_prediction_length);
 
     // initialize input buffer
     update_param(parameters, "input_delay", param.input_delay);
