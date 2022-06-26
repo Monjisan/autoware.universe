@@ -114,6 +114,12 @@ struct MPCParam
   float64_t low_curvature_weight_steer_acc;
   //!< @brief threshold of curvature to use "low curvature" parameter
   float64_t low_curvature_thresh_curvature;
+  //!< @brief lateral error weight in matrix Q in low speed short trajectrory
+  float64_t low_speed_short_trajectory_weight_lat_error;
+  //!< @brief threshold of "low_speed_short_trajectory_weight_lat_error" parameter
+  float64_t low_speed_thresh_velocity;
+  //!< @brief threshold of "low_speed_short_trajectory_weight_lat_error" parameter
+  float64_t short_trajectory_thresh_length;
 };
 /**
  * MPC problem data
@@ -226,7 +232,8 @@ private:
    * @brief generate MPC matrix with trajectory and vehicle model
    * @param [in] reference_trajectory used for linearization around reference trajectory
    */
-  MPCMatrix generateMPCMatrix(const trajectory_follower::MPCTrajectory & reference_trajectory, const float64_t max_dt);
+  MPCMatrix generateMPCMatrix(
+    const trajectory_follower::MPCTrajectory & reference_trajectory, const float64_t max_dt);
   /**
    * @brief generate MPC matrix with trajectory and vehicle model
    * @param [in] mpc_matrix parameters matrix to use for optimization
@@ -274,10 +281,16 @@ private:
   /**
    * @brief return the weight of the lateral error for the given curvature
    */
-  inline float64_t getWeightLatError(const float64_t curvature)
+  inline float64_t getWeightLatError(
+    const float64_t curvature, const bool is_low_speed_short_trajectory)
   {
-    return isLowCurvature(curvature) ? m_param.low_curvature_weight_lat_error
-                                     : m_param.weight_lat_error;
+    if (isLowCurvature(curvature)) {
+      return m_param.low_curvature_weight_lat_error;
+    } else if (is_low_speed_short_trajectory) {
+      return m_param.low_speed_short_trajectory_weight_lat_error;
+    } else {
+      return m_param.weight_lat_error;
+    }
   }
   /**
    * @brief return the weight of the heading error for the given curvature

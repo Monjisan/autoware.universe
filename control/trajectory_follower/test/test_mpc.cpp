@@ -116,6 +116,9 @@ protected:
     param.low_curvature_weight_steer_rate = 0.0;
     param.low_curvature_weight_steer_acc = 0.000001;
     param.low_curvature_thresh_curvature = 0.0;
+    param.low_speed_short_trajectory_weight_lat_error = 10.0;
+    param.low_speed_thresh_velocity = 1.0;
+    param.short_trajectory_thresh_length = 5.0;
 
     TrajectoryPoint p;
     p.pose.position.x = 0.0;

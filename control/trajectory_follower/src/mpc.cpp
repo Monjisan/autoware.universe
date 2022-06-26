@@ -577,6 +577,21 @@ MPCMatrix MPC::generateMPCMatrix(
 
   constexpr float64_t ep = 1.0e-3;  // large enough to ignore velocity noise
 
+  const bool is_low_speed_short_trajectory = [&]() {
+    float64_t sum_dist = 0;
+    bool is_low_speed = true;
+    for (size_t i = 0; i < reference_trajectory.vx.size(); i++) {
+      if (reference_trajectory.vx.at(i) > m_param.low_speed_thresh_velocity) is_low_speed = false;
+      if (i == 0) continue;
+      const float64_t segment_dist = std::hypot(
+        reference_trajectory.x.at(i) - reference_trajectory.x.at(i - 1),
+        reference_trajectory.y.at(i) - reference_trajectory.y.at(i - 1));
+      sum_dist += segment_dist;
+    }
+
+    return sum_dist < m_param.short_trajectory_thresh_length && is_low_speed;
+  }();
+
   /* predict dynamics for N times */
   for (int64_t i = 0; i < N; ++i) {
     const float64_t ref_vx = reference_trajectory.vx[static_cast<size_t>(i)];
@@ -594,7 +609,7 @@ MPCMatrix MPC::generateMPCMatrix(
 
     Q = Eigen::MatrixXd::Zero(DIM_Y, DIM_Y);
     R = Eigen::MatrixXd::Zero(DIM_U, DIM_U);
-    Q(0, 0) = getWeightLatError(ref_k);
+    Q(0, 0) = getWeightLatError(ref_k, is_low_speed_short_trajectory);
     Q(1, 1) = getWeightHeadingError(ref_k);
     R(0, 0) = getWeightSteerInput(ref_k);
 

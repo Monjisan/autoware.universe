@@ -40,6 +40,9 @@
     mpc_acceleration_limit: 2.0                  # limit on the vehicle's acceleration
     mpc_velocity_time_constant: 0.3              # time constant used for velocity smoothing
     mpc_min_prediction_length: 5.0               # minimum prediction length
+    low_speed_short_trajectory_weight_lat_error: 10.0 # lateral error weight in matrix Q in low speed short trajectrory
+    low_speed_thresh_velocity: 1.0                    # threshold of "low_speed_short_trajectory_weight_lat_error" parameter
+    short_trajectory_thresh_length: 5.0               # threshold of "low_speed_short_trajectory_weight_lat_error" parameter
 
     # -- vehicle model --
     vehicle_model_type: "kinematics" # vehicle model type for mpc prediction. option is kinematics, kinematics_no_delay, and dynamics

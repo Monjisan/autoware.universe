@@ -426,6 +426,12 @@ void MpcLateralController::declareMPCparameters()
     node_->declare_parameter<float64_t>("mpc_velocity_time_constant");
   m_mpc.m_param.min_prediction_length =
     node_->declare_parameter<float64_t>("mpc_min_prediction_length");
+  m_mpc.m_param.low_speed_short_trajectory_weight_lat_error =
+    node_->declare_parameter<float64_t>("low_speed_short_trajectory_weight_lat_error");
+  m_mpc.m_param.low_speed_thresh_velocity =
+    node_->declare_parameter<float64_t>("low_speed_thresh_velocity");
+  m_mpc.m_param.short_trajectory_thresh_length =
+    node_->declare_parameter<float64_t>("short_trajectory_thresh_length");
 }
 
 rcl_interfaces::msg::SetParametersResult MpcLateralController::paramCallback(
