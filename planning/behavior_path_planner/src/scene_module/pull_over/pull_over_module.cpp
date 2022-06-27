@@ -525,12 +525,16 @@ BehaviorModuleOutput PullOverModule::plan()
 
   // For experiment
   const auto current_pose = planner_data_->self_pose->pose;
+  const double real_shoulder_to_map_shoulder = 0.87;
+  const double dy = modified_goal_pose_.position.y - current_pose.position.y;
+  const double distance_from_real_shoulder =
+    real_shoulder_to_map_shoulder + parameters_.margin_from_boundary - dy;
   RCLCPP_INFO(
-    getLogger(), "current pose to goal, dx:%f dy:%f dyaw:%f",
-    modified_goal_pose_.position.x - current_pose.position.x,
-    modified_goal_pose_.position.y - current_pose.position.y,
+    getLogger(), "current pose to goal, dx:%f dy:%f dyaw:%f from_real_shoulder:%f",
+    modified_goal_pose_.position.x - current_pose.position.x, dy,
     tier4_autoware_utils::rad2deg(
-      tf2::getYaw(current_pose.orientation) - tf2::getYaw(modified_goal_pose_.orientation)));
+      tf2::getYaw(current_pose.orientation) - tf2::getYaw(modified_goal_pose_.orientation)),
+    distance_from_real_shoulder);
 
   return output;
 }
