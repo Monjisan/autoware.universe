@@ -111,6 +111,11 @@ void SurroundObstacleCheckerNode::pathCallback(
   geometry_msgs::msg::Point nearest_obj_point;
   getNearestObstacle(&min_dist_to_obj, &nearest_obj_point);
 
+  // for experiment not skip just passthrough
+  RCLCPP_INFO(get_logger(), "min_dist_to_obj: %f", min_dist_to_obj);
+  path_pub_->publish(*input_msg);
+  return;
+
   // check current obstacle status (exist or not)
   const auto is_obstacle_found = isObstacleFound(min_dist_to_obj);
 
