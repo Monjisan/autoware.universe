@@ -520,6 +520,15 @@ BehaviorModuleOutput PullOverModule::plan()
     }
   }
 
+  // For experiment
+  const auto current_pose = planner_data_->self_pose->pose;
+  RCLCPP_INFO(
+    getLogger(), "current pose to goal, dx:%f dy:%f dyaw:%f",
+    modified_goal_pose_.position.x - current_pose.position.x,
+    modified_goal_pose_.position.y - current_pose.position.y,
+    tier4_autoware_utils::rad2deg(
+      tf2::getYaw(current_pose.orientation) - tf2::getYaw(modified_goal_pose_.orientation)));
+
   return output;
 }
 
