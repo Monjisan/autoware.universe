@@ -47,6 +47,7 @@ private:
   rclcpp::Subscription<Trajectory>::SharedPtr sub_trajectory_;
   rclcpp::Subscription<AckermannControlCommand>::SharedPtr sub_control_cmd_;
   rclcpp::Subscription<ControlModeReport>::SharedPtr sub_control_mode_;
+  rclcpp::Subscription<OperationMode>::SharedPtr sub_gate_operation_mode_;
   rclcpp::Service<OperationModeRequest>::SharedPtr srv_mode_change_server_;
   rclcpp::Client<OperationModeRequest>::SharedPtr srv_mode_change_client_;
   rclcpp::TimerBase::SharedPtr timer_;

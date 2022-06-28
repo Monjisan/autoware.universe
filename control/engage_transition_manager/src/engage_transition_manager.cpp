@@ -31,8 +31,9 @@ EngageTransitionManager::EngageTransitionManager(const rclcpp::NodeOptions & opt
 {
   using std::placeholders::_1;
   using std::placeholders::_2;
-  engage_transition_manager_ = std::make_unique<NoneState>(this);
+  engage_transition_manager_ = std::make_unique<ManualDirectState>(this);
   data_ = std::make_shared<Data>();
+  data_->requested_state = State::MANUAL_DIRECT;
 
   pub_operation_mode_ = create_publisher<OperationMode>("engage_state", 1);
   pub_auto_available_ = create_publisher<IsAutonomousAvailable>("is_auto_available", 1);
@@ -51,6 +52,10 @@ EngageTransitionManager::EngageTransitionManager(const rclcpp::NodeOptions & opt
   sub_control_mode_ = create_subscription<ControlModeReport>(
     "control_mode_report", 1,
     [this](const ControlModeReport::SharedPtr msg) { data_->current_control_mode = *msg; });
+
+  sub_gate_operation_mode_ = create_subscription<OperationMode>(
+    "gate_operation_mode", 1,
+    [this](const OperationMode::SharedPtr msg) { data_->current_gate_operation_mode = *msg; });
 
   srv_mode_change_server_ = create_service<OperationModeRequest>(
     "operation_mode_request",
@@ -89,9 +94,6 @@ void EngageTransitionManager::onOperationModeRequest(
   const OperationModeRequest::Request::SharedPtr request,
   const OperationModeRequest::Response::SharedPtr response)
 {
-  // TODO: remove
-  RCLCPP_INFO_STREAM(get_logger(), "onOperationModeRequest callback()");
-
   const auto req_state = toEnum(request->mode);
 
   // invalid case
@@ -130,13 +132,6 @@ void EngageTransitionManager::onTimer()
   updateState(data_);
 
   publishData();
-
-  // TODO: remove
-  RCLCPP_INFO_STREAM(
-    get_logger(), "Timer: engage_available: "
-                    << (data_->is_auto_available ? "True" : "False")
-                    << ", requested_state: " << toStr(data_->requested_state)
-                    << ", current state: " << toStr(engage_transition_manager_->getCurrentState()));
 }
 
 void EngageTransitionManager::publishData()
@@ -154,6 +149,8 @@ void EngageTransitionManager::publishData()
   pub_auto_available_->publish(msg);
 
   debug_info_.stamp = time;
+  debug_info_.requested_state = toStr(data_->requested_state);
+  debug_info_.current_state = toStr(engage_transition_manager_->getCurrentState());
   pub_debug_info_->publish(debug_info_);
 }
 
@@ -251,7 +248,8 @@ bool EngageTransitionManager::checkEngageAvailable()
   // ...
 
   const bool is_all_ok = lateral_deviation_ok && yaw_deviation_ok && speed_upper_deviation_ok &&
-                         speed_lower_deviation_ok && stop_ok && large_acceleration_ok;
+                         speed_lower_deviation_ok && stop_ok && large_acceleration_ok &&
+                         large_lateral_acceleration_ok && large_lateral_acceleration_diff_ok;
 
   // set for debug info
   {
@@ -292,24 +290,25 @@ State EngageTransitionManager::updateState(const std::shared_ptr<Data> data)
   // transit state
   switch (next_state) {
     case State::STOP:
-      engage_transition_manager_ = std::make_unique<NoneState>(this);
+      engage_transition_manager_ = std::make_unique<StopState>(this);
       break;
     case State::REMOTE_OPERATOR:
-      engage_transition_manager_ = std::make_unique<RemoteState>(this);
+      engage_transition_manager_ = std::make_unique<RemoteOperatorState>(this);
       break;
     case State::MANUAL_DIRECT:
-      engage_transition_manager_ = std::make_unique<DirectState>(this);
+      engage_transition_manager_ = std::make_unique<ManualDirectState>(this);
       break;
     case State::LOCAL_OPERATOR:
-      engage_transition_manager_ = std::make_unique<LocalState>(this);
+      engage_transition_manager_ = std::make_unique<LocalOperatorState>(this);
       break;
     case State::TRANSITION_TO_AUTO:
-      engage_transition_manager_ = std::make_unique<TransitionState>(this);
+      engage_transition_manager_ = std::make_unique<TransitionToAutoState>(this);
       break;
     case State::AUTONOMOUS:
       engage_transition_manager_ = std::make_unique<AutonomousState>(this);
       break;
   }
+  engage_transition_manager_->setParam(stable_check_param_);
 
   if (next_state != engage_transition_manager_->getCurrentState()) {
     throw std::runtime_error("engage_transition_manager: unexpected state change!");

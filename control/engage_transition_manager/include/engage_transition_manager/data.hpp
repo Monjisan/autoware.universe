@@ -62,6 +62,7 @@ struct Data
   Trajectory trajectory;
   AckermannControlCommand control_cmd;
   ControlModeReport current_control_mode;
+  OperationMode current_gate_operation_mode;
 };
 
 struct EngageAcceptableParam

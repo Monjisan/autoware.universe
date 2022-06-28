@@ -53,38 +53,38 @@ protected:
   bool sendManualModeRequest();
 };
 
-class NoneState : public EngageStateBase
+class StopState : public EngageStateBase
 {
 public:
-  NoneState(rclcpp::Node * node) : EngageStateBase(State::STOP, node){};
+  StopState(rclcpp::Node * node) : EngageStateBase(State::STOP, node){};
   State update() override { return defaultUpdateOnManual(); };
 };
 
-class RemoteState : public EngageStateBase
+class RemoteOperatorState : public EngageStateBase
 {
 public:
-  RemoteState(rclcpp::Node * node) : EngageStateBase(State::REMOTE_OPERATOR, node){};
+  RemoteOperatorState(rclcpp::Node * node) : EngageStateBase(State::REMOTE_OPERATOR, node){};
   State update() override { return defaultUpdateOnManual(); };
 };
 
-class DirectState : public EngageStateBase
+class ManualDirectState : public EngageStateBase
 {
 public:
-  DirectState(rclcpp::Node * node) : EngageStateBase(State::MANUAL_DIRECT, node){};
+  ManualDirectState(rclcpp::Node * node) : EngageStateBase(State::MANUAL_DIRECT, node){};
   State update() override { return defaultUpdateOnManual(); };
 };
 
-class LocalState : public EngageStateBase
+class LocalOperatorState : public EngageStateBase
 {
 public:
-  LocalState(rclcpp::Node * node) : EngageStateBase(State::LOCAL_OPERATOR, node){};
+  LocalOperatorState(rclcpp::Node * node) : EngageStateBase(State::LOCAL_OPERATOR, node){};
   State update() override { return defaultUpdateOnManual(); };
 };
 
-class TransitionState : public EngageStateBase
+class TransitionToAutoState : public EngageStateBase
 {
 public:
-  TransitionState(rclcpp::Node * node) : EngageStateBase(State::TRANSITION_TO_AUTO, node)
+  TransitionToAutoState(rclcpp::Node * node) : EngageStateBase(State::TRANSITION_TO_AUTO, node)
   {
     transition_requested_time_ = clock_->now();
   };
@@ -97,10 +97,10 @@ private:
   // return true when MANUAL mode is detected after AUTO transition is done.
   bool checkVehicleOverride();
 
-  bool checkTransitionTimeout();
-
+  bool checkTransitionTimeout() const;
 
   bool is_vehicle_mode_change_done_ = false;  // set to true when the mode changed to Auto.
+  bool is_control_mode_request_send_ = false;
   rclcpp::Time transition_requested_time_;
 };
 

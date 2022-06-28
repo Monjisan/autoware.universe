@@ -43,14 +43,9 @@ State EngageStateBase::defaultUpdateOnManual()
     return isManual(data_->requested_state) ? data_->requested_state : getCurrentState();
   }
 
-  // manual to auto:
+  // manual to auto: control_more_request will be sent in TRANSITION_TO_AUTO state.
   if (all_engage_requirements_are_satisfied) {
-    if (sendAutonomousModeRequest()) {
-      return State::TRANSITION_TO_AUTO;
-    } else {
-      RCLCPP_WARN(logger_, "Vehicle failed to change AUTONOMOUS mode.");
-      return getCurrentState();
-    }
+    return State::TRANSITION_TO_AUTO;
   } else {
     RCLCPP_WARN(logger_, "engage requirements are not satisfied. Engage prohibited.");
     return getCurrentState();
@@ -74,10 +69,14 @@ bool EngageStateBase::sendAutonomousModeRequest()
 
   srv_mode_change_client_->async_send_request(request, callback);
 
+  // TODO(Horibe): handle request failure. Now, only timeout check is running in Transition state.
+  // auto future = srv_mode_change_client_->async_send_request(request, callback);
+  // rclcpp::spin_until_future_complete(node_, future);
+
   return success;
 }
 
-bool TransitionState::checkVehicleOverride()
+bool TransitionToAutoState::checkVehicleOverride()
 {
   const auto mode = data_->current_control_mode.mode;
 
@@ -93,20 +92,20 @@ bool TransitionState::checkVehicleOverride()
   return false;
 }
 
-bool TransitionState::checkTransitionTimeout()
+bool TransitionToAutoState::checkTransitionTimeout() const
 {
   if (data_->current_control_mode.mode == ControlModeReport::AUTONOMOUS) {
     return false;
   }
 
-  const auto timeout_thr = 3.0;
+  constexpr auto timeout_thr = 3.0;
   if ((clock_->now() - transition_requested_time_).seconds() > timeout_thr) {
     return true;
   }
   return false;
 }
 
-State TransitionState::update()
+State TransitionToAutoState::update()
 {
   // return to Manual soon if requested.
   const bool is_disengage_requested = isManual(data_->requested_state);
@@ -126,6 +125,26 @@ State TransitionState::update()
     return State::MANUAL_DIRECT;
   }
 
+  // waiting transition of vehicle_cmd_gate
+  if (data_->current_gate_operation_mode.mode != OperationMode::TRANSITION_TO_AUTO) {
+    RCLCPP_INFO(logger_, "transition check: gate operation_mode is still NOT TransitionToAuto");
+    return getCurrentState();
+  }
+
+  // send Autonomous mode request to vehicle
+  // NOTE: this should be done after gate_operation_mode is set to TRANSITION_TO_AUTO. Otherwise
+  // control_cmd with nominal filter will be sent to vehicle.
+  if (!is_control_mode_request_send_) {
+    sendAutonomousModeRequest();
+    is_control_mode_request_send_ = true;
+  }
+
+  // waiting transition of vehicle
+  if (data_->current_control_mode.mode != ControlModeReport::AUTONOMOUS) {
+    RCLCPP_INFO(logger_, "transition check: vehicle control_mode is still NOT Autonomous");
+    return getCurrentState();
+  }
+
   const bool is_system_stable = checkSystemStable();
 
   if (is_system_stable) {
@@ -135,7 +154,7 @@ State TransitionState::update()
   }
 }
 
-bool TransitionState::checkSystemStable()
+bool TransitionToAutoState::checkSystemStable()
 {
   constexpr auto dist_max = 5.0;
   constexpr auto yaw_max = M_PI_4;
@@ -144,11 +163,6 @@ bool TransitionState::checkSystemStable()
     stable_start_time_.reset();
     return false;
   };
-
-  if (data_->current_control_mode.mode != ControlModeReport::AUTONOMOUS) {
-    RCLCPP_INFO(logger_, "Not stable yet: vehicle control_mode is still NOT Autonomous");
-    return unstable();
-  }
 
   if (data_->trajectory.points.size() < 2) {
     RCLCPP_INFO(logger_, "Not stable yet: trajectory size must be > 2");
