@@ -66,6 +66,7 @@ VehicleCmdGate::VehicleCmdGate(const rclcpp::NodeOptions & node_options)
   engage_pub_ = this->create_publisher<EngageMsg>("output/engage", durable_qos);
   pub_external_emergency_ =
     this->create_publisher<Emergency>("output/external_emergency", durable_qos);
+  operation_mode_pub_ = this->create_publisher<OperationMode>("output/operation_mode", durable_qos);
 
   // Subscriber
   emergency_state_sub_ = this->create_subscription<EmergencyState>(
@@ -496,6 +497,7 @@ void VehicleCmdGate::publishStatus()
   gate_mode_pub_->publish(current_gate_mode_);
   engage_pub_->publish(autoware_engage);
   pub_external_emergency_->publish(external_emergency);
+  operation_mode_pub_->publish(current_operation_mode_);
 }
 
 AckermannControlCommand VehicleCmdGate::filterControlCommand(const AckermannControlCommand & in)
@@ -505,9 +507,12 @@ AckermannControlCommand VehicleCmdGate::filterControlCommand(const AckermannCont
 
   using tier4_system_msgs::msg::OperationMode;
 
-  if (current_operation_mode_.mode == OperationMode::TRANSITION_TO_AUTO) {
+  const auto mode = current_operation_mode_.mode;
+
+  // Apply transition_filter when transiting from MANUAL to AUTO.
+  if (mode == OperationMode::TRANSITION_TO_AUTO) {
     filter_on_transition_.filterAll(dt, current_steer_, out);
-    RCLCPP_INFO(get_logger(), "now transition filter is running");
+    RCLCPP_INFO(get_logger(), "now transition filter is running");  // TODO: remove
   } else {
     filter_.filterAll(dt, current_steer_, out);
   }

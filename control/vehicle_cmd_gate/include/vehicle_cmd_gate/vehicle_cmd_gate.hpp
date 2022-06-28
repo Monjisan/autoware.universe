@@ -89,6 +89,7 @@ private:
   rclcpp::Publisher<HazardLightsCommand>::SharedPtr hazard_light_cmd_pub_;
   rclcpp::Publisher<GateMode>::SharedPtr gate_mode_pub_;
   rclcpp::Publisher<EngageMsg>::SharedPtr engage_pub_;
+  rclcpp::Publisher<OperationMode>::SharedPtr operation_mode_pub_;
 
   // Subscription
   rclcpp::Subscription<EmergencyState>::SharedPtr emergency_state_sub_;
