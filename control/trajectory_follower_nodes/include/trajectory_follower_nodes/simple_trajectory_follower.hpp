@@ -52,6 +52,7 @@ private:
     TrajectoryPoint closest_traj_point_;
     bool use_external_target_vel_;
     double external_target_vel_;
+    double lateral_deviation_;
 
     void onTimer();
     bool checkData();

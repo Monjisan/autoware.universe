@@ -35,6 +35,7 @@ SimpleTrajectoryFollower::SimpleTrajectoryFollower(const rclcpp::NodeOptions & o
 
   use_external_target_vel_ = declare_parameter<bool>("use_external_target_vel", false);
   external_target_vel_ = declare_parameter<float>("external_target_vel", 0.0);
+  lateral_deviation_ = declare_parameter<float>("lateral_deviation", 0.0);
 
   using namespace std::literals::chrono_literals;
   timer_ = rclcpp::create_timer(
@@ -68,7 +69,8 @@ void SimpleTrajectoryFollower::updateClosest()
 double SimpleTrajectoryFollower::calcSteerCmd()
 {
   const auto lat_err =
-    calcLateralDeviation(closest_traj_point_.pose, odometry_->pose.pose.position);
+    calcLateralDeviation(closest_traj_point_.pose, odometry_->pose.pose.position) -
+    lateral_deviation_;
   const auto yaw_err = calcYawDeviation(closest_traj_point_.pose, odometry_->pose.pose);
 
   // linearized pure_pursuit control
