@@ -59,7 +59,6 @@ State EngageStateBase::defaultUpdateOnManual()
 
 bool EngageStateBase::sendAutonomousModeRequest()
 {
-  // TODO: serviceの送り方要確認。asyncでこれ回せるのか？無理じゃなかった？
   bool success = true;
 
   auto request = std::make_shared<ControlModeRequest::Request>();
@@ -180,10 +179,13 @@ bool TransitionState::checkSystemStable()
   }
 
   // check for speed deviation
-  const auto speed_deviation =
-    std::abs(closest_point.longitudinal_velocity_mps - data_->kinematics.twist.twist.linear.x);
-  if (speed_deviation > stable_check_param_.speed_threshold) {
-    RCLCPP_INFO(logger_, "Not stable yet: speed deviation is too large: %f", speed_deviation);
+  const auto speed_deviation = data_->kinematics.twist.twist.linear.x - closest_point.longitudinal_velocity_mps;
+  if (speed_deviation > stable_check_param_.speed_upper_threshold) {
+    RCLCPP_INFO(logger_, "Not stable yet: ego speed is too high: %f", speed_deviation);
+    return unstable();
+  }
+  if (speed_deviation < stable_check_param_.speed_lower_threshold) {
+    RCLCPP_INFO(logger_, "Not stable yet: ego speed is too low: %f", speed_deviation);
     return unstable();
   }
 

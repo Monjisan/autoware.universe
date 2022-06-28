@@ -67,7 +67,8 @@ struct Data
 struct EngageAcceptableParam
 {
   double dist_threshold = 2.0;
-  double speed_threshold = 10.0;
+  double speed_upper_threshold = 10.0;
+  double speed_lower_threshold = -10.0;
   double yaw_threshold = 0.785;
   double acc_threshold = 2.0;
   double lateral_acc_threshold = 2.0;
@@ -78,7 +79,8 @@ struct StableCheckParam
 {
   double duration = 3.0;
   double dist_threshold = 0.5;
-  double speed_threshold = 3.0;
+  double speed_upper_threshold = 3.0;
+  double speed_lower_threshold = -3.0;
   double yaw_threshold = M_PI / 10.0;
 };
 

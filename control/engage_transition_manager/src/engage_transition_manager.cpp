@@ -59,28 +59,21 @@ EngageTransitionManager::EngageTransitionManager(const rclcpp::NodeOptions & opt
   {
     auto & p = engage_acceptable_param_;
     p.dist_threshold = declare_parameter<double>("engage_acceptable_limits.dist_threshold");
-    p.speed_threshold = declare_parameter<double>("engage_acceptable_limits.speed_threshold");
+    p.speed_upper_threshold = declare_parameter<double>("engage_acceptable_limits.speed_upper_threshold");
+    p.speed_lower_threshold = declare_parameter<double>("engage_acceptable_limits.speed_lower_threshold");
     p.yaw_threshold = declare_parameter<double>("engage_acceptable_limits.yaw_threshold");
     p.acc_threshold = declare_parameter<double>("engage_acceptable_limits.acc_threshold");
     p.lateral_acc_threshold = declare_parameter<double>("engage_acceptable_limits.lateral_acc_threshold");
     p.lateral_acc_diff_threshold = declare_parameter<double>("engage_acceptable_limits.lateral_acc_diff_threshold");
-
-    // TODO: remove
-    std::cerr << "param_.dist_threshold" << p.dist_threshold << ", yaw_threshold" << p.yaw_threshold
-              << ", speed_threshold" << p.speed_threshold << std::endl;
   }
 
   {
     auto & p = stable_check_param_;
     p.duration = declare_parameter<double>("stable_check.duration");
     p.dist_threshold = declare_parameter<double>("stable_check.dist_threshold");
-    p.speed_threshold = declare_parameter<double>("stable_check.speed_threshold");
+    p.speed_upper_threshold = declare_parameter<double>("stable_check.speed_upper_threshold");
+    p.speed_lower_threshold = declare_parameter<double>("stable_check.speed_lower_threshold");
     p.yaw_threshold = declare_parameter<double>("stable_check.yaw_threshold");
-
-    // TODO: remove
-    std::cerr << "stable_check_param_.duration" << p.duration << "dist_threshold"
-              << p.dist_threshold << ", yaw_threshold" << p.yaw_threshold << ", speed_threshold"
-              << p.speed_threshold << std::endl;
   }
 
   {
@@ -166,6 +159,8 @@ void EngageTransitionManager::publishData()
 
 bool EngageTransitionManager::hasDangerAcceleration()
 {
+  debug_info_.target_control_acceleration = data_->control_cmd.longitudinal.acceleration;
+
   const bool is_stopping = std::abs(data_->kinematics.twist.twist.linear.x) < 0.01;
   if (is_stopping) {
     return false;  // any acceleration is ok when stopped
@@ -176,10 +171,39 @@ bool EngageTransitionManager::hasDangerAcceleration()
   return has_large_acc;
 }
 
+std::pair<bool, bool> EngageTransitionManager::hasDangerLateralAcceleration()
+{
+  const auto wheelbase = 4.0;
+  const auto curr_vx = data_->kinematics.twist.twist.linear.x;
+  const auto curr_wz = data_->kinematics.twist.twist.angular.z;
+
+  // Calculate angular velocity from kinematics model.
+  // Use current_vx to focus on the steering behavior.
+  const auto target_wz = curr_vx * std::tan(data_->control_cmd.lateral.steering_tire_angle) / wheelbase;
+
+  const auto curr_lat_acc = curr_vx * curr_wz;
+  const auto target_lat_acc = curr_vx * target_wz;
+
+  const bool has_large_lat_acc =
+    std::abs(curr_lat_acc) > engage_acceptable_param_.lateral_acc_threshold;
+  const bool has_large_lat_acc_diff =
+    std::abs(curr_lat_acc - target_lat_acc) > engage_acceptable_param_.lateral_acc_diff_threshold;
+
+  debug_info_.lateral_acceleration = curr_lat_acc;
+  debug_info_.lateral_acceleration_deviation = curr_lat_acc - target_lat_acc;
+
+
+  return {has_large_lat_acc, has_large_lat_acc_diff};
+}
+
 bool EngageTransitionManager::checkEngageAvailable()
 {
   constexpr auto dist_max = 5.0;
   constexpr auto yaw_max = M_PI_4;
+
+  const auto current_speed = data_->kinematics.twist.twist.linear.x;
+  const auto target_control_speed = data_->control_cmd.longitudinal.speed;
+  const auto & param = engage_acceptable_param_;
 
   if (data_->trajectory.points.size() < 2) {
     RCLCPP_WARN(get_logger(), "Engage unavailable: trajectory size must be > 2");
@@ -195,41 +219,60 @@ bool EngageTransitionManager::checkEngageAvailable()
     return false;                                  // closest trajectory point not found.
   }
   const auto closest_point = data_->trajectory.points.at(*closest_idx);
+  const auto target_planning_speed = closest_point.longitudinal_velocity_mps;
   debug_info_.trajectory_available_ok = true;
 
   // No engagement is lateral control error is large
   const auto lateral_deviation = calcDistance2d(closest_point.pose, data_->kinematics.pose.pose);
-  const bool lateral_deviation_ok = lateral_deviation < engage_acceptable_param_.dist_threshold;
+  const bool lateral_deviation_ok = lateral_deviation < param.dist_threshold;
 
   // No engagement is yaw control error is large
   const auto yaw_deviation = calcYawDeviation(closest_point.pose, data_->kinematics.pose.pose);
-  const bool yaw_deviation_ok = yaw_deviation < engage_acceptable_param_.yaw_threshold;
+  const bool yaw_deviation_ok = yaw_deviation < param.yaw_threshold;
 
   // No engagement if speed control error is large
-  const auto speed_deviation =
-    std::abs(closest_point.longitudinal_velocity_mps - data_->kinematics.twist.twist.linear.x);
-  const bool speed_deviation_ok = speed_deviation < engage_acceptable_param_.speed_threshold;
+  const auto speed_deviation = current_speed - target_planning_speed;
+  const bool speed_upper_deviation_ok = speed_deviation <= param.speed_upper_threshold;
+  const bool speed_lower_deviation_ok = speed_deviation >= param.speed_lower_threshold;
 
   // No engagement if the vehicle is moving but the target speed is zero.
-  const bool no_stop_ok =
-    !(std::abs(data_->kinematics.twist.twist.linear.x) > 0.1 &&
-      std::abs(data_->control_cmd.longitudinal.speed) < 0.01);
+  const bool stop_ok = !(std::abs(current_speed) > 0.1 && std::abs(target_control_speed) < 0.01);
 
   // No engagement if the large acceleration is commanded.
-  const bool no_large_acceleration_ok = !hasDangerAcceleration();
+  const bool large_acceleration_ok = !hasDangerAcceleration();
+
+  // No engagement if the lateral acceleration is over threshold
+  const auto [has_large_lat_acc, has_large_lat_acc_diff] = hasDangerLateralAcceleration();
+  const auto large_lateral_acceleration_ok = !has_large_lat_acc;
+  const auto large_lateral_acceleration_diff_ok = !has_large_lat_acc_diff;
 
   // No engagement if a stop is expected within a certain period of time
   // TODO: write me
   // ...
 
-  debug_info_.lateral_deviation_ok = lateral_deviation_ok;
-  debug_info_.yaw_deviation_ok = yaw_deviation_ok;
-  debug_info_.speed_deviation_ok = speed_deviation_ok;
-  debug_info_.no_stop_ok = no_stop_ok;
-  debug_info_.no_large_acceleration_ok = no_large_acceleration_ok;
+  const bool is_all_ok = lateral_deviation_ok && yaw_deviation_ok && speed_upper_deviation_ok &&
+                         speed_lower_deviation_ok && stop_ok && large_acceleration_ok;
 
-  const bool is_all_ok = lateral_deviation_ok && yaw_deviation_ok && speed_deviation_ok &&
-                         no_stop_ok && no_large_acceleration_ok;
+  // set for debug info
+  {
+    debug_info_.is_all_ok = is_all_ok;
+    debug_info_.lateral_deviation_ok = lateral_deviation_ok;
+    debug_info_.yaw_deviation_ok = yaw_deviation_ok;
+    debug_info_.speed_upper_deviation_ok = speed_upper_deviation_ok;
+    debug_info_.speed_lower_deviation_ok = speed_lower_deviation_ok;
+    debug_info_.stop_ok = stop_ok;
+    debug_info_.large_acceleration_ok = large_acceleration_ok;
+    debug_info_.large_lateral_acceleration_ok = large_lateral_acceleration_ok;
+    debug_info_.large_lateral_acceleration_diff_ok = large_lateral_acceleration_diff_ok;
+
+    debug_info_.current_speed = current_speed;
+    debug_info_.target_control_speed = target_control_speed;
+    debug_info_.target_planning_speed = target_planning_speed;
+
+    debug_info_.lateral_deviation = lateral_deviation;
+    debug_info_.yaw_deviation = yaw_deviation;
+    debug_info_.speed_deviation = speed_deviation;
+  }
 
   return is_all_ok;
 }

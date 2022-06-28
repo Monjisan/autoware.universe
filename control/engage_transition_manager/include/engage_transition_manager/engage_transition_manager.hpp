@@ -62,6 +62,7 @@ private:
   StableCheckParam stable_check_param_;
 
   bool hasDangerAcceleration();
+  std::pair<bool, bool> hasDangerLateralAcceleration();
   bool checkEngageAvailable();
 
   void publishData();
