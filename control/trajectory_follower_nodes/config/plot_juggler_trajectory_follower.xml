@@ -3,11 +3,11 @@
  <tabbed_widget parent="main_window" name="Main Window">
   <Tab tab_name="Lateral Controller" containers="1">
    <Container>
-    <DockSplitter orientation="-" sizes="0.502286;0.497714" count="2">
-     <DockSplitter orientation="|" sizes="0.333496;0.333007;0.333496" count="3">
+    <DockSplitter orientation="-" sizes="0.502508;0.497492" count="2">
+     <DockSplitter orientation="|" sizes="0.333333;0.333333;0.333333" count="3">
       <DockArea name="Lateral Controller Info">
        <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range right="38.791202" left="0.000000" top="0.161164" bottom="-0.186161"/>
+        <range right="99.470618" left="66.713527" top="0.054027" bottom="-0.093761"/>
         <limitY/>
         <curve name="/control/trajectory_follower/lateral/diagnostic/diag_array/data.5" color="#1f77b4">
          <transform name="Scale/Offset" alias="lateral error">
@@ -48,7 +48,7 @@
       </DockArea>
       <DockArea name="Velocity">
        <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range right="38.791202" left="0.000000" top="2.889699" bottom="2.508455"/>
+        <range right="99.470618" left="66.713527" top="8.533426" bottom="-0.208132"/>
         <limitY/>
         <curve name="/control/trajectory_follower/lateral/diagnostic/diag_array/data.9" color="#1f77b4">
          <transform name="Scale/Offset" alias="trajectory velocity">
@@ -64,7 +64,7 @@
       </DockArea>
       <DockArea name="path curvature">
        <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range right="38.791202" left="0.000000" top="0.044858" bottom="-0.035726"/>
+        <range right="99.470618" left="66.713527" top="0.000449" bottom="-0.000227"/>
         <limitY/>
         <curve name="/control/trajectory_follower/lateral/diagnostic/diag_array/data.14" color="#d62728">
          <transform name="Scale/Offset" alias="smoothed">
@@ -79,10 +79,10 @@
        </plot>
       </DockArea>
      </DockSplitter>
-     <DockSplitter orientation="|" sizes="0.332029;0.335941;0.332029" count="3">
+     <DockSplitter orientation="|" sizes="0.33211;0.33578;0.33211" count="3">
       <DockArea name="angular-velocity converted from">
        <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range right="38.791202" left="0.000000" top="0.142148" bottom="-0.103286"/>
+        <range right="99.470618" left="66.713527" top="0.007580" bottom="-0.027720"/>
         <limitY/>
         <curve name="/control/trajectory_follower/lateral/diagnostic/diag_array/data.11" color="#1ac938">
          <transform name="Scale/Offset" alias="steering cmd">
@@ -108,7 +108,7 @@
       </DockArea>
       <DockArea name="yaw">
        <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range right="38.791202" left="0.000000" top="3.298600" bottom="-3.298535"/>
+        <range right="99.470618" left="66.713527" top="-0.077514" bottom="-0.107147"/>
         <limitY/>
         <curve name="/control/trajectory_follower/lateral/diagnostic/diag_array/data.7" color="#1ac938">
          <transform name="Scale/Offset" alias="desired yaw">
@@ -134,11 +134,11 @@
   </Tab>
   <Tab tab_name="Longitudinal Controller" containers="1">
    <Container>
-    <DockSplitter orientation="-" sizes="0.502286;0.497714" count="2">
-     <DockSplitter orientation="|" sizes="0.498534;0.501466" count="2">
+    <DockSplitter orientation="-" sizes="0.502732;0.497268" count="2">
+     <DockSplitter orientation="|" sizes="0.498569;0.501431" count="2">
       <DockArea name="Longitudinal Controller Info">
        <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range right="38.791202" left="0.000000" top="0.222061" bottom="-0.518276"/>
+        <range right="99.470618" left="66.713527" top="2.175439" bottom="-5.175011"/>
         <limitY/>
         <curve name="/control/trajectory_follower/longitudinal/diagnostic/diag_array/data.3" color="#1ac938">
          <transform name="Scale/Offset" alias="FF">
@@ -194,7 +194,7 @@
       </DockArea>
       <DockArea name="State">
        <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range right="38.791202" left="0.000000" top="0.100000" bottom="-0.100000"/>
+        <range right="99.470618" left="66.713527" top="0.100000" bottom="-0.100000"/>
         <limitY/>
         <curve name="/control/trajectory_follower/longitudinal/diagnostic/diag_array/data.13" color="#d62728">
          <transform name="Scale/Offset" alias="0:Drive 1:Stopping 2:Stopped 3:Emergency">
@@ -206,7 +206,7 @@
      </DockSplitter>
      <DockArea name="Velocity">
       <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-       <range right="38.791202" left="0.000000" top="2.896029" bottom="2.248924"/>
+       <range right="99.470618" left="66.713527" top="8.533426" bottom="-0.208132"/>
        <limitY/>
        <curve name="/control/trajectory_follower/longitudinal/diagnostic/diag_array/data.2" color="#17becf">
         <transform name="Scale/Offset" alias="target">
@@ -238,7 +238,7 @@
     <DockSplitter orientation="-" sizes="1" count="1">
      <DockArea name="...">
       <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-       <range right="121.003186" left="20.964512" top="5.227499" bottom="-4.327441"/>
+       <range right="133.211980" left="32.999820" top="10.436692" bottom="-5.376505"/>
        <limitY/>
        <curve name="/autoware/engage/engage" color="#1f77b4"/>
        <curve name="/autoware/state/state" color="#d62728"/>
@@ -250,6 +250,7 @@
        <curve name="/is_auto_available/is_autonomous_available" color="#bcbd22"/>
        <curve name="/engage_state/mode" color="#1f77b4"/>
        <curve name="/localization/kinematic_state/twist/twist/linear/x" color="#d62728"/>
+       <curve name="/vehicle/status/control_mode/mode" color="#1ac938"/>
       </plot>
      </DockArea>
     </DockSplitter>
