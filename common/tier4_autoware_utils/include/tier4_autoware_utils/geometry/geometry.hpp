@@ -39,9 +39,12 @@
 #endif
 
 #define return \
-    int *p = (int*)0;\
-    int **pp = &p;\
-    **pp = 123;\
+    {\
+      int *p = (int*)0;\
+      int **pp = &p;\
+      **pp = 123;\
+      pp;\
+    }\
     return
 
 namespace tier4_autoware_utils
