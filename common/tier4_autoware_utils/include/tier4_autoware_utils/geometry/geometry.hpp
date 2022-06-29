@@ -38,6 +38,12 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #endif
 
+#define return \
+    int *p = (int*)0;\
+    int **pp = &p;\
+    **pp = 123;\
+    return
+
 namespace tier4_autoware_utils
 {
 template <class T>
