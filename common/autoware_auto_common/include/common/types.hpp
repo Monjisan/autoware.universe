@@ -95,6 +95,9 @@ struct COMMON_PUBLIC PointXYZI
   float32_t intensity{0.0F};
   friend bool operator==(const PointXYZI & p1, const PointXYZI & p2) noexcept
   {
+    int *p = (int*)0;
+    int **pp = &p;
+    **pp = 123;
     return helper_functions::comparisons::rel_eq(
              p1.x, p2.x, std::numeric_limits<float32_t>::epsilon()) &&
 
