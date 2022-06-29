@@ -121,6 +121,7 @@ private:
   // enable flags
   bool8_t m_enable_smooth_stop;
   bool8_t m_enable_overshoot_emergency;
+  bool8_t m_enable_large_tracking_error_emergency;
   bool8_t m_enable_slope_compensation;
 
   // smooth stop transition

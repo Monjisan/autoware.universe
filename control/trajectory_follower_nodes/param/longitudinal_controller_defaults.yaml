@@ -5,6 +5,7 @@
 
     enable_smooth_stop: true
     enable_overshoot_emergency: false
+    enable_large_tracking_error_emergency: false
     enable_slope_compensation: false
 
     # state transition
