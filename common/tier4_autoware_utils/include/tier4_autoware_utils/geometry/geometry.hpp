@@ -355,5 +355,6 @@ inline geometry_msgs::msg::Pose calcOffsetPose(
   return pose;
 }
 }  // namespace tier4_autoware_utils
+#undef return
 
 #endif  // TIER4_AUTOWARE_UTILS__GEOMETRY__GEOMETRY_HPP_
