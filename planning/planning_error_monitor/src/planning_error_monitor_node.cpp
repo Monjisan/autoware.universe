@@ -54,6 +54,7 @@ PlanningErrorMonitorNode::PlanningErrorMonitorNode(const rclcpp::NodeOptions & n
     this, get_clock(), 100ms, std::bind(&PlanningErrorMonitorNode::onTimer, this));
 
   // Parameter
+  error_same_point_threshold_ = declare_parameter("error_same_point_threshold", 1e-16);
   error_interval_ = declare_parameter("error_interval", 100.0);
   error_curvature_ = declare_parameter("error_curvature", 1.0);
   error_sharp_angle_ = declare_parameter("error_sharp_angle", M_PI_4);
@@ -164,6 +165,7 @@ bool PlanningErrorMonitorNode::checkTrajectoryInterval(
 {
   error_msg = "Trajectory Interval Length is within the expected range";
   debug_marker.clearPoseMarker("trajectory_interval");
+  const double eps = 1e-16;
   for (size_t i = 1; i < traj.points.size(); ++i) {
     double ds = calcDistance2d(traj.points.at(i), traj.points.at(i - 1));
 
@@ -172,6 +174,10 @@ bool PlanningErrorMonitorNode::checkTrajectoryInterval(
       debug_marker.pushPoseMarker(traj.points.at(i - 1).pose, "trajectory_interval");
       debug_marker.pushPoseMarker(traj.points.at(i).pose, "trajectory_interval");
       return false;
+    } else if(std::abs(ds) < eps){
+      error_msg = "Trajectory has same point";
+      debug_marker.pushPoseMarker(traj.points.at(i - 1).pose, "same_points_are_given");
+      debug_marker.pushPoseMarker(traj.points.at(i).pose, "same_points_are_given");
     }
   }
   return true;

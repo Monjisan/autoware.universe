@@ -69,6 +69,7 @@ private:
   Trajectory::ConstSharedPtr current_trajectory_;
 
   // Parameter
+  double error_same_point_threshold_;
   double error_interval_;
   double error_curvature_;
   double error_sharp_angle_;
